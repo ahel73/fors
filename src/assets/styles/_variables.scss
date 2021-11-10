@@ -1,0 +1,104 @@
+$default: (
+  "500": transparent,
+  "600": #F3F3F3,
+  "700": #F3F3F3,
+);
+
+$default-btn: (
+  "500": #828286,
+  "600": #828286,
+  "700": #C1C1C1,
+);
+
+$default-btn-border: (
+  "500": #c1c1c1,
+  "600": #c1c1c1,
+  "700": #c1c1c1,
+);
+
+$primary: (
+  "500": #d19b3f,
+  "600": #be8a32,
+  "700": #be8a32,
+);
+
+$primary-btn: (
+  "500": #FFFFFF,
+  "600": #FFFFFF,
+  "700": #ffffff50,
+);
+
+$primary-btn-border: (
+  "500": #d19b3f,
+  "600": #be8a32,
+  "700": #be8a32,
+);
+
+$success: (
+  "500": #63D149,
+  "600": #50ba3c,
+  "700": #50ba3c,
+);
+
+$success-btn: (
+  "500": #FFFFFF,
+  "600": #FFFFFF,
+  "700": #ffffff50,
+);
+
+$success-btn-border: (
+  "500": #63D149,
+  "600": #50ba3c,
+  "700": #50ba3c,
+);
+
+$error: (
+  "500": #F44D4D,
+  "600": #e13640,
+  "700": #e13640,
+);
+
+$error-btn: (
+  "500": #FFFFFF,
+  "600": #FFFFFF,
+  "700": #ffffff50,
+);
+
+$error-btn-border: (
+  "500": #F44D4D,
+  "600": #e13640,
+  "700": #e13640,
+);
+
+$theme-colors: (
+  "accent": #be8a32,
+  "anchor": #d19b3f,
+  "black": #242424,
+  "bright": #e3e3e3,
+  "dark": #45474b,
+  "disabled": #F6F8F9,
+  "error": #f44d4d,
+  "gold": #D19B3F,
+  "light": #c1c1c1,
+  "medium": #828286,
+  "primary": #d19b3f,
+  "secondary": #f3f3f3,
+  "success": #63d149,
+  "white": #ffffff,
+);
+
+$shadows: (
+  "dark-1": rgba($color: map-get($map: $theme-colors, $key: "dark"), $alpha: .1),
+);
+
+$zIndexes: (
+  "dialog": 6,
+  "filter": 6,
+  "menu": 8,
+  "notification": 7,
+  "overlay": 5,
+  "table": (
+    "scroll-btn": 3,
+    "th": 2,
+  ),
+);

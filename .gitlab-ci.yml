@@ -1,0 +1,211 @@
+# Create project or personal access token with api, write_repository and write_registry scopes
+# define project or group (for personal token) variables RELEASE_USER=<token name> and RELEASE_TOKEN=<token>
+ 
+stages:
+  - build
+  - release-gitlab
+  - deploy
+ 
+variables:
+  ENVIROMENT: "test"
+  NAMESPACE: "$CI_ENVIRONMENT_NAME"
+  DOCKER_REGISTRY: "$CI_REGISTRY"
+  GITLAB_REGISTRY: "registry.gitlab.com"
+  GCR_IO_REGISTRY: "gcr.io"
+  HELM_REPOSITORY: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable"
+  REGISTRY_AUTH_CONFIG: "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\", \"password\":\"$CI_REGISTRY_PASSWORD\"}}}"
+  HELM_USER: "gitlab-ci-token"
+  HELM_TOKEN: "$CI_JOB_TOKEN"
+  HELM_CURL_ARG: "--request POST --user $HELM_USER:$HELM_TOKEN --form \"chart=@target/${CI_PROJECT_NAME}-$${VERSION}.tgz\" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/stable/charts"
+  RELEASE_BY_TAG: "false"
+  AUTO_BUILD_DEPLOY: "true"
+ 
+.variables: &variables
+  - IMAGE=${DOCKER_REGISTRY:-$CI_REGISTRY}/$CI_PROJECT_PATH
+ 
+# build snapshot version and push to docker registry
+build:
+  image:
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    entrypoint: [ "" ]
+  stage: build
+  rules:
+    - if: $AUTO_BUILD_DEPLOY == "true" && $RELEASE_VERSION == null && $CI_COMMIT_TAG == null && $DEPLOY_VERSION == null && $CI_COMMIT_MESSAGE !~ /Release version/
+  script:
+    - *variables
+    - export VERSION=$(date +1.0.0-SNAPSHOT-%Y%m%d%H%M%S)
+    - >
+      sed -i -E -e 's/version:.*$/version: '"$VERSION"'/g'
+      -e 's/appVersion:.*$/appVersion: '"$VERSION"'/g' helm/Chart.yaml
+    - mkdir -p /kaniko/.docker
+    - echo $REGISTRY_AUTH_CONFIG > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE:$VERSION $KANIKO_OPTS
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - helm
+ 
+deploy:
+  image: ${DOCKER_PROXY}dtzar/helm-kubectl:3.7.1
+  stage: deploy
+  rules:
+    - if: $AUTO_BUILD_DEPLOY == "true" && $CI_COMMIT_REF_NAME == 'master' && $RELEASE_VERSION == null && $DEPLOY_VERSION == null && $CI_COMMIT_MESSAGE !~ /Release version/
+  script:
+    - *variables
+    - helm upgrade -i --create-namespace -n $NAMESPACE
+      --set image.registry=$CI_REGISTRY
+      --set image.prefix=$CI_PROJECT_NAMESPACE
+      --set image.credentials.username=$RELEASE_USER
+      --set image.credentials.password=$RELEASE_TOKEN
+      $CI_PROJECT_NAME ./helm
+  environment:
+    name: dev
+    kubernetes:
+      namespace: $NAMESPACE
+  dependencies:
+    - build
+ 
+# Set version and commit changes
+set-version:
+  image: ${DOCKER_PROXY}node:lts
+  stage: .pre
+  resource_group: $CI_PROJECT_NAME-$CI_JOB_STAGE
+  rules:
+    - if: $RELEASE_VERSION && $RELEASE_BY_TAG == "false"
+  script:
+    - *variables
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$RELEASE_USER"
+    - git checkout -B "$CI_BUILD_REF_NAME"
+    - npm version $RELEASE_VERSION -m "Release version $RELEASE_VERSION"
+    - >
+      sed -i -E -e 's/version:.*$/version: '"$RELEASE_VERSION"'/g'
+      -e 's/appVersion:.*$/appVersion: '"$RELEASE_VERSION"'/g' helm/Chart.yaml
+    - git add --all
+    - git commit -m "Release version $RELEASE_VERSION"
+    - git remote set-url origin https://$RELEASE_USER:$RELEASE_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH
+    - git config --global credential.helper store
+    - echo "https://$RELEASE_USER:$RELEASE_TOKEN@$CI_SERVER_HOST" >> ~/.git-credentials
+    - git push --follow-tags --set-upstream origin $CI_COMMIT_REF_NAME
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - helm
+ 
+# Set version by tag
+set-version-tag:
+  image: ${DOCKER_PROXY}node:lts
+  stage: .pre
+  resource_group: $CI_PROJECT_NAME-$CI_JOB_STAGE
+  rules:
+    - if: $CI_COMMIT_TAG && $RELEASE_BY_TAG == "true"
+  script:
+    - >
+      sed -i -E -e 's/version:.*$/version: '"$CI_COMMIT_TAG"'/g'
+      -e 's/appVersion:.*$/appVersion: '"$CI_COMMIT_TAG"'/g' helm/Chart.yaml
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - helm
+ 
+# build snapshot version and push to docker registry
+release-tag:
+  image:
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    entrypoint: [ "" ]
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG && $RELEASE_BY_TAG == "true"
+  script:
+    - *variables
+    - mkdir -p /kaniko/.docker
+    - echo $REGISTRY_AUTH_CONFIG > /kaniko/.docker/config.json
+    - export
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination $IMAGE:$CI_COMMIT_TAG $KANIKO_OPTS
+  artifacts:
+    expire_in: 1 hrs
+  dependencies:
+    - set-version-tag
+ 
+# build snapshot version and push to docker registry
+release-docker:
+  image:
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    entrypoint: [ "" ]
+  stage: build
+  rules:
+    - if: $RELEASE_VERSION && $RELEASE_BY_TAG == "false"
+  script:
+    - *variables
+    - mkdir -p /kaniko/.docker
+    - echo $REGISTRY_AUTH_CONFIG > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination $IMAGE:$RELEASE_VERSION $KANIKO_OPTS
+  artifacts:
+    expire_in: 1 hrs
+  dependencies:
+    - set-version
+ 
+release-helm:
+  image: ${DOCKER_PROXY}dtzar/helm-kubectl:3.7.1
+  stage: build
+  rules:
+    - if: $RELEASE_VERSION && $RELEASE_BY_TAG == "false"
+      when: always
+    - if: $CI_COMMIT_TAG && $RELEASE_BY_TAG == "true"
+      when: always
+  script:
+    - *variables
+    - export VERSION=$( [[ $RELEASE_VERSION ]] && echo $RELEASE_VERSION || echo $CI_COMMIT_TAG | sed 's/v//' )
+    - helm package helm --version $VERSION -d target
+    - eval curl ${HELM_CURL_ARG}
+  dependencies:
+    - set-version
+    - set-version-tag
+ 
+release-gitlab:
+  image: ${GITLAB_REGISTRY}/gitlab-org/release-cli:latest
+  stage: release-gitlab
+  rules:
+    - if: $RELEASE_VERSION && $RELEASE_BY_TAG == "false"
+      variables:
+        VERSION: $RELEASE_VERSION
+        TAG_NAME: "v$RELEASE_VERSION"
+      when: always
+    - if: $CI_COMMIT_TAG && $RELEASE_BY_TAG == "true"
+      variables:
+        VERSION: $CI_COMMIT_TAG
+        TAG_NAME: "$CI_COMMIT_TAG"
+      when: always
+  script:
+    - echo 'Release Job'
+  release:
+    tag_name: $TAG_NAME
+    description: "Выпуск версии $VERSION"
+ 
+release-deploy:
+  image: ${DOCKER_PROXY}dtzar/helm-kubectl:3.7.1
+  stage: deploy
+  rules:
+    - if: $AUTO_BUILD_DEPLOY == "true" && $RELEASE_VERSION && $RELEASE_BY_TAG == "false"
+      when: on_success
+    - if: $AUTO_BUILD_DEPLOY == "true" && $CI_COMMIT_TAG && $RELEASE_BY_TAG == "true"
+      when: on_success
+    - if: $DEPLOY_VERSION
+      when: always
+  script:
+    - *variables
+    - export VERSION=$( [[ $RELEASE_VERSION ]] && echo $RELEASE_VERSION || [[ $DEPLOY_VERSION ]] && echo $DEPLOY_VERSION || echo $CI_COMMIT_TAG | sed 's/v//' )
+    - helm repo add --username $HELM_USER --password $HELM_TOKEN $CI_PROJECT_NAME $HELM_REPOSITORY
+    - helm upgrade -i --create-namespace -n $NAMESPACE
+      --set image.registry=$DOCKER_REGISTRY
+      --set image.prefix=$CI_PROJECT_NAMESPACE
+      --set image.credentials.username=$RELEASE_USER
+      --set image.credentials.password=$RELEASE_TOKEN
+      --version $VERSION
+      $CI_PROJECT_NAME $CI_PROJECT_NAME/$CI_PROJECT_NAME
+  environment:
+    name: $ENVIROMENT
+    kubernetes:
+      namespace: $NAMESPACE

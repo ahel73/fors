@@ -1,0 +1,45 @@
+@use "sass:map";
+
+@import "@/assets/styles/_variables.scss";
+
+$primary: map-get($map: $theme-colors, $key: "primary");
+
+$table_zIndexes: map.get($zIndexes, ("table"));
+
+:root {
+
+  .v-application .primary--text {
+    caret-color: $primary !important;
+    color: $primary !important;
+  }
+
+  .v-application ul,
+  .v-application ol {
+    padding-left: 0;
+  }
+
+  .v-dialog__content {
+    z-index: map-get($map: $zIndexes, $key: "dialog") !important;
+  }
+
+  .v-overlay {
+    z-index: map-get($map: $zIndexes, $key: "overlay") !important;
+  }
+
+  .v-data-table th {
+    z-index: map-get($map: $table_zIndexes, $key: "th") !important;
+  }
+
+  .v-menu__content {
+    z-index: map-get($map: $zIndexes, $key: "menu") !important;
+  }
+
+  .v-card__title {
+    word-break: normal;
+  }
+
+  .v-list.v-select-list .v-list-item__title {
+    white-space: pre-line;
+  }
+
+}

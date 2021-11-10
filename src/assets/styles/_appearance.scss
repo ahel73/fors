@@ -1,0 +1,15 @@
+@import "@/assets/styles/_variables.scss";
+
+$light: map-get($map: $theme-colors, $key: "light");
+
+@mixin custom_scrollbar() {
+
+  &::-webkit-scrollbar {
+    height: 3px;
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $light;
+  }
+}
