@@ -13,6 +13,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import { RouteNames } from '@/navigation/types';
+import AccountingBusinessCard from '@/components/AccountingBusiness/AccountingBusinessCard.vue'
 
 Vue.use(Router);
 
@@ -31,6 +32,36 @@ const router = new Router({
       },
       name: 'MainPage',
       component: () => import('@/views/MainPage.vue'),
+      props: true,
+    },
+    {
+      path: '/accountingBusiness',
+      children: [
+        {
+          path: '/accountingBusiness/:id/:type',
+          name: 'accountingBusiness-card',
+          component: AccountingBusinessCard,
+        },
+        {
+          path: '/accountingBusiness/create',
+          name: 'accountingBusiness-card',
+          component: AccountingBusinessCard,
+          meta: {
+            breadcrumb: [
+              { name: 'Орган государственной власти' },
+            ],
+          },
+        },
+      ],
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Учетное дело',
+          },
+        ],
+      },
+      name: 'AccountingBusiness',
+      component: () => import('@/views/AccountingBusiness/AccountingBusiness.vue'),
       props: true,
     },
     {
