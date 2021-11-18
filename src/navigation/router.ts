@@ -34,6 +34,19 @@ const router = new Router({
       props: true,
     },
     {
+      path: '/list-people',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Список нуждающихся лиц',
+          },
+        ],
+      },
+      name: 'ListPeoplePage',
+      component: () => import('@/views/ListPeoplePage.vue'),
+      props: true,
+    },
+    {
       path: '*',
       redirect: '/indicators',
     },
