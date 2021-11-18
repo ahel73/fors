@@ -1,14 +1,9 @@
 <template>
-  <div class="accountingBusinessList">
-    <v-col cols="12">
-      <div class="title">
-        <span> Список учетных дел </span>
-      </div>
-    </v-col>
+  <main-layout title="Список учетных дел">
     <v-col>
       <data-table>
         <template
-          v-slot:[`tabs.after`]
+          #[`tabs.after`]
         >
           <v-row>
             <v-col
@@ -48,7 +43,7 @@
         </template>
       </data-table>
     </v-col>
-  </div>
+  </main-layout>
 </template>
 
 <script lang="ts">
@@ -59,6 +54,7 @@ import FilterComponent from '../shared/Filter/Filter.vue';
 import InputComponent from '../shared/inputs/InputComponent.vue';
 import ColumnsView from '../shared/table/ColumnsView/ColumnsView.vue';
 import DataTable from '../shared/table/DataTable.vue';
+import MainLayout from '@/layouts/MainLayout.vue';
 
 @Component({
   name: 'accountingBusinessList',
@@ -69,6 +65,7 @@ import DataTable from '../shared/table/DataTable.vue';
     DataTable,
     ColumnsView,
     IconButton,
+    MainLayout,
   },
 })
 export default class AccountingBusinessList extends Vue {

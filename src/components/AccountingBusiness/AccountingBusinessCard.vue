@@ -1,10 +1,5 @@
 <template>
-  <div class="card">
-    <v-col cols="12">
-      <div class="main-header">
-        <h2>Ученое дело</h2>
-      </div>
-    </v-col>
+  <main-layout title="Учетное дело">
     <v-tabs
       v-model="tab"
       background-color="white"
@@ -22,9 +17,12 @@
     </v-tabs>
 
     <v-tabs-items v-model="tab">
-      <v-tab-item key="main">
+      <v-tab-item
+        class="tab-card"
+        key="main"
+      >
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <autocomplete-component
               v-model="info.name"
               label="Заявитель"
@@ -48,7 +46,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <input-component
               v-model="info.dateCreate"
               label="Код ОКТМО"
@@ -56,13 +54,13 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <input-component
               v-model="info.dateCreate"
               label="Размер общей площади"
             />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <input-component
               v-model="info.dateCreate"
               label="Расчетный объем средств"
@@ -70,13 +68,13 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <Datepicker
               v-model="info.dateCreate"
               label="Дата постановки на учет"
             />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <Datepicker
               v-model="info.dateChange"
               class="datePicker"
@@ -87,7 +85,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <select-component label=" Период" />
             <input-component
               v-model="info.dateCreate"
@@ -97,25 +95,26 @@
           </v-col>
           <v-col />
         </v-row>
-        <v-row>
-          <v-col cols="6">
+        <v-row class="tab-card__button">
+          <v-col cols="auto">
             <button-component
               @click="putOnRecord"
               size="micro"
               title="Поставить на учет"
+              class="button"
             />
-
             <button-component
               @click="onDeregister"
               size="micro"
               title="Снять с учета"
             />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="auto">
             <button-component
               @click="saveDataApplicant"
               size="micro"
               title="Сохранить"
+              class="button"
             />
             <button-component
               @click="cancel"
@@ -125,9 +124,12 @@
           </v-col>
         </v-row>
       </v-tab-item>
-      <v-tab-item key="family">
+      <v-tab-item
+        class="tab-card"
+        key="family"
+      >
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <input-component
               v-model="info.dateCreate"
               label="Фамилия Имя Отчество"
@@ -135,13 +137,13 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <Datepicker
               v-model="info.dateCreate"
               label="Дата рождения"
             />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <select-component
               v-model="info.dateCreate"
               label="Родственные отношения"
@@ -149,20 +151,22 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <input-component
               v-model="info.dateCreate"
               label="Документ, удостоверяющий личность"
             />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="4">
+        <v-row class="tab-card__button-end">
+          <v-col cols="auto">
             <button-component
               @click="saveDataApplicant"
               size="micro"
               title="Сохранить"
             />
+          </v-col>
+          <v-col cols="auto">
             <button-component
               @click="cancel"
               size="micro"
@@ -171,9 +175,12 @@
           </v-col>
         </v-row>
       </v-tab-item>
-      <v-tab-item key="document">
+      <v-tab-item
+        class="tab-card"
+        key="document"
+      >
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <input-component
               v-model="info.dateCreate"
               label="Наименование"
@@ -181,13 +188,13 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <input-component
               v-model="info.dateCreate"
               label="Номер"
             />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <Datepicker
               v-model="info.dateCreate"
               label="Дата"
@@ -195,7 +202,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="8">
+          <v-col cols="12">
             <input-component
               v-model="info.dateCreate"
               label="Примечание"
@@ -203,27 +210,57 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="4">
+          <v-col cols="6">
             <Datepicker
               v-model="info.dateCreate"
               label="Срок действия документа"
             />
           </v-col>
-          <v-col cols="4">
-            Действующий
+          <v-col cols="6">
+            <checkbox-component
+              v-model="info.acting"
+              class="card__item"
+              label="Действующий"
+            />
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="8">
-            <input-component
-              v-model="info.dateCreate"
+          <v-col cols="12">
+            <select-component
+              v-model="info.gruppa"
               label="Группа"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <upload-file-component
+              v-model="info.file"
+              label="Файл"
+              placeholder="Загрузить"
+              prepend-icon="mdi-arrow-collapse-down"
+            />
+          </v-col>
+        </v-row>
+        <v-row class="tab-card__button-end">
+          <v-col cols="auto">
+            <button-component
+              @click="saveDataApplicant"
+              size="micro"
+              title="Сохранить"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <button-component
+              @click="cancel"
+              size="micro"
+              title="Отменить"
             />
           </v-col>
         </v-row>
       </v-tab-item>
     </v-tabs-items>
-    <v-row>
+    <v-row class="tab-card__button-end">
       <v-col cols="auto">
         <button-component
           @click="saveAllInfo"
@@ -238,11 +275,12 @@
             @click="cancel"
             size="micro"
             title="Отменить"
+            class="button-save"
           />
         </router-link>
       </v-col>
     </v-row>
-  </div>
+  </main-layout>
 </template>
 
 <script lang="ts">
@@ -255,6 +293,9 @@ import PdfView from '@/components/shared/DocumentActions/PdfView/PdfView.vue';
 import AutocompleteComponent from '../shared/inputs/AutocompleteComponent.vue';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import Datepicker from '../shared/Datepicker/Datepicker.vue';
+import CheckboxComponent from '../shared/inputs/CheckboxComponent.vue';
+import MainLayout from '@/layouts/MainLayout.vue';
+import UploadFileComponent from '../shared/inputs/UploadFileComponent.vue';
 
 @Component({
   components: {
@@ -264,7 +305,10 @@ import Datepicker from '../shared/Datepicker/Datepicker.vue';
     AutocompleteComponent,
     SelectComponent,
     Datepicker,
+    CheckboxComponent,
+    MainLayout,
     PdfView,
+    UploadFileComponent,
   },
 })
 
@@ -315,6 +359,34 @@ export default class AccountingBusinessListCard extends Vue {
 <style scoped lang="scss">
   .card {
     padding-left: 32px;
+  }
+
+  .card__item {
+    padding-top: 32px !important;
+  }
+
+  .tab-card {
+    border: 1px solid grey;
+    padding: 16px;
+    margin-bottom: 16px;
+
+  .tab-card__button {
+    display: flex;
+    justify-content: space-between;
+  }
+  }
+
+  .button {
+    margin-right: 24px;
+  }
+
+  .button-save {
+    margin-right: 16px;
+  }
+
+  .tab-card__button-end {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .bordered {
