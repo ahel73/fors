@@ -12,7 +12,6 @@
 
 import Vue from 'vue';
 import Router from 'vue-router';
-import { RouteNames } from '@/navigation/types';
 
 Vue.use(Router);
 
@@ -31,6 +30,19 @@ const router = new Router({
       },
       name: 'MainPage',
       component: () => import('@/views/MainPage.vue'),
+      props: true,
+    },
+    {
+      path: '/participants',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Список участников',
+          },
+        ],
+      },
+      name: 'ParticipantsListPage',
+      component: () => import('@/views/ParticipantsListPage.vue'),
       props: true,
     },
     {

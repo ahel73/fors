@@ -1,11 +1,7 @@
 import { Module } from 'vuex-simple';
-// import MeasureModule from '@/store/modules/measure';
-// import MeasuresModule from '@/store/modules/measures';
+import MeModule from '@/store/me/me';
 
 export default class {
-  // @Module()
-  // public measure = new MeasureModule(this);
-
-  // @Module()
-  // public measures = new MeasuresModule();
+  @Module()
+  public me = new MeModule();
 }
