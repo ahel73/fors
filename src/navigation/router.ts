@@ -34,16 +34,16 @@ const router = new Router({
       props: true,
     },
     {
-      path: '/list-people',
+      path: '/nuzhdayushchiyesya-grazhdane',
       meta: {
         breadcrumbs: [
           {
-            label: 'Список нуждающихся лиц',
+            label: 'Список нуждающихся лиц.',
           },
         ],
       },
       name: 'ListPeoplePage',
-      component: () => import('@/views/ListPeoplePage.vue'),
+      component: () => import('@/views/ListPeopleInNeetyPage/ListPeopleInNeetyPage.vue'),
       props: true,
     },
     {
