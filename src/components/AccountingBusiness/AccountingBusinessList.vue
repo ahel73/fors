@@ -1,22 +1,34 @@
 <template>
   <main-layout title="Список учетных дел">
     <v-col>
-      <data-table :headers="headers" :items="measuresItems">
+      <data-table
+        :headers="headers"
+        :items="measuresItems"
+      >
         <template #[`tabs.after`]>
           <v-row>
-            <v-col cols="12" class="d-flex align-start">
+            <v-col
+              cols="12"
+              class="d-flex align-start"
+            >
               <filter-component
                 @onSearch="handleSearch"
                 @onReset="handleReset"
-                :filters="filters"
                 :initial-items="items"
-                eager
+                :filters="filters"
               />
             </v-col>
           </v-row>
           <v-row class="mb-8">
-            <v-col cols="12" class="d-flex align-start">
-              <columns-view @saveColumns="saveColumns" />
+            <v-col
+              cols="12"
+              class="d-flex align-start"
+            >
+              <columns-view
+                @saveColumns="saveColumns"
+                :headers.sync="headers"
+                :columns="columns"
+              />
               <icon-button
                 @click="handleExportMeasuresInXlsx"
                 type="text"
@@ -54,7 +66,10 @@
               </router-link>
             </span>
             <span class="table-action__wrapper">
-              <base-action @click="handleDeleteMeasure()" hint="Удалить">
+              <base-action
+                @click="handleDeleteMeasure()"
+                hint="Удалить"
+              >
                 <delete-icon />
               </base-action>
             </span>
@@ -65,7 +80,10 @@
                   params: { id: item.id, type: 'show' },
                 }"
               >
-                <base-action @click="handleOpenMeasure()" hint="Просмотр">
+                <base-action
+                  @click="handleOpenMeasure()"
+                  hint="Просмотр"
+                >
                   <eye-icon />
                 </base-action>
               </router-link>
@@ -106,6 +124,7 @@ import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import DialogComponent from '@/components/shared/Dialog/Dialog.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
+import { FilterTypeNames, ValueTypes } from '../shared/Filter/types';
 
 @Component({
   name: 'accountingBusinessList',
@@ -127,37 +146,66 @@ import TextComponent from '@/components/shared/Text/Text.vue';
 })
 export default class AccountingBusinessList extends Vue {
   searchName = '';
-  fields = ['name', 'dsdf', 'sdfsf'];
-  items = [{
-    items: [
-      {
-        text: 'id',
-        value: '1',
-        code: '1',
-      },
-    ],
-    /* isCustom: 'true',
-    isDefault: 'true',
-    label: 'string',
-    like: 'true',
-    name: 'string',
-    names: 'string',
-    negative: 'true',
-    order: '2', */
-  }];
+  items = [];
 
   isDeleteMeasureDialogShow = false;
 
   get filters() {
     return {
-      multiFilters: [
+      simpleFilters: [
         {
-          name: 'search',
-          like: true,
-          label: 'Поиск',
-          names: this.fields,
-          isDefault: true,
+          name: 'fullName', // поле по которому ищет бэк
+          label: 'Фамилия Имя Отчество',
           defaultValue: '',
+          isDefault: true,
+          like: true,
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.SIMPLE_FILTER,
+        },
+      ],
+      selectFilters: [
+        {
+          name: 'improvingWayname',
+          label: 'Способ улучшения ЖУ',
+          // defaultValue: this.programIds,
+          // items: this.stateProgramsReferenceState,
+          isDefault: true,
+          multiple: true,
+          showCode: true,
+          valueType: ValueTypes.NUMBER,
+          type: FilterTypeNames.SELECT_FILTER,
+        },
+        {
+          name: 'employmentname',
+          label: 'Сфера деятельности',
+          // defaultValue: this.subprogramIds,
+          // items: this.subProgramsData,
+          isDefault: true,
+          // isCustom: true, // если поле не должно быть по умолчанию
+          multiple: true,
+          showCode: true,
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.SELECT_FILTER,
+        },
+        {
+          name: 'queuePriorityname',
+          label: 'Приоритет',
+          // items: this.mainMeasureData,
+          isDefault: true,
+          multiple: true,
+          showCode: true,
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.SELECT_FILTER,
+        },
+        {
+          name: 'statusname',
+          label: 'Статус',
+          // items: this.budgetData,
+          isDefault: true,
+          multiple: true,
+          showCode: true,
+          valueType: ValueTypes.NUMBER,
+          type: FilterTypeNames.SELECT_FILTER,
         },
       ],
     };
@@ -268,100 +316,90 @@ export default class AccountingBusinessList extends Vue {
     },
   ];
 
-  columns = [
-    {
-      isDefault: false,
-      text: 'РФ/Субъект РФ',
-      value: 'oktmoName',
-    },
-    {
-      isDefault: false,
-      text: 'ГРБС',
-      value: 'headName',
-    },
-    {
-      isDefault: false,
-      text: 'Рз и ПР',
-      value: 'sectionName',
-    },
-    {
-      isDefault: false,
-      text: 'П',
-      value: 'programName',
-    },
-    {
-      isDefault: false,
-      text: 'ПП',
-      value: 'subprogramName',
-    },
-    {
-      isDefault: false,
-      text: 'М',
-      value: 'mainMeasureName',
-    },
-    {
-      isDefault: false,
-      text: 'НР',
-      value: 'costDirectionName',
-    },
-    {
-      isDefault: false,
-      text: 'ВР',
-      value: 'costTypeName',
-    },
-    {
-      isDefault: true,
-      isEditable: false,
-      text: 'КБК',
-      value: 'kbkCode',
-    },
-    {
-      isDefault: true,
-      isEditable: false,
-      text: 'Наименование',
-      value: 'name',
-    },
-    {
-      isDefault: true,
-      isEditable: false,
-      text: 'Статус',
-      value: 'statusName',
-    },
-    {
-      value: 'actions',
-      text: 'Действия',
-      sortable: false,
-      isVisible: false,
-      isEditable: false,
-      isDefault: true,
-      align: 'center',
-    },
-  ];
+ columns = [
+   {
+     isDefault: true,
+     text: 'Фамилия Имя Отчество',
+     value: 'applicant.fullName',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Способ улучшения ЖУ',
+     value: 'improvingWay.name',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Сфера деятельности',
+     value: 'employment.name',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Приоритет',
+     value: 'queuePriority.name',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Размер общей площади',
+     value: 'area',
+     align: 'center',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Расчетный объем средств',
+     value: 'amount_funds',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Дата постановки на учет',
+     value: 'regDate',
+   },
+   {
+     isDefault: false,
+     isEditable: true,
+     text: 'Статус',
+     value: 'status.name',
+   },
+   {
+     value: 'actions',
+     text: 'Действия',
+     sortable: false,
+     isVisible: false,
+     isEditable: false,
+     isDefault: true,
+     align: 'center',
+   },
+ ];
 
-  handleSearch() {
-    console.log('handleSearch');
-  }
+ handleSearch() {
+   console.log('handleSearch');
+ }
 
-  saveColumns() {
-    console.log('saveColumns');
-  }
+ saveColumns() {
+   console.log('saveColumns');
+ }
 
-  handleReset() {
-    console.log('handleReset');
-  }
+ handleReset() {
+   console.log('handleReset');
+ }
 
-  handleResetSearch() {
-    console.log('handleResetSearch');
-  }
+ handleResetSearch() {
+   console.log('handleResetSearch');
+ }
 
-  handleDeleteMeasure(measureDeleteId: number) {
-    console.log(measureDeleteId);
+ handleDeleteMeasure(measureDeleteId: number) {
+   console.log(measureDeleteId);
 
-    this.isDeleteMeasureDialogShow = true;
-  }
+   this.isDeleteMeasureDialogShow = true;
+ }
 
-  handleDeleteMeasureSuccess() {
-    /*  const { measureDeleteId } = this;
+ handleDeleteMeasureSuccess() {
+   /*  const { measureDeleteId } = this;
 
     if (measureDeleteId) {
       await this.store.measure.deleteMeasureData(measureDeleteId);
@@ -369,15 +407,15 @@ export default class AccountingBusinessList extends Vue {
       this.fetchMeasures();
       this.measureDeleteId = null;
     } */
-  }
+ }
 
-  handleOpenMeasure() {
-    console.log('handleOpenMeasure');
-  }
+ handleOpenMeasure() {
+   console.log('handleOpenMeasure');
+ }
 
-  handleExportMeasuresInXlsx() {
-    console.log('handleExportMeasuresInXlsx');
-  }
+ handleExportMeasuresInXlsx() {
+   console.log('handleExportMeasuresInXlsx');
+ }
 }
 </script>
 
