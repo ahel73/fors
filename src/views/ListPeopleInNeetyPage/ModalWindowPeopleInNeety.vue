@@ -21,53 +21,63 @@
           <ul>
             <li>
               <span class="required">Фамилия</span>
-              <span><input></span>
+              <span><input v-model="newClient.surname"></span>
             </li>
             <li>
               <span class="required">Имя</span>
-              <span><input></span>
+              <span><input v-model="newClient.name"></span>
             </li>
             <li>
               <span>Отчество</span>
-              <span><input></span>
+              <span><input v-model="newClient.patronymic"></span>
             </li>
             <li>
               <span class="required">Дата рождения</span>
-              <span><input type="date"></span>
+              <span>
+                <input
+                  v-model="newClient.birthDate"
+                  type="date"
+                >
+              </span>
             </li>
             <li>
               <span class="required">Пол</span>
               <span>
                 <label for="men">
                   <input
+                    v-model="newClient.sex"
                     id="men"
                     type="radio"
-                    name="gender"
+                    value="M"
                   > <span>Мужской</span>
                 </label>
                 <label for="women">
                   <input
+                    v-model="newClient.sex"
                     id="women"
                     type="radio"
-                    name="gender"
+                    value="W"
                   > <span>Женский</span>
                 </label>
                 <input></span>
             </li>
             <li>
               <span>Место жительства:</span>
-              <span><input></span>
+              <span><input v-model="newClient.residence"></span>
             </li>
             <li>
               <span>Место прибывания</span>
-              <span><input></span>
+              <span><input v-model="newClient.location"></span>
             </li>
             <li>
               <span>Дата регистрации</span>
               <span>
-                <input type="date">
+                <input
+                  v-model="newClient.regDate"
+                  type="date"
+                >
                 <span class="required">Код МОЖ</span>
-                <input>
+                <input v-model="newClient.codMO">
               </span>
             </li>
             <li>
@@ -81,23 +91,34 @@
                 <ol>
                   <li>
                     <span class="required">Вид удостоверения:</span>
-                    <span><input></span>
+                    <span><input v-model="newDocs.name"></span>
                   </li>
                   <li>
                     <span class="required">Серия и номер:</span>
-                    <span><input></span>
+                    <span><input v-model="newDocs.seriesNum"></span>
                   </li>
                   <li>
                     <span class="required">Дата выдачи:</span>
-                    <span><input type="date"></span>
+                    <span>
+                      <input
+                        v-model="newDocs.issueDate"
+                        type="date"
+                      >
+                    </span>
                   </li>
                   <li>
                     <span>Кем выдан:</span>
-                    <span><input></span>
+                    <span><input v-model="newDocs.authority"></span>
                   </li>
                   <li>
                     <span class="required">Действующий:</span>
-                    <span><input type="checkbox"></span>
+                    <span>
+                      <input
+                        v-model="newDocs.authority"
+                        type="checkbox"
+                        :value="true"
+                      >
+                    </span>
                   </li>
                 </ol>
                 <div class="kntr_btn kntr">
@@ -119,26 +140,29 @@
             <li>
               <span class="required">СНИЛС:</span>
               <span>
-                <input>
+                <input v-model="newClient.snils">
                 <span>ИНН:</span>
-                <input>
+                <input v-model="newClient.inn">
               </span>
             </li>
             <li>
               <span class="required">Телефон:</span>
               <span>
-                <input type="tel">
+                <input
+                  v-model="newClient.phoneNumber"
+                  type="tel"
+                >
                 <span>ОГРНИП:</span>
-                <input>
+                <input v-model="newClient.ogrnip">
               </span>
             </li>
             <li>
               <span>Эл почта:</span>
-              <span><input></span>
+              <span><input v-model="newClient.email"></span>
             </li>
             <li>
               <span>Статус</span>
-              <span><input></span>
+              <span><input v-model="newClient.status.name"></span>
             </li>
           </ul>
           <div class="kntr_btn kntr">
@@ -257,6 +281,39 @@ export default {
       addWork: false,
       addDocumentWindow: false,
       addWorkWindow: false,
+      newClient: {
+        surname: '',
+        name: '',
+        patronymic: '',
+        birthDate: '',
+        sex: '',
+        residence: '',
+        location: '',
+        regDate: '',
+        codMO: '',
+        identityDocs: [],
+        inputDoc: '',
+        snils: '',
+        inn: '',
+        ogrnip: '',
+        phoneNumber: '',
+        email: '',
+        status: {
+          id: 1,
+          name: 'Черновик',
+          active: true,
+        },
+      },
+      newDocs: {
+        seriesNum: '',
+        issueDate: '',
+        authority: '',
+        type: {
+          id: '',
+          name: '',
+          active: true,
+        },
+      },
       headers: [
         { text: 'Место работы', value: 'placeOfWork', stopIteraror: false },
         { text: 'Трудовая функция', value: 'position', stopIteraror: false },
@@ -299,11 +356,30 @@ export default {
       if (event.target.closest('.modal-window')) return;
       this.$emit('close-modal-window');
     },
-    closeDopWindow(property) {
+    closeDopWindow(property, arrayAddFun = []) {
       this[property] = false;
+      if (arrayAddFun.length) {
+        arrayAddFun.forEach(el => el());
+      }
     },
     openDopWindow(property) {
       this[property] = true;
+    },
+    cleaningObject(arg) {
+      const obj = arg.obj;
+      if (typeof obj !== 'object') return false;
+      for (const i in obj) {
+        if (Array.isArray(obj[i])) {
+          obj[i].length = 0;
+        } else if (obj[i] === 'object') {
+          const subArg = { obj: obj[i] };
+          this.cleaningObject(subArg);
+        } else if (obj[i] === 'string') {
+          obj[i] = '';
+        } else {
+          obj[i] = undefined;
+        }
+      }
     },
   },
 };
