@@ -34,7 +34,7 @@ const router = new Router({
       props: true,
     },
     {
-      path: '/nuzhdayushchiyesya-grazhdane',
+      path: '/list-people-in-neety',
       meta: {
         breadcrumbs: [
           {

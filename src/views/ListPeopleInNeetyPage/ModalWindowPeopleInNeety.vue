@@ -82,7 +82,12 @@
             </li>
             <li>
               <span>Документ удостоверяющий личность:</span>
-              <span><input @click="openDopWindow('addDocumentWindow')"></span>
+              <span>
+                <input
+                  v-model="newDocs.type.name"
+                  @click="openDopWindow('addDocumentWindow')"
+                >
+              </span>
               <div
                 v-if="addDocumentWindow"
                 class="add-document-window"
@@ -91,7 +96,7 @@
                 <ol>
                   <li>
                     <span class="required">Вид удостоверения:</span>
-                    <span><input v-model="newDocs.name"></span>
+                    <span><input v-model="newDocs.type.name"></span>
                   </li>
                   <li>
                     <span class="required">Серия и номер:</span>
@@ -125,11 +130,14 @@
                   <button type="button">
                     Добавить
                   </button>
-                  <button type="button">
+                  <button
+                    @click.stop="closeDopWindow('addDocumentWindow')"
+                    type="button"
+                  >
                     Сохранить
                   </button>
                   <button
-                    @click.stop="closeDopWindow('addDocumentWindow')"
+                    @click.stop="closeDopWindow('addDocumentWindow', [[cleaningObject, { obj: newDocs }]])"
                     type="button"
                   >
                     Отмена
@@ -359,7 +367,7 @@ export default {
     closeDopWindow(property, arrayAddFun = []) {
       this[property] = false;
       if (arrayAddFun.length) {
-        arrayAddFun.forEach(el => el());
+        arrayAddFun.forEach(el => el[0](el[1]));
       }
     },
     openDopWindow(property) {
@@ -371,16 +379,19 @@ export default {
       for (const i in obj) {
         if (Array.isArray(obj[i])) {
           obj[i].length = 0;
-        } else if (obj[i] === 'object') {
+        } else if (typeof obj[i] === 'object') {
           const subArg = { obj: obj[i] };
           this.cleaningObject(subArg);
-        } else if (obj[i] === 'string') {
+        } else if (typeof obj[i] === 'string') {
           obj[i] = '';
         } else {
           obj[i] = undefined;
         }
       }
     },
+    // addNewDoc() {
+    //   this
+    // }
   },
 };
 </script>
