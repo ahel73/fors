@@ -1,62 +1,71 @@
-import { Module, Getters, Mutations, Actions, createMapper } from 'vuex-smart-module';
+import { Action, Getter, Mutation, State } from 'vuex-simple';
 import {
-  fetchParticipantsList
+  fetchParticipantsList,
+  fetchRegions,
 } from '@/data';
 import {
   WorkingRegion,
 } from '@/types';
+import { ParticipantsState } from './types';
 
-class ParticipantsState {
-  region: WorkingRegion | null = null;
-  financialYear: number | null = null;
-  searchName = '';
-  items: unknown[] = [];
-}
+export default class ParticipantsModule {
+  @State()
+  state: ParticipantsState = {
+    regions: [],
+    financialYear: null,
+    searchName: '',
+    items: [],
+  }
 
-class ParticipantsGetters extends Getters<ParticipantsState> {
+  @Getter()
   getSearchName() {
     return this.state.searchName;
   }
 
+  @Getter()
   getItems() {
     return this.state.items;
   }
 
+  @Getter()
   getFinancialYear() {
     return this.state.financialYear;
   }
 
-  getRegion() {
-    return this.state.region;
+  @Getter()
+  getRegions() {
+    return this.state.regions;
   }
-}
 
-class ParticipantsMutations extends Mutations<ParticipantsState> {
+  @Mutation()
   setSearchName(payload: string) {
     this.state.searchName = payload;
   }
 
+  @Mutation()
   setItems(payload: unknown[]) {
     this.state.items = payload;
   }
 
+  @Mutation()
   setFinancialYear(payload: number) {
     this.state.financialYear = payload;
   }
 
-  setRegion(payload: WorkingRegion) {
-    this.state.region = payload;
+  @Mutation()
+  setRegions(payload: WorkingRegion[]) {
+    this.state.regions = payload;
   }
-}
 
-class ParticipantsActions extends Actions<
-ParticipantsState,
-ParticipantsGetters,
-ParticipantsMutations,
-ParticipantsActions
-> {
+  @Action()
+  async fetchRegions() {
+    const result = await fetchRegions();
+    this.setRegions(result as WorkingRegion[]);
+  }
+
+  @Action()
   async fetchItems({
-    name, page, size, sort
+    name, page, size, sort,
   } : {
     name?: string;
     page?: string;
@@ -71,38 +80,6 @@ ParticipantsActions
       sort: sort,
     };
     const result = await fetchParticipantsList(filterParams);
-    this.commit('setItems', result);
+    this.setItems(result);
   }
-  // async fetchHeadGRBSData({
-  //   headTypeId, headTypeCode,
-  //   name, page, size, sort,
-  // }: {
-  //   headTypeId?: string;
-  //   headTypeCode?: HeadTypeCodes;
-  //   name?: string;
-  //   page?: string;
-  //   size?: string;
-  //   sort?: string;
-  // }) {
-  //   const filterParams: HeadGRBSRequestParams = {
-  //     headTypeId: headTypeId,
-  //     headTypeCode: headTypeCode,
-  //     name: name,
-  //     page: page,
-  //     size: size,
-  //     sort: sort,
-  //   };
-  //   const result = await fetchHeadGRBS(filterParams);
-
-  //   this.commit('setHeadGRBSData', result);
-  // }
 }
-
-export const participants = new Module({
-  state: ParticipantsState,
-  getters: ParticipantsGetters,
-  mutations: ParticipantsMutations,
-  actions: ParticipantsActions,
-});
-
-export const participantsMapper = createMapper(participants);

@@ -33,6 +33,19 @@ const router = new Router({
       props: true,
     },
     {
+      path: '/participants-consolidated',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Сводный список участников',
+          },
+        ],
+      },
+      name: 'ParticipantsListPage',
+      component: () => import('@/views/ParticipantsConsolidatedListPage.vue'),
+      props: true,
+    },
+    {
       path: '/participants',
       meta: {
         breadcrumbs: [

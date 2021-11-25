@@ -1,6 +1,6 @@
 <template>
   <main-layout
-    :title="getMainText"
+    :title="mainLayoutText"
   >
     <v-row>
       <v-col>
@@ -25,15 +25,17 @@
                 class="d-flex justify-end"
               >
                 <v-row>
-                  <v-col>
-                    Финансовый год
+                  <v-col cols="8">
                     <select-component
-                      :items="[1,2,3]"
+                      variant="micro"
+                      label="Субъект"
+                      :items="regions"
                     />
                   </v-col>
-                  <v-col>
-                    Регион
+                  <v-col cols="4">
                     <select-component
+                      variant="micro"
+                      label="Финансовый год"
                       :items="[1,2,3]"
                     />
                   </v-col>
@@ -80,10 +82,28 @@
     </v-row>
     <v-row>
       <button-component
-        title="Согласовать"
+        title="Утвердить"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
       />
       <button-component
-        title="Добавить вакансию"
+        title="Исключить участника"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
+      />
+      <button-component
+        title="Добавить участника"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
+      />
+      <button-component
+        title="Перевести в другой список"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
       />
     </v-row>
   </main-layout>
@@ -91,7 +111,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { participants } from '@/store/modules/participants';
+import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import MainLayout from '@/layouts/MainLayout.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
@@ -118,14 +138,22 @@ import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
   },
 })
 
-export default class ParticipantsListPage extends Vue {
-  participantsContext = participants.context(this.$store);
+export default class ParticipantsConsolidatedListPage extends Vue {
+  store: Store = useStore(this.$store);
 
   itemIdToDelete: number | null = null;
   deleteDialog = false
 
-  get getMainText() {
-    return `${this.participantsContext.}`;
+  get mainLayoutText() {
+    return `Сводный список участников ${this.itemIdToDelete}`;
+  }
+
+  get regions() {
+    return this.store.participants.getRegions();
+  }
+
+  mounted() {
+    this.store.participants.fetchRegions();
   }
 }
 </script>

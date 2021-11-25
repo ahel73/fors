@@ -7,6 +7,14 @@ const fetchParticipantsList = async (params: unknown) : Promise<WorkingRegion[]>
   return data;
 };
 
+const fetchRegions = async (): Promise<unknown[]> => {
+  // const { data } = await httpClient.get('/regions');
+
+  // return data;
+  return [1, 2, 3];
+};
+
 export {
   fetchParticipantsList,
+  fetchRegions,
 };
