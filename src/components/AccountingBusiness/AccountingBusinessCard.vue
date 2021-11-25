@@ -13,7 +13,6 @@
       <v-tab key="document">
         Документы
       </v-tab>
-      <!-- <v-tab key="his"> Использование </v-tab> -->
     </v-tabs>
 
     <v-tabs-items v-model="tab">
@@ -24,37 +23,37 @@
         <v-row>
           <v-col cols="12">
             <autocomplete-component
-              v-model="info.name"
+              v-model="form.applicant"
               label="Заявитель"
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="info"
+              v-model="form.improvingWay"
               label="Способ УЖУ"
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="info.funds"
+              v-model="form.funds"
               label=" Направление расходования средств"
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="info.measure.name"
+              v-model="form.measure"
               label=" Сфера занятости"
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="info.measure.kbk"
+              v-model="form.measure"
               label="Приоритет"
             />
           </v-col>
           <v-col cols="6">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.oktmo.code"
               label="Код ОКТМО"
             />
           </v-col>
@@ -62,13 +61,13 @@
         <v-row>
           <v-col cols="6">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.area"
               label="Размер общей площади"
             />
           </v-col>
           <v-col cols="6">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.amount_funds"
               label="Расчетный объем средств"
             />
           </v-col>
@@ -76,13 +75,13 @@
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="info.dateCreate"
+              v-model="form.regDate"
               label="Дата постановки на учет"
             />
           </v-col>
           <v-col cols="6">
             <Datepicker
-              v-model="info.dateChange"
+              v-model="form.dateChange"
               class="datePicker"
               :format="'DD.MM.YYYY'"
               label="Дата изменения"
@@ -96,7 +95,7 @@
           </v-col>
           <v-col cols="12">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Дата создания"
             />
           </v-col>
@@ -163,7 +162,7 @@
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
-                    @click="handleDelete()"
+                    @click="handleDelete(item.id)"
                     hint="Удалить"
                   >
                     <delete-icon />
@@ -176,7 +175,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Фамилия Имя Отчество"
             />
           </v-col>
@@ -184,13 +183,13 @@
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Дата рождения"
             />
           </v-col>
           <v-col cols="6">
             <select-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Родственные отношения"
             />
           </v-col>
@@ -198,7 +197,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Документ, удостоверяющий личность"
             />
           </v-col>
@@ -249,7 +248,7 @@
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
-                    @click="handleDeleteUD(item.id)"
+                    @click="handleDeleteDoc(item.id)"
                     hint="Удалить"
                   >
                     <delete-icon />
@@ -262,7 +261,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Наименование"
             />
           </v-col>
@@ -270,13 +269,13 @@
         <v-row>
           <v-col cols="6">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Номер"
             />
           </v-col>
           <v-col cols="6">
             <Datepicker
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Дата"
             />
           </v-col>
@@ -284,7 +283,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Примечание"
             />
           </v-col>
@@ -292,13 +291,13 @@
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="info.dateCreate"
+              v-model="form.dateCreate"
               label="Срок действия документа"
             />
           </v-col>
           <v-col cols="6">
             <checkbox-component
-              v-model="info.acting"
+              v-model="form.acting"
               class="card__item"
               label="Действующий"
             />
@@ -307,15 +306,15 @@
         <v-row>
           <v-col cols="12">
             <select-component
-              v-model="info.gruppa"
+              v-model="form.gruppa"
               label="Группа"
             />
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="2">
             <upload-file-component
-              v-model="info.file"
+              v-model="form.file"
               label="Файл"
               placeholder="Загрузить"
               prepend-icon="mdi-arrow-collapse-down"
@@ -424,23 +423,7 @@ export default class AccountingBusinessListCard extends Vue {
   isDeleteMeasureDialogShow = false;
 
   tab = '';
-  info = {
-    dateCreate: null,
-    dateEdit: null,
-    docType: {},
-    id: null,
-    measure: {},
-    propertyBudgetPeriodValues: [],
-    quota: {
-      currentFinYearId: 0,
-    },
-    recipient: {
-      region: {},
-    },
-    status: {},
-    subsidy: {},
-  };
-
+  info = {};
   form = {
     id: 10,
     regDate: '2011-11-11',
@@ -622,7 +605,13 @@ export default class AccountingBusinessListCard extends Vue {
      console.log('goToConclusionsRegistry/*  */');
    }
 
-   handleDeleteUD(measureDeleteId: number) {
+   handleDelete(measureDeleteId: number) {
+     console.log(measureDeleteId);
+
+     this.isDeleteMeasureDialogShow = true;
+   }
+
+   handleDeleteDoc(measureDeleteId: number) {
      console.log(measureDeleteId);
 
      this.isDeleteMeasureDialogShow = true;

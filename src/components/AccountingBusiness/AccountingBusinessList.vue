@@ -152,20 +152,18 @@ export default class AccountingBusinessList extends Vue {
 
   get filters() {
     return {
-      simpleFilters: [
+      selectFilters: [
         {
-          name: 'fullName', // поле по которому ищет бэк
+          name: 'name', // поле по которому ищет бэк
           label: 'Фамилия Имя Отчество',
           defaultValue: '',
           isDefault: true,
           like: true,
           valueType: ValueTypes.STRING,
-          type: FilterTypeNames.SIMPLE_FILTER,
+          type: FilterTypeNames.SELECT_FILTER,
         },
-      ],
-      selectFilters: [
         {
-          name: 'improvingWayname',
+          name: 'improvingWayId',
           label: 'Способ улучшения ЖУ',
           // defaultValue: this.programIds,
           // items: this.stateProgramsReferenceState,
@@ -176,7 +174,7 @@ export default class AccountingBusinessList extends Vue {
           type: FilterTypeNames.SELECT_FILTER,
         },
         {
-          name: 'employmentname',
+          name: 'employmentId',
           label: 'Сфера деятельности',
           // defaultValue: this.subprogramIds,
           // items: this.subProgramsData,
@@ -188,7 +186,7 @@ export default class AccountingBusinessList extends Vue {
           type: FilterTypeNames.SELECT_FILTER,
         },
         {
-          name: 'queuePriorityname',
+          name: 'queuePriority',
           label: 'Приоритет',
           // items: this.mainMeasureData,
           isDefault: true,
@@ -198,7 +196,7 @@ export default class AccountingBusinessList extends Vue {
           type: FilterTypeNames.SELECT_FILTER,
         },
         {
-          name: 'statusname',
+          name: 'statusId',
           label: 'Статус',
           // items: this.budgetData,
           isDefault: true,
