@@ -15,14 +15,14 @@ import Vuex from 'vuex';
 import { createStore, Module } from 'vuex-smart-module';
 import { createVuexStore } from 'vuex-simple';
 
-import { configurator } from './modules/configurator';
+import { participants } from './modules/participants';
 import Store from './store';
 
 Vue.use(Vuex);
 
 const vuexSmart = new Module({
   modules: {
-    configurator,
+    participants,
   },
 });
 

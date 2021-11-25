@@ -1,6 +1,6 @@
 <template>
   <main-layout
-    title='Сводный список участников ${}'
+    :title="getMainText"
   >
     <v-row>
       <v-col>
@@ -91,7 +91,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { useStore } from 'vuex-simple';
+import { participants } from '@/store/modules/participants';
 import Store from '@/store/store';
 import MainLayout from '@/layouts/MainLayout.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
@@ -119,10 +119,14 @@ import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 })
 
 export default class ParticipantsListPage extends Vue {
-  store: Store = useStore(this.$store);
+  participantsContext = participants.context(this.$store);
 
   itemIdToDelete: number | null = null;
   deleteDialog = false
+
+  get getMainText() {
+    return `${this.participantsContext.}`;
+  }
 }
 </script>
 
