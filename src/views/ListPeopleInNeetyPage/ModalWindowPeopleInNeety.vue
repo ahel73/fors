@@ -84,19 +84,29 @@
               <span>Документ удостоверяющий личность:</span>
               <span>
                 <input
-                  v-model="newDocs.type.name"
                   @click="openDopWindow('addDocumentWindow')"
+                  :value="nameDoc"
                 >
               </span>
               <div
                 v-if="addDocumentWindow"
-                class="add-document-window"
+                class="dop-modal-window"
               >
                 <h6>Удостоверение личности</h6>
                 <ol>
                   <li>
                     <span class="required">Вид удостоверения:</span>
-                    <span><input v-model="newDocs.type.name"></span>
+                    <span>
+                      <select :value="newDocs.typeName">
+                        <option
+                          v-for="doc in listDocs"
+                          @click="selectDocType(doc)"
+                          :key="doc.name"
+                        >
+                          {{ doc.name }}
+                        </option>
+                      </select>
+                    </span>
                   </li>
                   <li>
                     <span class="required">Серия и номер:</span>
@@ -131,7 +141,12 @@
                     Добавить
                   </button>
                   <button
-                    @click.stop="closeDopWindow('addDocumentWindow')"
+                    @click.stop="closeDopWindow(
+                      'addDocumentWindow',
+                      [
+                        [addEntity, { property: 'identityDocs', value: newDocs}],
+                        [cleaningObject, { obj: newDocs }]
+                      ])"
                     type="button"
                   >
                     Сохранить
@@ -201,76 +216,180 @@
           />
           <list-table
             :headers="headers"
-            :entity="entity"
+            :entity="listWork"
             :actions-table="actionsTable"
           />
+          <!-- Окно добавления трудовой теятельности -->
           <div v-if="addWork">
             <ul>
               <li>
                 <span class="required">Место работы:</span>
-                <span><input @click="openDopWindow('addWorkWindow')"></span>
+                <span>
+                  <input
+                    @click="openDopWindow('addWorkWindow')"
+                    :value="newWork.nameEmployer"
+                  >
+                </span>
+                <!-- Окно выбора работодателя -->
                 <div
                   v-if="addWorkWindow"
-                  class="add-document-window"
+                  class="dop-modal-window"
                 >
                   <h6>Выбор работодателя</h6>
                   <div>
                     <p>выберете работодателя <span @click.stop="closeDopWindow('addWorkWindow')">x</span></p>
                     <div>
-                      <input placeholder="укажите тип">
-                      <input placeholder="укажите наименование">
+                      <select v-model="newWork.nameEmployer">
+                        <option
+                          v-for="employer in listEmployers"
+                          :key="employer.id"
+                        >
+                          {{ employer.type + ' ' + employer.name }}
+                        </option>
+                      </select>
                     </div>
                     <div class="kntr_btn kntr">
-                      <button type="button">
+                      <button
+                        @click.stop="closeDopWindow('addWorkWindow')"
+                        type="button"
+                      >
                         Ок
                       </button>
-                      <button type="button">
+                      <button
+                        @click.stop="closeDopWindow('addWorkWindow')"
+                        type="button"
+                      >
                         Отмена
                       </button>
                     </div>
                   </div>
                   <div class="kntr_btn kntr">
-                    <button type="button">
+                    <button
+                      @click="openDopWindow('addEmployerWindow')"
+                      type="button"
+                    >
                       Добавить
                     </button>
+                    <!-- Окно добавление работодателя -->
+                    <div
+                      v-if="addEmployerWindow"
+                      class="dop-modal-window"
+                    >
+                      <h6>Работодатель</h6>
+                      <ol>
+                        <li>
+                          <span class="required">Наименование:</span>
+                          <span><input v-model="newEmployer.name"></span>
+                        </li>
+                        <li>
+                          <span class="required">Тип:</span>
+                          <span>
+                            <select v-model="newEmployer.type">
+                              <option>ООО</option>
+                              <option>ИП</option>
+                              <option>ОАО</option>
+                            </select>
+                          </span>
+                        </li>
+                        <li>
+                          <span class="required">регистрационный номер в ПФР:</span>
+                          <span><input v-model="newEmployer.numberPFR"></span>
+                        </li>
+                        <li>
+                          <span class="required">Действующий:</span>
+                          <span>
+                            <input
+                              v-model="newEmployer.acting"
+                              type="checkbox"
+                            >
+                          </span>
+                        </li>
+                        <li>
+                          <div class="kntr_btn kntr">
+                            <button
+                              @click.stop="closeDopWindow(
+                                'addEmployerWindow',
+                                [
+                                  [addEntity, { property: 'listEmployers', value: newEmployer}],
+                                  [cleaningObject, { obj: newEmployer }]
+                                ])"
+                              type="button"
+                            >
+                              Сохранить
+                            </button>
+                            <button
+                              @click.stop="closeDopWindow('addWork', [[cleaningObject, { obj: newEmployer }]])"
+                              type="button"
+                            >
+                              Отменить
+                            </button>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
                   </div>
                 </div>
               </li>
               <li>
                 <span class="required">Трудовая функция:</span>
-                <span><input></span>
+                <span><input v-model="newWork.workFunction"></span>
               </li>
               <li>
                 <span class="required">Дата приёма:</span>
                 <span>
-                  <input type="date">
+                  <input
+                    v-model="newWork.dataReception"
+                    type="date"
+                  >
                   <span>Дата увольнения:</span>
-                  <input type="date">
+                  <input
+                    v-model="newWork.dataDismissal"
+                    type="date"
+                  >
                 </span>
               </li>
               <li>
                 <span>Причина увольнения:</span>
-                <span><input></span>
+                <span><input v-model="newWork.causeDismissal"></span>
               </li>
               <li>
                 <span>Документ-основание:</span>
-                <span><input></span>
+                <span><input v-model="newWork.document"></span>
               </li>
               <li>
                 <span>Признак ПФР:</span>
-                <span><input type="checkbox"></span>
+                <span>
+                  <input
+                    v-model="newWork.flagPFR"
+                    type="checkbox"
+                    :value="true"
+                  >
+                </span>
+              </li>
+              <li>
+                <div class="kntr_btn kntr">
+                  <button
+                    @click.stop="closeDopWindow(
+                      'addWork',
+                      [
+                        [addEntity, { property: 'listWork', value: newWork}],
+                        [cleaningObject, { obj: newWork }]
+                      ])"
+                    type="button"
+                  >
+                    Сохранить
+                  </button>
+                  <button
+                    @click.stop="closeDopWindow('addWork', [[cleaningObject, { obj: newWork }]])"
+                    type="button"
+                  >
+                    Отменить
+                  </button>
+                </div>
               </li>
             </ul>
           </div>
         </template>
-        <div class="kntr_btn kntr">
-          <button type="button">
-            Сохранить
-          </button>
-          <button type="button">
-            Отменить
-          </button>
-        </div>
       </form>
     </div>
   </div>
@@ -289,6 +408,7 @@ export default {
       addWork: false,
       addDocumentWindow: false,
       addWorkWindow: false,
+      addEmployerWindow: false,
       newClient: {
         surname: '',
         name: '',
@@ -316,11 +436,25 @@ export default {
         seriesNum: '',
         issueDate: '',
         authority: '',
-        type: {
-          id: '',
-          name: '',
-          active: true,
-        },
+        type: '',
+        typeName: '',
+      },
+      newEmployer: {
+        id: '',
+        name: '',
+        type: '',
+        numberPFR: '',
+        acting: '',
+      },
+      newWork: {
+        id: '',
+        nameEmployer: '',
+        workFunction: '',
+        dataReception: '',
+        dataDismissal: '',
+        causeDismissal: '',
+        document: '',
+        flagPFR: '',
       },
       headers: [
         { text: 'Место работы', value: 'placeOfWork', stopIteraror: false },
@@ -328,12 +462,12 @@ export default {
         { text: 'Дата приёма', value: 'reception', stopIteraror: false },
         { text: 'Действия', value: 'actions', stopIteraror: true },
       ],
-      entity: [
+      listWork: [
         {
           id: 1,
-          placeOfWork: 'ООО Рога и копыта',
-          position: 'Сторож',
-          reception: '05-10-2021',
+          nameEmployer: 'ООО Рога и копыта',
+          workFunction: 'Сторож',
+          dataReception: '05-10-2021',
         },
       ],
       actionsTable: [
@@ -350,7 +484,37 @@ export default {
           action(id) { alert(this.name + ' ' + id); },
         },
       ],
+      listDocs: [
+        {
+          id: 1,
+          name: 'паспорт',
+        },
+        {
+          id: 2,
+          name: 'права',
+        },
+      ],
+      listEmployers: [
+        {
+          id: 1,
+          name: 'фирма 1',
+          type: 'ООО',
+        },
+        {
+          id: 2,
+          name: 'фирма 2',
+          type: 'ИП',
+        },
+      ],
     };
+  },
+  computed: {
+    nameDoc() {
+      const array = this.listDocs.filter(doc => {
+        return doc.id === +this.newDocs.type;
+      });
+      return array.length ? array[0].name : '';
+    },
   },
   methods: {
     changeTab(event) {
@@ -366,6 +530,7 @@ export default {
     },
     closeDopWindow(property, arrayAddFun = []) {
       this[property] = false;
+      console.log(arrayAddFun);
       if (arrayAddFun.length) {
         arrayAddFun.forEach(el => el[0](el[1]));
       }
@@ -389,9 +554,20 @@ export default {
         }
       }
     },
-    // addNewDoc() {
-    //   this
-    // }
+    addEntity({ property, value }) {
+      value = JSON.parse(JSON.stringify(value));
+      if (property === 'identityDocs') {
+        this.newClient.identityDocs[0] = value;
+      } else if (property in this) {
+        this[property].push(value);
+      } else {
+        this.newClient[property].push(value);
+      }
+    },
+    selectDocType(type) {
+      this.newDocs.typeName = type.name;
+      this.newDocs.type = type.id;
+    },
   },
 };
 </script>
@@ -416,7 +592,7 @@ export default {
     position: relative;
   }
 
-  .add-document-window {
+  .dop-modal-window {
     background: white;
     padding: 20px;
     position: absolute;

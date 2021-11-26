@@ -20,13 +20,15 @@
             :data-sort="item.id"
             :key="item.name"
           >
-            <template v-for="(value, name) in item">
-              <td
-                v-if="name!=='id'"
-                :key="value"
-              >
-                {{ value }}
-              </td>
+            <template v-for="(value, name, index) in item">
+              <template v-if="index < headers.length">
+                <td
+                  v-if="name!=='id'"
+                  :key="value"
+                >
+                  {{ value }}
+                </td>
+              </template>
             </template>
             <td v-if="actionsTable">
               <span
