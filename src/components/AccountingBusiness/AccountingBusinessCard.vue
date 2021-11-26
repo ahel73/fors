@@ -24,37 +24,62 @@
           <v-col cols="12">
             <autocomplete-component
               v-model="form.applicant"
+              :items="individualPersonInfoController"
               label="Заявитель"
+              item-text="fullName"
+              return-object
+              variant="micro"
+              :select-menu-props="{ offsetY: true }"
             />
           </v-col>
           <v-col cols="12">
             <select-component
               v-model="form.improvingWay"
               label="Способ УЖУ"
+              :items="improvingWayController"
+              item-text="name"
+              item-value="id"
+              return-object
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="form.funds"
+              v-model="form.spendingDirection"
               label=" Направление расходования средств"
+              :items="spendingDirectionController"
+              item-text="name"
+              item-value="id"
+              return-object
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="form.measure"
+              v-model="form.employment"
+              :items="employmentController"
+              item-text="name"
+              item-value="id"
+              return-object
               label=" Сфера занятости"
             />
           </v-col>
           <v-col cols="12">
             <select-component
-              v-model="form.measure"
+              v-model="form.queuePriority"
               label="Приоритет"
+              :items="queuePriorityController"
+              item-text="name"
+              item-value="id"
+              return-object
             />
           </v-col>
           <v-col cols="6">
-            <input-component
-              v-model="form.oktmo.code"
+            <select-component
+              v-model="form.oktmo"
               label="Код ОКТМО"
+              :items="oktmoController"
+              item-text="name"
+              item-value="id"
+              return-object
             />
           </v-col>
         </v-row>
@@ -91,16 +116,20 @@
         </v-row>
         <v-row>
           <v-col cols="12">
-            <select-component label=" Период" />
-          </v-col>
-          <v-col cols="12">
             <input-component
               v-model="form.dateCreate"
-              label="Дата создания"
+              label="Причина изменения"
             />
           </v-col>
           <v-col cols="12">
-            <select-component label="Статус" />
+            <select-component
+              v-model="form.status"
+              label="Статус"
+              :items="deedStatusController"
+              item-text="name"
+              item-value="id"
+              return-object
+            />
           </v-col>
           <v-col />
         </v-row>
@@ -141,28 +170,21 @@
           <data-table
             :headers="headersFamily"
             :items="form.familyMembers"
-            hide-footer="true"
+            :hide-footer="isEditable"
           >
             <template #[`item.actions`]="{ item }">
               <div class="d-flex justify-center flex-nowrap">
                 <span class="table-action__wrapper">
-                  <router-link
-                    :to="{
-                      name: 'accountingBusiness-card',
-                      params: { id: item.id, type: 'edit' },
-                    }"
+                  <base-action
+                    @click="handleOpenfamilyMembers(item)"
+                    hint="Редактировать"
                   >
-                    <base-action
-                      @click="handleOpenMeasure({ id: item.id })"
-                      hint="Редактировать"
-                    >
-                      <edit-icon />
-                    </base-action>
-                  </router-link>
+                    <edit-icon />
+                  </base-action>
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
-                    @click="handleDelete(item.id)"
+                    @click="handleDeleteFamilyPeople(item)"
                     hint="Удалить"
                   >
                     <delete-icon />
@@ -174,22 +196,28 @@
         </v-col>
         <v-row>
           <v-col cols="12">
-            <input-component
-              v-model="form.dateCreate"
-              label="Фамилия Имя Отчество"
+            <autocomplete-component
+              v-model="familyPeople.individualPerson"
+              :items="individualPersonInfoController"
+              label="Заявитель"
+              item-text="fullName"
+              return-object
+              variant="micro"
+              :select-menu-props="{ offsetY: true }"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="form.dateCreate"
+              v-model="familyPeople.birthDate"
               label="Дата рождения"
+              :disabled="isEditable"
             />
           </v-col>
           <v-col cols="6">
-            <select-component
-              v-model="form.dateCreate"
+            <input-component
+              v-model="familyPeople.relationship"
               label="Родственные отношения"
             />
           </v-col>
@@ -197,15 +225,16 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="form.dateCreate"
+              v-model="familyPeople.identityDoc"
               label="Документ, удостоверяющий личность"
+              :disabled="isEditable"
             />
           </v-col>
         </v-row>
         <v-row class="tab-card__button-end">
           <v-col cols="auto">
             <button-component
-              @click="saveDataApplicant"
+              @click="saveDataFamilyPeople"
               size="micro"
               title="Сохранить"
             />
@@ -227,28 +256,21 @@
           <data-table
             :headers="headers"
             :items="form.documents"
-            hide-footer="true"
+            :hide-footer="isEditable"
           >
             <template #[`item.actions`]="{ item }">
               <div class="d-flex justify-center flex-nowrap">
                 <span class="table-action__wrapper">
-                  <router-link
-                    :to="{
-                      name: 'accountingBusiness-card',
-                      params: { id: item.id, type: 'edit' },
-                    }"
+                  <base-action
+                    @click="handleOpenDocument(item)"
+                    hint="Редактировать"
                   >
-                    <base-action
-                      @click="handleOpenMeasure({ id: item.id })"
-                      hint="Редактировать"
-                    >
-                      <edit-icon />
-                    </base-action>
-                  </router-link>
+                    <edit-icon />
+                  </base-action>
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
-                    @click="handleDeleteDoc(item.id)"
+                    @click="handleDeleteDocument(item)"
                     hint="Удалить"
                   >
                     <delete-icon />
@@ -261,7 +283,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="form.dateCreate"
+              v-model="documentEditOrCreate.name"
               label="Наименование"
             />
           </v-col>
@@ -269,13 +291,13 @@
         <v-row>
           <v-col cols="6">
             <input-component
-              v-model="form.dateCreate"
+              v-model="documentEditOrCreate.docNum"
               label="Номер"
             />
           </v-col>
           <v-col cols="6">
             <Datepicker
-              v-model="form.dateCreate"
+              v-model="documentEditOrCreate.docDate"
               label="Дата"
             />
           </v-col>
@@ -283,7 +305,7 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="form.dateCreate"
+              v-model="documentEditOrCreate.note"
               label="Примечание"
             />
           </v-col>
@@ -291,13 +313,13 @@
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="form.dateCreate"
+              v-model="documentEditOrCreate.docEndDate"
               label="Срок действия документа"
             />
           </v-col>
           <v-col cols="6">
             <checkbox-component
-              v-model="form.acting"
+              v-model="documentEditOrCreate.acting"
               class="card__item"
               label="Действующий"
             />
@@ -306,7 +328,11 @@
         <v-row>
           <v-col cols="12">
             <select-component
-              v-model="form.gruppa"
+              v-model="documentEditOrCreate.docGroup"
+              :items="docGroupController"
+              item-text="name"
+              item-value="id"
+              return-object
               label="Группа"
             />
           </v-col>
@@ -314,7 +340,7 @@
         <v-row>
           <v-col cols="2">
             <upload-file-component
-              v-model="form.file"
+              v-model="documentEditOrCreate.file"
               label="Файл"
               placeholder="Загрузить"
               prepend-icon="mdi-arrow-collapse-down"
@@ -324,7 +350,7 @@
         <v-row class="tab-card__button-end">
           <v-col cols="auto">
             <button-component
-              @click="saveDataApplicant"
+              @click="saveDocument"
               size="micro"
               title="Сохранить"
             />
@@ -361,7 +387,7 @@
     </v-row>
     <dialog-component
       v-model="isDeleteMeasureDialogShow"
-      @onSuccess="handleDeleteMeasureSuccess"
+      @onSuccess="handleDeletePeopleOrDocumentSuccess"
       cancel-title="Отменить"
       confirm-title="Продолжить"
       width="600"
@@ -395,6 +421,19 @@ import EditIcon from '@/components/shared/IconComponent/icons/EditIcon.vue';
 import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
+import {
+  createDeedController,
+  getDeedControllerByID,
+  getDeedStatusController,
+  getDocGroupController,
+  getEmploymentController,
+  getImprovingWayController,
+  getIndividualPersonInfoController,
+  getOktmoController,
+  getQueuePriorityController,
+  getSpendingDirectionController,
+  updateDeedController,
+} from '@/data/services/accountingBisiness/accountingBisiness';
 
 @Component({
   components: {
@@ -421,110 +460,42 @@ export default class AccountingBusinessListCard extends Vue {
   isSignatureModalOpen = false;
   isPreviewPrintModalOpen = false;
   isDeleteMeasureDialogShow = false;
+  docGroupController = [];
+  employmentController = [];
+  improvingWayController = [];
+  queuePriorityController = [];
+  spendingDirectionController = [];
+  deedStatusController = [];
+  individualPersonInfoController = [];
+  oktmoController = [];
+  familyPeople = {};
+  documentEditOrCreate = {};
+  peopleId = '';
+  documentId: number | string = '';
+  editDocument: number | string = '';
+  indexPeople: number | string = '';
+  itemPeople: any | object = {
+    changeDate: '',
+    changeUser: '',
+    createDate: '',
+    createUser: '',
+    deedId: '',
+    id: '',
+    identityDoc: '',
+    individualPerson: '',
+    birthDate: '',
+    fullName: '',
+    idPerson: '',
+    relationship: '',
+  };
+
+  isEditable = true;
 
   tab = '';
   info = {};
   form = {
-    id: 10,
-    regDate: '2011-11-11',
-    area: 33,
-    applicantId: 1,
-    improvingWay: {
-      id: 1,
-      code: '1  ',
-      name: 'социальная выплата',
-    },
-    employment: {
-      id: 1,
-      code: '1',
-      name: 'АПК/Ветеринария',
-    },
-    queuePriority: {
-      id: 1,
-      code: '1',
-      name: 'Многодетная семья',
-    },
-    familyMembers: [
-      {
-        id: 5,
-        individualPersonId: 9,
-        fullName: 'Nest Test',
-        deedId: 10,
-        relationship: 'брат-3',
-        changeUser: null,
-        createUser: null,
-        changeDate: '2021-11-22T17:00:19.10433',
-        createDate: '2021-11-22T16:59:17.515844',
-        identityDoc: {
-          id: 3,
-          seriesNum: '2345532',
-          issueDate: '2010-12-10',
-          authority: 'some_authority',
-          typeId: 2,
-          typeName: 'свидетельство о рождении',
-        },
-        individualPerson: {
-          id: 9,
-          surname: 'testSurname3',
-          name: 'testName3',
-          fullName: 'testSurname3 testName3',
-          patronymic: 'testPatronymi21',
-          birthDate: '2010-11-11',
-        },
-      },
-    ],
-    documents: [
-      {
-        id: 8,
-        deedId: 10,
-        estateObjectId: null,
-        name: 'Название2',
-        docNum: '1212',
-        docDate: '2011-11-11',
-        note: 'note',
-        docEndDate: '2011-11-12',
-        docGroup: {
-          id: 1,
-          name: 'Постановка на учет',
-        },
-        createDate: '2021-11-22T16:49:59.348881',
-        changeDate: '2021-11-22T17:00:19.157283',
-        createUser: null,
-        changeUser: null,
-      },
-    ],
-    spendingDirection: {
-      id: 1,
-      code: '1',
-      name: 'строительство',
-    },
-    oktmo: {
-      id: 1,
-      code: '1',
-      name: '1',
-      areaName: '1',
-      createDate: null,
-      updateDate: null,
-      regioncode: null,
-      areacode: null,
-      citycode: null,
-      localcode: null,
-      controlnum: null,
-      section: null,
-      clarification: null,
-      lastChangeNum: null,
-      lastChangeType: null,
-    },
-    createDate: '2021-11-22T16:49:59.124129',
-    createUser: null,
-    changeUser: null,
-    changeDate: '2021-11-22T17:00:18.942053',
-    changeReason: null,
-    lkSubId: 1,
-    status: {
-      id: 1,
-      name: 'Черновик',
-    },
+    familyMembers: [{}],
+    documents: [{}],
   };
 
   headersFamily = [
@@ -534,11 +505,11 @@ export default class AccountingBusinessListCard extends Vue {
     },
     {
       text: 'Фамилия Имя Отчество',
-      value: 'individualPerson.fullName',
+      value: 'personInfo.fullName',
     },
     {
       text: 'Дата рождения',
-      value: 'individualPerson.birthDate',
+      value: 'personInfo.birthDate',
     },
     {
       text: 'Родственные отношения',
@@ -546,7 +517,7 @@ export default class AccountingBusinessListCard extends Vue {
     },
     {
       text: 'Документ удостоверяющий личность',
-      value: 'identityDoc.typeName',
+      value: 'personInfo.identityDoc.typeName',
     },
     {
       text: 'Действия',
@@ -554,128 +525,249 @@ export default class AccountingBusinessListCard extends Vue {
     },
   ];
 
-   headers = [
-     {
-       text: 'Номер',
-       value: 'docNum',
-     },
-     {
-       text: 'Наименование',
-       value: 'name',
-     },
-     {
-       text: 'Дата',
-       value: 'docDate',
-     },
-     {
-       text: 'Срок действия документа',
-       value: 'docEndDate',
-     },
-     {
-       text: 'Группа',
-       value: 'docGroup.name',
-     },
-     {
-       text: 'Примечание',
-       value: 'note',
-     },
-     {
-       text: 'Действия',
-       value: 'actions',
-     },
-   ];
+  headers = [
+    {
+      text: 'Номер',
+      value: 'docNum',
+    },
+    {
+      text: 'Наименование',
+      value: 'name',
+    },
+    {
+      text: 'Дата',
+      value: 'docDate',
+    },
+    {
+      text: 'Срок действия документа',
+      value: 'docEndDate',
+    },
+    {
+      text: 'Группа',
+      value: 'docGroup.name',
+    },
+    {
+      text: 'Примечание',
+      value: 'note',
+    },
+    {
+      text: 'Действия',
+      value: 'actions',
+    },
+  ];
 
-   putOnRecord() {
-     console.log('goToConclusionsRegistry/*  */');
-   }
+  mounted() {
+    this.getControllerData();
+    if (this.$route.params.id) {
+      this.getDeedControllerByID(this.$route.params.id);
+    }
+  }
 
-   onDeregister() {
-     console.log('goToConclusionsRegistry/*  */');
-   }
+  getDeedControllerByID(id: any) {
+    getDeedControllerByID(id).then((data) => {
+      this.form = data;
+    });
+  }
 
-   saveDataApplicant() {
-     console.log('goToConclusionsRegistry/*  */');
-   }
+  getControllerData() {
+    getDocGroupController().then((data) => {
+      this.docGroupController = data.data;
+    });
 
-   saveAllInfo() {
-     console.log('goToConclusionsRegistry/*  */');
-   }
+    getEmploymentController().then((data) => {
+      this.employmentController = data.data;
+    });
 
-   cancel() {
-     console.log('goToConclusionsRegistry/*  */');
-   }
+    getImprovingWayController().then((data) => {
+      this.improvingWayController = data.data;
+    });
 
-   handleDelete(measureDeleteId: number) {
-     console.log(measureDeleteId);
+    getQueuePriorityController().then((data) => {
+      this.queuePriorityController = data.data;
+    });
 
-     this.isDeleteMeasureDialogShow = true;
-   }
+    getSpendingDirectionController().then((data) => {
+      this.spendingDirectionController = data.data;
+    });
 
-   handleDeleteDoc(measureDeleteId: number) {
-     console.log(measureDeleteId);
+    getOktmoController().then((data) => {
+      this.oktmoController = data.data;
+    });
 
-     this.isDeleteMeasureDialogShow = true;
-   }
+    getDeedStatusController().then((data) => {
+      this.deedStatusController = data.data;
+    });
 
-   handleDeleteMeasureSuccess() {
-   /*  const { measureDeleteId } = this;
+    getIndividualPersonInfoController().then((data) => {
+      this.individualPersonInfoController = data.data;
+    });
+  }
 
-    if (measureDeleteId) {
-      await this.store.measure.deleteMeasureData(measureDeleteId);
+  handleOpenfamilyMembers(item: any) {
+    this.indexPeople = this.form.familyMembers.indexOf(item);
+    console.log(this.indexPeople, item, 'this.indexPeople');
 
-      this.fetchMeasures();
-      this.measureDeleteId = null;
-    } */
-   }
+    this.familyPeople = {
+      changeDate: item.changeDate ? item.changeDate : null,
+      changeUser: item.changeUser ? item.changeUser : null,
+      createDate: item.createDate ? item.createDate : null,
+      createUser: item.createUser ? item.createUser : null,
+      deedId: item.deedId ? item.deedId : null,
+      id: item.id ? item.id : null,
+      identityDoc: item.personInfo.identityDoc ? item.personInfo.identityDoc.typeName : null,
+      individualPerson: item.personInfo ? item.personInfo : null,
+      birthDate: item.personInfo.birthDate ? item.personInfo.birthDate : null,
+      fullName: item.personInfo.fullName ? item.personInfo.fullName : null,
+      idPerson: item.personInfo.id ? item.personInfo.id : null,
+      relationship: item.relationship ? item.relationship : null,
+    };
+  }
+
+  handleOpenDocument(item: any) {
+    this.editDocument = this.form.documents.indexOf(item);
+    this.documentEditOrCreate = item;
+    console.log(this.form.documents.indexOf(item), 'item');
+  }
+
+  saveDataFamilyPeople() {
+    this.itemPeople = this.familyPeople;
+
+    const people = {
+      changeDate: '2021-11-25T23:47:09.453252',
+      changeUser: this.itemPeople.changeUser ? this.itemPeople.changeUser : null,
+      createDate: '2021-11-25T23:47:09.453252',
+      createUser: this.itemPeople.createUser ? this.itemPeople.createUser : null,
+      deedId: this.$route.params.id,
+      id: this.itemPeople.id ? this.itemPeople.id : null,
+      identityDoc: {
+        typeName: this.itemPeople.identityDoc ? this.itemPeople.identityDoc : null,
+      },
+      personInfo: this.itemPeople.individualPerson ? this.itemPeople.individualPerson : null,
+      relationship: this.itemPeople.relationship ? this.itemPeople.relationship : null,
+    };
+
+    console.log(people, 'ppp');
+
+    if (this.indexPeople === 0 || this.indexPeople) {
+      this.form.familyMembers[+this.indexPeople] = people;
+      console.log(this.form.familyMembers, 'this.form.familyMembers');
+    } else {
+      this.form.familyMembers.push(people);
+    }
+    this.familyPeople = {};
+    this.indexPeople = '';
+  }
+
+  saveDocument() {
+    if (this.editDocument === 0 || this.editDocument) {
+      this.form.documents[+this.editDocument] = this.documentEditOrCreate;
+    } else {
+      this.form.documents.push(this.documentEditOrCreate);
+    }
+    this.editDocument = '';
+    this.documentEditOrCreate = {};
+  }
+
+  putOnRecord() {
+    console.log('putOnRecord');
+  }
+
+  onDeregister() {
+    console.log('onDeregister');
+  }
+
+  saveDataApplicant() {
+    console.log('saveDataApplicant');
+  }
+
+  saveAllInfo() {
+    if (!this.$route.params.id) {
+      createDeedController(this.form);
+      this.$router.replace({
+        path: '/accountingBusiness',
+      });
+    } else {
+      updateDeedController(this.$route.params.id, this.form);
+      this.$router.replace({
+        path: '/accountingBusiness',
+      });
+    }
+  }
+
+  cancel() {
+    this.familyPeople = {};
+    this.documentEditOrCreate = {};
+    console.log('cancel');
+  }
+
+  handleDeleteFamilyPeople(item: string) {
+    this.indexPeople = this.form.familyMembers.indexOf(item);
+    this.isDeleteMeasureDialogShow = true;
+  }
+
+  handleDeleteDocument(document: string) {
+    this.documentId = this.form.documents.indexOf(document);
+    this.isDeleteMeasureDialogShow = true;
+  }
+
+  handleDeletePeopleOrDocumentSuccess() {
+    if (this.indexPeople === 0 || this.indexPeople) {
+      this.form.familyMembers.splice(+this.indexPeople, 1);
+      this.indexPeople = '';
+    } else if (this.editDocument === 0 || this.editDocument) {
+      this.form.documents.splice(+this.documentId, 1);
+      this.documentId = '';
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
-  .card {
-    padding-left: 32px;
-  }
+.card {
+  padding-left: 32px;
+}
 
-  .card__item {
-    padding-top: 32px !important;
-  }
+.card__item {
+  padding-top: 32px !important;
+}
 
-  .tab-card {
-    border: 1px solid grey;
-    padding: 16px;
-    margin-bottom: 16px;
+.tab-card {
+  border: 1px solid grey;
+  padding: 16px;
+  margin-bottom: 16px;
 
   .tab-card__button {
     display: flex;
     justify-content: space-between;
   }
-  }
+}
 
-  .button {
-    margin-right: 24px;
-  }
+.button {
+  margin-right: 24px;
+}
 
-  .button-save {
-    margin-right: 16px;
-  }
+.button-save {
+  margin-right: 16px;
+}
 
-  .tab-card__button-end {
-    display: flex;
-    justify-content: flex-end;
-  }
+.tab-card__button-end {
+  display: flex;
+  justify-content: flex-end;
+}
 
-  .bordered {
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+.bordered {
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
 
-    div {
-      border: 1px solid black;
-      border-collapse: collapse;
-      margin: 0;
+  div {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: 0;
 
-      &.row {
-        border-bottom: 0;
-        border-top: 0;
-      }
+    &.row {
+      border-bottom: 0;
+      border-top: 0;
     }
   }
+}
 </style>

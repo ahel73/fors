@@ -2,6 +2,7 @@
   <main-layout title="Список учетных дел">
     <v-col>
       <data-table
+        @onSortChange="saveColumns"
         :headers="headers"
         :items="measuresItems"
       >
@@ -67,13 +68,13 @@
             </span>
             <span class="table-action__wrapper">
               <base-action
-                @click="handleDeleteMeasure()"
+                @click="handleDeleteDeed(item.id)"
                 hint="Удалить"
               >
                 <delete-icon />
               </base-action>
             </span>
-            <span class="table-action__wrapper">
+            <!-- <span class="table-action__wrapper">
               <router-link
                 :to="{
                   name: 'accountingBusiness-card',
@@ -87,7 +88,7 @@
                   <eye-icon />
                 </base-action>
               </router-link>
-            </span>
+            </span> -->
           </div>
         </template>
       </data-table>
@@ -124,7 +125,24 @@ import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import DialogComponent from '@/components/shared/Dialog/Dialog.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
-import { FilterTypeNames, ValueTypes } from '../shared/Filter/types';
+import { useStore } from 'vuex-simple';
+
+import Store from '@/store/store';
+import { FilterTypeNames, FilterTypes, ValueTypes } from '../shared/Filter/types';
+import {
+  deleteDeedController,
+  getDeedController,
+  getDeedStatusController,
+  getDocGroupController,
+  getEmploymentController,
+  getImprovingWayController,
+  getIndividualPersonInfoController,
+  getOktmoController,
+  getQueuePriorityController,
+  getSpendingDirectionController,
+} from '@/data/services/accountingBisiness/accountingBisiness';
+import { OutputFilters } from '../shared/Filter/FilterTypes/types';
+import { isEmpty } from 'lodash';
 
 @Component({
   name: 'accountingBusinessList',
@@ -146,19 +164,37 @@ import { FilterTypeNames, ValueTypes } from '../shared/Filter/types';
 })
 export default class AccountingBusinessList extends Vue {
   searchName = '';
-  items = [];
+  deedDeleteId: number | string = '';
+  items: OutputFilters = [];
+  size: number | string = 10;
+  page: number | string = 0;
+  sort: string | undefined = '-id';
+  initialSort: string | undefined = '-id';
+  subPrograms = [];
+  store = useStore(this.$store);
+  measuresItems = [];
+  docGroupController = [];
+  employmentController = [];
+  improvingWayController = [];
+  queuePriorityController = [];
+  spendingDirectionController = [];
+  oktmoController = [];
+  deedStatusController = [];
+  individualPersonInfoController = [];
+  filter = {};
 
   isDeleteMeasureDialogShow = false;
 
-  get filters() {
+  get filters(): FilterTypes {
     return {
       selectFilters: [
         {
           name: 'name', // поле по которому ищет бэк
           label: 'Фамилия Имя Отчество',
-          defaultValue: '',
+          items: this.individualPersonInfoController,
           isDefault: true,
           like: true,
+          showCode: true,
           valueType: ValueTypes.STRING,
           type: FilterTypeNames.SELECT_FILTER,
         },
@@ -166,9 +202,9 @@ export default class AccountingBusinessList extends Vue {
           name: 'improvingWayId',
           label: 'Способ улучшения ЖУ',
           // defaultValue: this.programIds,
-          // items: this.stateProgramsReferenceState,
+          items: this.improvingWayController,
           isDefault: true,
-          multiple: true,
+          // multiple: true,
           showCode: true,
           valueType: ValueTypes.NUMBER,
           type: FilterTypeNames.SELECT_FILTER,
@@ -176,103 +212,32 @@ export default class AccountingBusinessList extends Vue {
         {
           name: 'employmentId',
           label: 'Сфера деятельности',
-          // defaultValue: this.subprogramIds,
-          // items: this.subProgramsData,
+          items: this.employmentController,
           isDefault: true,
-          // isCustom: true, // если поле не должно быть по умолчанию
-          multiple: true,
           showCode: true,
-          valueType: ValueTypes.STRING,
+          valueType: ValueTypes.NUMBER,
           type: FilterTypeNames.SELECT_FILTER,
         },
         {
           name: 'queuePriority',
           label: 'Приоритет',
-          // items: this.mainMeasureData,
+          items: this.queuePriorityController,
           isDefault: true,
-          multiple: true,
           showCode: true,
-          valueType: ValueTypes.STRING,
+          valueType: ValueTypes.NUMBER,
           type: FilterTypeNames.SELECT_FILTER,
         },
         {
           name: 'statusId',
           label: 'Статус',
-          // items: this.budgetData,
+          items: this.deedStatusController,
           isDefault: true,
-          multiple: true,
           showCode: true,
           valueType: ValueTypes.NUMBER,
           type: FilterTypeNames.SELECT_FILTER,
         },
       ],
     };
-  }
-
-  get measuresItems() {
-    return [
-      {
-        id: 13,
-        regDate: '2011-11-11', // дата постановки на учет
-        area: 33, // размер общей площади
-        applicant: { // для фио
-          id: 1,
-          surname: 'testovich',
-          name: 'test',
-          patronymic: null,
-          fullName: 'testovich test',
-        },
-        improvingWay: { // способ улучшения
-          id: 1,
-          code: '1  ',
-          name: 'социальная выплата',
-        },
-        employment: { // сфера деяятельности
-          id: 1,
-          code: '1',
-          name: 'АПК/Ветеринария',
-        },
-        queuePriority: { // приоритет
-          id: 1,
-          code: '1',
-          name: 'Многодетная семья',
-        },
-        familyMembers: [],
-        documents: [],
-        spendingDirection: {
-          id: 1,
-          code: '1',
-          name: 'строительство',
-        },
-        oktmo: {
-          id: 1,
-          code: null,
-          name: null,
-          areaName: null,
-          createDate: null,
-          updateDate: null,
-          regioncode: null,
-          areacode: null,
-          citycode: null,
-          localcode: null,
-          controlnum: null,
-          section: null,
-          clarification: null,
-          lastChangeNum: null,
-          lastChangeType: null,
-        },
-        createDate: '2021-11-23T13:56:14.80455',
-        createUser: null,
-        changeUser: null,
-        changeDate: null,
-        changeReason: null,
-        lkSubId: 1,
-        status: { // статус
-          id: 1,
-          name: 'Черновик',
-        },
-      },
-    ];
   }
 
   headers = [
@@ -355,7 +320,7 @@ export default class AccountingBusinessList extends Vue {
      isDefault: false,
      isEditable: true,
      text: 'Дата постановки на учет',
-     value: 'regDate',
+     value: 'createDate',
    },
    {
      isDefault: false,
@@ -374,37 +339,113 @@ export default class AccountingBusinessList extends Vue {
    },
  ];
 
- handleSearch() {
-   console.log('handleSearch');
+ mounted() {
+   // eslint-disable-next-line no-unused-expressions
+   // this.store.deed.state.data;
+   this.getDeedController();
+   this.getControllerData();
  }
 
- saveColumns() {
-   console.log('saveColumns');
+ getDeedController() {
+   getDeedController().then(data => {
+     this.measuresItems = data.data;
+   });
  }
 
- handleReset() {
-   console.log('handleReset');
+ getControllerData() {
+   getDocGroupController().then((data) => {
+     this.docGroupController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getEmploymentController().then((data) => {
+     this.employmentController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getImprovingWayController().then((data) => {
+     this.improvingWayController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getQueuePriorityController().then((data) => {
+     this.queuePriorityController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getSpendingDirectionController().then((data) => {
+     this.spendingDirectionController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getOktmoController().then((data) => {
+     this.oktmoController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getDeedStatusController().then((data) => {
+     this.deedStatusController = data.data.map((item: any) => ({
+       text: item.name,
+       value: item.id,
+     }));
+   });
+
+   getIndividualPersonInfoController().then((data) => {
+     this.individualPersonInfoController = data.data.map((item: any) => ({
+       text: item.fullName,
+       value: item.id,
+     }));
+   });
+ }
+
+ handleSearch(outputFilters: OutputFilters): void {
+   console.log(outputFilters, 'outputFilters');
+
+   outputFilters.forEach(item => {
+     console.log(item.value[0], 'hh');
+     // const val = Object.assign({`${item.name}`: item.name });
+     // console.log(val, 'nn');
+   });
+ }
+
+ saveColumns(): void {
+   const data = { columns: this.columns, sort: this.sort, items: this.items };
+   // saveRegistrySettings({ data: data, registry: RegistryType.PROGRAMS });
+ }
+
+ handleReset(): void {
+   this.items = [];
  }
 
  handleResetSearch() {
    console.log('handleResetSearch');
  }
 
- handleDeleteMeasure(measureDeleteId: number) {
-   console.log(measureDeleteId);
-
+ handleDeleteDeed(deedDeleteId: number) {
+   console.log(deedDeleteId, 'deedDeleteId');
+   this.deedDeleteId = deedDeleteId;
    this.isDeleteMeasureDialogShow = true;
  }
 
  handleDeleteMeasureSuccess() {
-   /*  const { measureDeleteId } = this;
+   if (this.deedDeleteId) {
+     deleteDeedController(this.deedDeleteId);
 
-    if (measureDeleteId) {
-      await this.store.measure.deleteMeasureData(measureDeleteId);
-
-      this.fetchMeasures();
-      this.measureDeleteId = null;
-    } */
+     this.getDeedController();
+     this.deedDeleteId = '';
+   }
  }
 
  handleOpenMeasure() {
