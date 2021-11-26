@@ -29,7 +29,7 @@
                     <select-component
                       variant="micro"
                       label="Субъект"
-                      :items="regions"
+                      :items="[1, 2, 3]"
                     />
                   </v-col>
                   <v-col cols="4">
@@ -122,6 +122,7 @@ import IconButton from '@/components/shared/buttons/IconButton.vue';
 import IconComponent from '@/components/shared/IconComponent/IconComponent.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
+import { TableHeaders } from '@/components/shared/table/DataTable.types';
 
 @Component({
   name: 'ParticipantsList',
@@ -144,16 +145,18 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   itemIdToDelete: number | null = null;
   deleteDialog = false
 
+  headers: TableHeaders[] = []
+
   get mainLayoutText() {
     return `Сводный список участников ${this.itemIdToDelete}`;
   }
 
   get regions() {
-    return this.store.participants.getRegions();
+    return this.store.participants.state?.regions;
   }
 
   mounted() {
-    this.store.participants.fetchRegions();
+    // this.store.participants.fetchRegions();
   }
 }
 </script>

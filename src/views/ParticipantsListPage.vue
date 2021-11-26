@@ -1,10 +1,12 @@
 <template>
   <main-layout
-    title="Список участников"
+    :title="mainLayoutText"
   >
     <v-row>
       <v-col>
-        <data-table>
+        <data-table
+          :headers="headers"
+        >
           <template #[`tabs.after`]>
             <v-row>
               <v-col
@@ -20,21 +22,36 @@
               </v-col>
               <v-col
                 cols="4"
-                class="d-flex justify-end"
+                class="d-flex flex-column justify-end"
               >
                 <v-row>
-                  <v-col>
-                    Финансовый год
+                  <v-col cols="8">
                     <select-component
+                      variant="micro"
+                      label="Муниципальный район"
+                      :items="[1, 2, 3]"
+                    />
+                  </v-col>
+                  <v-col cols="4">
+                    <select-component
+                      variant="micro"
+                      label="Финансовый год"
                       :items="[1,2,3]"
                     />
                   </v-col>
-                  <v-col>
-                    Регион
-                    <select-component
-                      :items="[1,2,3]"
-                    />
-                  </v-col>
+                </v-row>
+                <v-row class="d-flex justify-end">
+                  <button-component
+                    title="Применить"
+                    size="micro"
+                    variant="primary"
+                    style="margin-right: 15px"
+                  />
+                  <button-component
+                    title="Отменить"
+                    size="micro"
+                    style="margin-right: 15px"
+                  />
                 </v-row>
               </v-col>
             </v-row>
@@ -68,7 +85,7 @@
                   class="ml-3"
                   type="text"
                   icon="mdi-plus-circle"
-                  text="Добавить"
+                  text="Сформировать свод"
                 />
               </v-col>
             </v-row>
@@ -79,9 +96,15 @@
     <v-row>
       <button-component
         title="Согласовать"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
       />
       <button-component
         title="Добавить вакансию"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
       />
     </v-row>
   </main-layout>
@@ -100,6 +123,7 @@ import IconButton from '@/components/shared/buttons/IconButton.vue';
 import IconComponent from '@/components/shared/IconComponent/IconComponent.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
+import { TableHeaders } from '@/components/shared/table/DataTable.types';
 
 @Component({
   name: 'ParticipantsList',
@@ -116,11 +140,25 @@ import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
   },
 })
 
-export default class ParticipantsListPage extends Vue {
+export default class ParticipantsConsolidatedListPage extends Vue {
   store: Store = useStore(this.$store);
 
   itemIdToDelete: number | null = null;
   deleteDialog = false
+
+  headers: TableHeaders[] = []
+
+  get mainLayoutText() {
+    return `Список участников ${this.itemIdToDelete}`;
+  }
+
+  get regions() {
+    return this.store.participants.state?.regions;
+  }
+
+  mounted() {
+    // this.store.participants.fetchRegions();
+  }
 }
 </script>
 

@@ -3,7 +3,7 @@ import {
 } from '@/types';
 
 export interface ParticipantsState {
-  regions: WorkingRegion[] | null;
+  regions: WorkingRegion[];
   financialYear: number | null;
   searchName: string;
   items: unknown[];

@@ -59,6 +59,32 @@ const router = new Router({
       props: true,
     },
     {
+      path: '/hiring-participant-card/:id',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Карточка участника договора найма',
+          },
+        ],
+      },
+      name: 'HiringParticipantFormPage',
+      component: () => import('@/views/HiringParticipantFormPage.vue'),
+      props: true,
+    },
+    {
+      path: '/payout-participant-card/:id',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Карточка участника социальной выплаты',
+          },
+        ],
+      },
+      name: 'PayoutParticipantFormPage',
+      component: () => import('@/views/PayoutParticipantFormPage.vue'),
+      props: true,
+    },
+    {
       path: '*',
       redirect: '/',
     },
