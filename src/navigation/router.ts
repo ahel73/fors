@@ -12,7 +12,7 @@
 
 import Vue from 'vue';
 import Router from 'vue-router';
-import { RouteNames } from '@/navigation/types';
+import AccountingBusinessCard from '@/components/AccountingBusiness/AccountingBusinessCard.vue';
 
 Vue.use(Router);
 
@@ -33,6 +33,7 @@ const router = new Router({
       component: () => import('@/views/MainPage.vue'),
       props: true,
     },
+    // Мой роуты
     {
       path: '/list-people-in-neety',
       meta: {
@@ -43,12 +44,39 @@ const router = new Router({
         ],
       },
       name: 'ListPeoplePage',
-      component: () => import('@/views/ListPeopleInNeetyPage/ListPeopleInNeetyPage.vue'),
+      component: () => import('@/views/PeopleInNeetyPages/ListPeopleInNeetyPage.vue'),
       props: true,
     },
     {
+      path: '/create-people-in-neety',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Создание нуждающегося лица.',
+          },
+        ],
+      },
+      name: 'FormAddNewPeopleInNeety',
+      component: () => import('@/views/PeopleInNeetyPages/FormAddNewPeopleInNeety.vue'),
+      props: true,
+    },
+    {
+      path: '/add-new-worker-activity',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Добавление новой трудовой деятельности',
+          },
+        ],
+      },
+      name: 'FormAddNewWorkerActivity',
+      component: () => import('@/views/PeopleInNeetyPages/FormAddNewWorkerActivity.vue'),
+      props: true,
+    },
+    // Мои конец
+    {
       path: '*',
-      redirect: '/indicators',
+      redirect: '/',
     },
   ],
 });
