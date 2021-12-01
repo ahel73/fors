@@ -4,21 +4,14 @@
   >
     <v-row>
       <v-col>
-        <data-table
-          :headers="headers"
-        >
+        <data-table>
           <template #[`tabs.after`]>
             <v-row>
               <v-col
                 cols="12"
                 class="d-flex align-start"
               >
-                <filter-component
-                  @onSearch="handleSearch"
-                  @onReset="handleReset"
-                  :initial-items="items"
-                  :filters="filters"
-                />
+                <filter-component />
               </v-col>
             </v-row>
             <v-row class="mb-8">
@@ -26,13 +19,8 @@
                 cols="12"
                 class="d-flex align-start"
               >
-                <columns-view
-                  @saveColumns="saveColumns"
-                  :headers.sync="headers"
-                  :columns="columns"
-                />
+                <columns-view />
                 <icon-button
-                  @click="handleExportMeasuresInXlsx"
                   type="text"
                   text="Экспорт списка"
                   class="ml-4"
@@ -40,7 +28,6 @@
                 />
                 <router-link :to="{name: 'FormAddNewPeopleInNeety'}">
                   <icon-button
-                    @click="handleOpenMeasure"
                     class="ml-3"
                     type="text"
                     icon="mdi-plus-circle"
@@ -56,7 +43,7 @@
   </main-layout>
 </template>
 
-<script>
+<script lang="ts">
 // import { Component, Vue } from 'vue-property-decorator';
 import { useStore } from 'vuex-simple';
 // import Store from '@/store/store';
@@ -78,22 +65,11 @@ export default {
   },
   data() {
     return {
-      store: useStore(this.$store),
-      itemIdToDelete: null,
-      deleteDialog: false,
-      headers: [],
+      // .
     };
   },
   computed: {
-    mainLayoutText() {
-      return `Сводный список участников ${this.itemIdToDelete}`;
-    },
-    regions() {
-      return this.store.participants.state?.regions;
-    },
-  },
-  mounted() {
-    this.store.participants.fetchRegions();
+    // .
   },
 };
 </script>

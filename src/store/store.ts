@@ -1,11 +1,11 @@
 import { Module } from 'vuex-simple';
-// import MeasureModule from '@/store/modules/measure';
-// import MeasuresModule from '@/store/modules/measures';
+import MeModule from '@/store/me/me';
+import PeopleInNeetyModule from '@/store/PeopleInNeetyPages';
 
 export default class {
-  // @Module()
-  // public measure = new MeasureModule(this);
+  @Module()
+  public me = new MeModule();
 
-  // @Module()
-  // public measures = new MeasuresModule();
+  @Module()
+  public PeopleInNeetyM = new PeopleInNeetyModule();
 }

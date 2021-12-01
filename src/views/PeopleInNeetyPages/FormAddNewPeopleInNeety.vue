@@ -35,7 +35,10 @@
             Фамилия:
           </v-col>
           <v-col cols="8">
-            <input-component />
+            <input-component
+              @input="up"
+              :value="$store.state.name"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -44,6 +47,17 @@
           </v-col>
           <v-col cols="8">
             <input-component />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4">
+            Фамилия 2:
+          </v-col>
+          <v-col cols="8">
+            <input
+              @input="up"
+              :value="$store.getters.value"
+            >
           </v-col>
         </v-row>
         <v-row>
@@ -158,7 +172,6 @@
         <v-row>
           <v-col cols="auto">
             <button-component
-              @click="saveAllInfo"
               size="micro"
               title="Зарегистрировать"
               variant="primary"
@@ -166,14 +179,12 @@
           </v-col>
           <v-col cols="auto">
             <button-component
-              @click="cancel"
               size="micro"
               title="Отменить регистрацию"
             />
           </v-col>
           <v-col cols="auto">
             <button-component
-              @click="cancel"
               size="micro"
               title="Восстановить"
               class="button-save"
@@ -184,7 +195,6 @@
             cols="auto"
           >
             <button-component
-              @click="cancel"
               size="micro"
               title="Сохранить"
               variant="primary"
@@ -193,7 +203,6 @@
           </v-col>
           <v-col cols="auto">
             <button-component
-              @click="cancel"
               size="micro"
               title="Отменить"
               class="button-save"
@@ -210,7 +219,6 @@
           <v-col>
             <router-link :to="{name: 'FormAddNewWorkerActivity'}">
               <icon-button
-                @click="handleOpenMeasure"
                 class="ml-3"
                 type="text"
                 icon="mdi-plus-circle"
@@ -251,7 +259,6 @@
     <v-row class="global-button">
       <v-col cols="auto">
         <button-component
-          @click="cancel"
           size="micro"
           title="Сохранить"
           variant="primary"
@@ -261,7 +268,6 @@
       <v-col cols="auto">
         <router-link :to="{name: 'ListPeoplePage'}">
           <button-component
-            @click="cancel"
             size="micro"
             title="Отменить"
             class="button-save"
@@ -280,6 +286,7 @@ import RadioGroupComponent from '@/components/shared/inputs/RadioGroupComponent.
 import SelectComponent from '@/components/shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
+import DataTable from '@/components/shared/table/DataTable.vue';
 
 export default {
   components: {
@@ -290,18 +297,27 @@ export default {
     SelectComponent,
     ButtonComponent,
     IconButton,
+    DataTable,
   },
   data() {
     return {
       tab: '',
       headers: [
       ],
-      value: 'кликни',
     };
+  },
+  computed: {
+    value() {
+      return this.$store.getters.value;
+    },
   },
   methods: {
     click() {
       alert('открывается модальное окно добавления удостоверяющего документа');
+    },
+    up(event) {
+      console.log(event);
+      this.$store.state.name = 344;
     },
   },
 };
