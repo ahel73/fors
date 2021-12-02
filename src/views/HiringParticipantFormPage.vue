@@ -226,15 +226,7 @@ import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue'
 
 export default class HiringParticipantFormPage extends Vue {
   store: Store = useStore(this.$store);
-
-  itemIdToDelete: number | null = null;
   deleteDialog = false
-
-  headers: TableHeaders[] = []
-
-  get mainLayoutText() {
-    return `Сводный список участников ${this.itemIdToDelete}`;
-  }
 
   get regions() {
     return this.store.participants.state?.regions;

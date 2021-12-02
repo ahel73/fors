@@ -1,6 +1,7 @@
 import { Module } from 'vuex-simple';
 import MeModule from '@/store/me/me';
-import ParticipantsModule from '@/store/modules/participants';
+import ParticipantsModule from '@/store/modules/participants/store';
+import ParticipantsConsolidatedModule from '@/store/modules/participantsConsolidated/store';
 
 export default class {
   @Module()
@@ -8,4 +9,7 @@ export default class {
 
   @Module()
   public participants = new ParticipantsModule();
+
+  @Module()
+  public participantsConsolidated = new ParticipantsConsolidatedModule();
 }

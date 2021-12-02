@@ -22,7 +22,7 @@
               </v-col>
               <v-col
                 cols="4"
-                class="d-flex justify-end"
+                class="d-flex flex-column justify-end"
               >
                 <v-row>
                   <v-col cols="8">
@@ -39,6 +39,19 @@
                       :items="[1,2,3]"
                     />
                   </v-col>
+                </v-row>
+                <v-row class="d-flex justify-end">
+                  <button-component
+                    title="Применить"
+                    size="micro"
+                    variant="primary"
+                    style="margin-right: 15px"
+                  />
+                  <button-component
+                    title="Отменить"
+                    size="micro"
+                    style="margin-right: 15px"
+                  />
                 </v-row>
               </v-col>
             </v-row>
@@ -72,10 +85,13 @@
                   class="ml-3"
                   type="text"
                   icon="mdi-plus-circle"
-                  text="Добавить"
+                  text="Загрузить список"
                 />
               </v-col>
             </v-row>
+          </template>
+          <template #[`header.budgets`]="{ item }">
+            {{ item }}
           </template>
         </data-table>
       </v-col>
@@ -141,14 +157,25 @@ import { TableHeaders } from '@/components/shared/table/DataTable.types';
 
 export default class ParticipantsConsolidatedListPage extends Vue {
   store: Store = useStore(this.$store);
-
-  itemIdToDelete: number | null = null;
   deleteDialog = false
 
-  headers: TableHeaders[] = []
+  headers: TableHeaders[] = [
+    { text: '№ очереди', value: 'test', sortable: false },
+    { text: 'Фамилия Имя Отчество', value: 'test', sortable: false },
+    { text: 'Место работы, должность', value: 'test', sortable: false },
+    { text: 'Сфера занятости', value: 'test', sortable: false },
+    { text: 'Направление расходования средств', value: 'test', sortable: false },
+    { text: 'Приоритет', value: 'test', sortable: false },
+    { text: 'Дата постановки на учёт', value: 'test', sortable: false },
+    { text: 'Тестовое значение', value: 'budgets', sortable: false },
+  ]
 
   get mainLayoutText() {
-    return `Сводный список участников ${this.itemIdToDelete}`;
+    return `Сводный список участников ${this.currentType}`;
+  }
+
+  get currentType() {
+    return this.$route.query ? this.$route.query.type : 'Тест';
   }
 
   get regions() {
@@ -157,6 +184,7 @@ export default class ParticipantsConsolidatedListPage extends Vue {
 
   mounted() {
     // this.store.participants.fetchRegions();
+    this.store.participantsConsolidated.fetchItems({});
   }
 }
 </script>
