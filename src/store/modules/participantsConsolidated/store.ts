@@ -1,6 +1,6 @@
-import { Action, Getter, Mutation, State } from 'vuex-simple';
+import { Action, Mutation, State } from 'vuex-simple';
 import {
-  fetchParticipantsList,
+  fetchConsolidatedParticipantsList,
   fetchRegions,
 } from '@/data';
 import {
@@ -14,21 +14,6 @@ export default class ParticipantsConsolidatedModule {
     regions: [],
     financialYear: null,
     items: [],
-  }
-
-  @Getter()
-  getItems() {
-    return this.state.items;
-  }
-
-  @Getter()
-  getFinancialYear() {
-    return this.state.financialYear;
-  }
-
-  @Getter()
-  getRegions() {
-    return this.state.regions;
   }
 
   @Mutation()
@@ -62,13 +47,13 @@ export default class ParticipantsConsolidatedModule {
     sort?: string;
   }) {
     console.log(name, page, size, sort);
-    const filterParams: unknown = {
+    const filterParams: object = {
       name: name,
       page: page,
       size: size,
       sort: sort,
     };
-    const result = await fetchParticipantsList(filterParams);
+    const result = await fetchConsolidatedParticipantsList(filterParams);
     this.setItems(result);
   }
 }

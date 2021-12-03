@@ -17,26 +17,6 @@ export default class ParticipantsModule {
     items: [],
   }
 
-  @Getter()
-  getSearchName() {
-    return this.state.searchName;
-  }
-
-  @Getter()
-  getItems() {
-    return this.state.items;
-  }
-
-  @Getter()
-  getFinancialYear() {
-    return this.state.financialYear;
-  }
-
-  @Getter()
-  getRegions() {
-    return this.state.regions;
-  }
-
   @Mutation()
   setSearchName(payload: string) {
     this.state.searchName = payload;
@@ -64,22 +44,24 @@ export default class ParticipantsModule {
   }
 
   @Action()
-  async fetchItems({
-    name, page, size, sort,
+  async fetchMembers({
+    name, page, size, sort, type,
   } : {
     name?: string;
     page?: string;
     size?: string;
     sort?: string;
+    type: string;
   }) {
-    console.log(name, page, size, sort);
     const filterParams: unknown = {
       name: name,
       page: page,
       size: size,
       sort: sort,
     };
-    const result = await fetchParticipantsList(filterParams);
-    this.setItems(result);
+    if (type === 'payout' || type === 'hiring') {
+      const result = await fetchParticipantsList(filterParams, type);
+      this.setItems(result);
+    }
   }
 }

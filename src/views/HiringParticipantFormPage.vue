@@ -3,7 +3,7 @@
     title="Участник списка на договор найма"
   >
     <v-row>
-      <v-col>
+      <v-col cols="3">
         Номер очереди:
       </v-col>
       <v-col>
@@ -11,7 +11,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         ФИО:
       </v-col>
       <v-col>
@@ -19,7 +19,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         Место работы:
       </v-col>
       <v-col>
@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         Должность:
       </v-col>
       <v-col>
@@ -35,7 +35,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         Дата приёма:
       </v-col>
       <v-col>
@@ -43,7 +43,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         Сфера занятости:
       </v-col>
       <v-col>
@@ -51,7 +51,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="3">
         ОКТМО:
       </v-col>
       <v-col>
@@ -61,7 +61,7 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Вакансия:
           </v-col><v-col>
             <checkbox-component />
@@ -70,7 +70,7 @@
       </v-col>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Стоимость, 1 кв.м.:
           </v-col>
           <v-col>
@@ -82,7 +82,7 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Кол-во человек:
           </v-col><v-col>
             <input-component />
@@ -91,7 +91,7 @@
       </v-col>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Площадь, кв.м.:
           </v-col><v-col>
             <input-component />
@@ -99,53 +99,55 @@
         </v-row>
       </v-col>
     </v-row>
+    <div class="bordered">
+      <v-row>
+        <v-col style="height: 60px;">
+          Объем средств, предусмотренных на строительство (приобретение) жилья, тысяч рублей
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-row>
+            <v-col>
+              Федеральный бюджет:
+            </v-col><v-col>
+              <input-component :disabled="true" />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row>
+            <v-col>
+              Региональный бюджет:
+            </v-col><v-col>
+              <checkbox-component />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-row>
+            <v-col>
+              Местный бюджет:
+            </v-col><v-col>
+              <input-component :disabled="true" />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row>
+            <v-col>
+              Внебюджетные источники:
+            </v-col><v-col>
+              <checkbox-component />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
     <v-row>
-      <v-col style="height: 60px;">
-        Объем средств, предусмотренных на строительство (приобретение) жилья, тысяч рублей
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            Федеральный бюджет:
-          </v-col><v-col>
-            <input-component :disabled="true" />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-            Региональный бюджет:
-          </v-col><v-col>
-            <checkbox-component />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            Местный бюджет:
-          </v-col><v-col>
-            <input-component :disabled="true" />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-            Внебюджетные источники:
-          </v-col><v-col>
-            <checkbox-component />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
+      <v-col cols="4">
         Дата постановки на учёт:
       </v-col>
       <v-col>
@@ -153,7 +155,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col cols="4">
         Номер учетного дела:
       </v-col>
       <v-col>
@@ -246,5 +248,12 @@ export default class HiringParticipantFormPage extends Vue {
   .col {
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  .bordered {
+    margin: 24px 0;
+    padding: 24px 16px;
+    border-radius: 16px;
+    border: 1px solid black;
   }
 </style>

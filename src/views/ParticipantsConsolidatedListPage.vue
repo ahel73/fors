@@ -6,6 +6,7 @@
       <v-col>
         <data-table
           :headers="headers"
+          :items="items"
         >
           <template #[`tabs.after`]>
             <v-row>
@@ -98,12 +99,6 @@
     </v-row>
     <v-row>
       <button-component
-        title="Утвердить"
-        size="micro"
-        variant="primary"
-        style="margin-right: 15px"
-      />
-      <button-component
         title="Исключить участника"
         size="micro"
         variant="primary"
@@ -121,6 +116,18 @@
         variant="primary"
         style="margin-right: 15px"
       />
+      <button-component
+        title="На доработку"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
+      />
+      <button-component
+        title="Утвердить"
+        size="micro"
+        variant="primary"
+        style="margin-right: 15px"
+      />
     </v-row>
   </main-layout>
 </template>
@@ -132,6 +139,7 @@ import Store from '@/store/store';
 import MainLayout from '@/layouts/MainLayout.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
 import ColumnsView from '@/components/shared/table/ColumnsView/ColumnsView.vue';
+import { Columns } from '@/components/shared/table/ColumnsView/ColumnsView';
 import FilterComponent from '@/components/shared/Filter/Filter.vue';
 import SelectComponent from '@/components/shared/inputs/SelectComponent.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
@@ -159,15 +167,17 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   store: Store = useStore(this.$store);
   deleteDialog = false
 
-  headers: TableHeaders[] = [
-    { text: '№ очереди', value: 'test', sortable: false },
-    { text: 'Фамилия Имя Отчество', value: 'test', sortable: false },
-    { text: 'Место работы, должность', value: 'test', sortable: false },
-    { text: 'Сфера занятости', value: 'test', sortable: false },
-    { text: 'Направление расходования средств', value: 'test', sortable: false },
-    { text: 'Приоритет', value: 'test', sortable: false },
-    { text: 'Дата постановки на учёт', value: 'test', sortable: false },
-    { text: 'Тестовое значение', value: 'budgets', sortable: false },
+  headers: TableHeaders[] = [];
+
+  columns: Columns[] = [
+    { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: false },
+    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'fio', sortable: false },
+    { isDefault: true, text: 'Место работы, должность', value: 'position', sortable: false },
+    { isDefault: true, text: 'Сфера занятости', value: 'workPlace', sortable: false },
+    { isDefault: true, text: 'Направление расходования средств', value: 'spendingDirectionId', sortable: false },
+    { isDefault: true, text: 'Приоритет', value: 'queuePriorityId', sortable: false },
+    { isDefault: true, text: 'Дата постановки на учёт', value: 'resigtrationDate', sortable: false },
+    { isDefault: true, text: 'Тестовое значение', value: 'budgets', sortable: false },
   ]
 
   get mainLayoutText() {
@@ -180,6 +190,10 @@ export default class ParticipantsConsolidatedListPage extends Vue {
 
   get regions() {
     return this.store.participants.state?.regions;
+  }
+
+  get items() {
+    return this.store.participantsConsolidated.state?.items;
   }
 
   mounted() {

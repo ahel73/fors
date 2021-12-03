@@ -1,10 +1,16 @@
 import httpClient from '@/data/http';
 import { WorkingRegion } from '@/types/WorkingRegion';
 
-const fetchParticipantsList = async (params: unknown) : Promise<WorkingRegion[]> => {
-  const { data } = await httpClient.get('/payout-list-members');
+const fetchParticipantsList = async (params: unknown, type: string) : Promise<WorkingRegion[]> => {
+  const { data } = await httpClient.post(`/${type}-list-members/find`, { });
+  console.log(data);
+  return data.data;
+};
 
-  return data;
+const fetchConsolidatedParticipantsList = async (params: object): Promise<WorkingRegion[]> => {
+  const { data } = await httpClient.post('/hiring-list-members/find', { ...params });
+  console.log(data);
+  return data.data;
 };
 
 const fetchRegions = async (): Promise<WorkingRegion[]> => {
@@ -16,5 +22,6 @@ const fetchRegions = async (): Promise<WorkingRegion[]> => {
 
 export {
   fetchParticipantsList,
+  fetchConsolidatedParticipantsList,
   fetchRegions,
 };

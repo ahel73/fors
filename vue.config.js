@@ -11,6 +11,9 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: { '^/configurator/api': '' },
       },
+      '^/housing-subsidies/api': {
+        target: 'https://mgp-dev.fors.ru',
+      },
       '^/security/api': {
         target: 'https://mgp-dev.fors.ru',
       },
