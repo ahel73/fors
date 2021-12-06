@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { getDeedControllerByID } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './deedItemCard';
+import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import { takeWhile } from 'lodash';
 
@@ -12,7 +12,7 @@ export default class DeedControllerItemModule {
     data: {} as DeedItemCard,
     error: null,
     isLoading: false,
-    itemEdit: {},
+    documentEdit: {},
     peopleEdit: {},
   }
 
@@ -59,13 +59,13 @@ export default class DeedControllerItemModule {
     if (item.id) {
       this.state.data.documents.filter(value => {
         if (value.id === item.id) {
-          this.state.itemEdit = item;
+          this.state.documentEdit = item;
         }
       });
     } else {
       this.state.data.documents.filter(value => {
         if (value.index === item.index) {
-          this.state.itemEdit = item;
+          this.state.documentEdit = item;
         }
       });
     }

@@ -395,7 +395,7 @@ export default class AccountingBusinessList extends Vue {
      { from: 'periodFrom', to: 'periodFromCode, periodToCode' },
    ];
 
-   this.store.deed.fetchDeedControllerData(
+   store.deed.fetchDeedControllerData(
      {
        items,
        page,

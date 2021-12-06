@@ -1,10 +1,10 @@
 import { AxiosError } from 'axios';
-import { DeedItemCard } from './deedItemCard';
+import { DeedItemCard } from './typesDeedItem';
 
 export interface DeedControllerItemStore {
   data: DeedItemCard;
   error: AxiosError | null;
   isLoading: boolean;
-  itemEdit?: any;
+  documentEdit?: any;
   peopleEdit?: any;
 }

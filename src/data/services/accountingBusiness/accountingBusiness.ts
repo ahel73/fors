@@ -25,6 +25,10 @@ export const createDeedController = async (form: any) => {
 
 export const getDeedControllerByID = async (id: any) => {
   const { data } = await httpClient.get<any>(`/deeds/${id}`);
-
   return data;
+};
+
+export const onRecordAccounting = async (data: any) => {
+  const { content } = await httpClient.post<any>('deeds/actions/accounting', data);
+  return content;
 };

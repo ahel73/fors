@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './deedItemCard';
+import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 
 export default class UpdateDeedControllerModule {

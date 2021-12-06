@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { deleteDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './deedItemCard';
+import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 
 export default class DeleteDeedControllerModule {
@@ -23,7 +23,7 @@ export default class DeleteDeedControllerModule {
     this.state.error = error;
   }
 
- /*  @Mutation()
+  /*  @Mutation()
   setDeedController(response?: any): void {
     const data = response;
     this.state.data = data;

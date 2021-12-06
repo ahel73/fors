@@ -134,7 +134,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
   }
 
   get itemDocument() {
-    return this.store.deedItem.state.itemEdit;
+    return this.store.deedItem.state.documentEdit;
   }
 
   fetchDocument() {

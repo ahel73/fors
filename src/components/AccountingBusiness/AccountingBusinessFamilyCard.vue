@@ -19,7 +19,7 @@
         <Datepicker
           v-model="itemPeople.birthDate"
           label="Дата рождения"
-          :disabled="isEditable"
+          :readonly="isEditable"
         />
       </v-col>
       <v-col cols="6">
@@ -119,7 +119,7 @@ export default class AccountingBusinessFamilyCard extends Vue {
     id: null,
   };
 
-  isEditable = false;
+  isEditable = true;
   itemPeople: any | object = {
   };
 

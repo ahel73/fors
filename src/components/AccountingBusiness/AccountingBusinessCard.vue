@@ -31,7 +31,7 @@
               variant="micro"
               :select-menu-props="{ offsetY: true }"
               required
-              :disabled="isShow"
+              :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
           <v-col cols="12">
@@ -42,7 +42,7 @@
               item-text="name"
               item-value="id"
               return-object
-              :disabled="isShow"
+              :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
           <v-col cols="12">
@@ -53,7 +53,7 @@
               item-text="name"
               item-value="id"
               return-object
-              :disabled="isShow"
+              :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
           <v-col cols="12">
@@ -65,7 +65,7 @@
               return-object
               label=" Сфера занятости"
               is-required
-              :disabled="isShow"
+              :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
           <v-col cols="12">
@@ -87,7 +87,7 @@
               item-text="name"
               item-value="id"
               return-object
-              :disabled="isShow"
+              :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
           <v-col cols="6">
@@ -122,7 +122,7 @@
             <input-component
               v-model="form.changeReason"
               label="Причина изменения"
-              :disabled="isShow"
+              :disabled="isShow || statusCard !== 2"
             />
           </v-col>
           <v-col cols="12">
@@ -144,12 +144,14 @@
             cols="auto"
           >
             <button-component
+              v-if="statusCard === 1"
               @click="putOnRecord"
               size="micro"
               title="Поставить на учет"
               class="button"
             />
             <button-component
+              v-if="statusCard === 2"
               @click="onDeregister"
               size="micro"
               title="Снять с учета"
@@ -327,6 +329,29 @@
         </text-component>
       </template>
     </dialog-component>
+    <dialog-component
+      v-model="isOnRecordDialogShow"
+      @onSuccess="handleRecordSuccess"
+      cancel-title="Отменить"
+      confirm-title="Продолжить"
+      width="400"
+      prompt
+    >
+      <template #title>
+        <text-component variant="h4">
+          Поставить на учет учетное дело №{{ form.id }}
+        </text-component>
+        <v-col>
+          <Datepicker
+            v-model="recordDate"
+            class="datePicker"
+            :format="'DD.MM.YYYY'"
+            label="Дата постановки на учет"
+            title-format="MMMM YYYY"
+          />
+        </v-col>
+      </template>
+    </dialog-component>
   </main-layout>
 </template>
 
@@ -351,9 +376,10 @@ import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
-import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
+import { onRecordAccounting, updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
+import { FamilyMembers } from '@/store/accountingBusiness/typesDeedItem';
 
 @Component({
   components: {
@@ -379,16 +405,16 @@ import { cloneDeep } from 'lodash';
 
 export default class AccountingBusinessListCard extends Vue {
   store: Store = useStore(this.$store);
-  isSignatureModalOpen = false;
-  isPreviewPrintModalOpen = false;
   isDeleteDocumentDialogShow = false;
   isDeletePeopleDialogShow = false;
+  isOnRecordDialogShow = false;
   familyPeople = {};
   documentEditOrCreate = {};
   peopleId = '';
   editDocument: number | string = '';
   indexPeople: number | string = '';
   isDisabled = true;
+  recordDate = '';
 
   isEditable = true;
 
@@ -398,7 +424,9 @@ export default class AccountingBusinessListCard extends Vue {
   docForDelete = {};
   peopleForDelete = {};
   form = {};
+
   isShow = false;
+  isAdd = false;
 
   headersFamily = [
     {
@@ -463,7 +491,6 @@ export default class AccountingBusinessListCard extends Vue {
     if (this.$route.params.type === 'show') {
       this.isShow = true;
     }
-    console.log(Object.keys(this.store.deedItem.state.data).length, 'hhhh');
     if (this.$route.params.type !== 'create') {
       if (Object.keys(this.store.deedItem.state.data).length === 0) {
         this.fetchById();
@@ -472,11 +499,16 @@ export default class AccountingBusinessListCard extends Vue {
       }
     } else {
       this.form = {};
+      this.isAdd = true;
     }
   }
 
   get card() {
     return this.store.deedItem.state.data;
+  }
+
+  get statusCard() {
+    return this.store.deedItem.state.data.status ? this.store.deedItem.state.data.status.id : null;
   }
 
   @Watch('card')
@@ -543,7 +575,16 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   putOnRecord() {
-    console.log('putOnRecord');
+    this.isOnRecordDialogShow = true;
+  }
+
+  handleRecordSuccess() {
+    const data = {
+      deedId: this.$route.params.id,
+      registrationDate: this.recordDate,
+    };
+    onRecordAccounting(data);
+    this.recordDate = '';
   }
 
   onDeregister() {
@@ -552,7 +593,7 @@ export default class AccountingBusinessListCard extends Vue {
 
   async saveAllInfo() {
     if (!this.$route.params.id) {
-      await this.store.createItem.fetchCreateDeedController(this.form);
+      await this.store.createItem.fetchCreateDeedController(this.form, this.familyMembers, this.formDoc);
       this.$router.replace({
         path: '/accountingBusiness',
       });
