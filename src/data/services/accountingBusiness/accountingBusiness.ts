@@ -2,9 +2,9 @@ import httpClient from '@/data/http';
 import { query } from '@/utils';
 
 export const getDeedController = async (params: any = {} as any): Promise<any> => {
-  const { page = 0, sort = '-id', size } = params;
-  const queryParams = query({ ...params, page, sort, size });
-  const { data } = await httpClient.post<any>('/deeds/find');
+  const { page, sort, size, ...payload } = params;
+  const queryParams = ({ page, sort, size });
+  const { data } = await httpClient.post<any>(`/deeds/find?page=${queryParams.page}&size=${queryParams.size}&sort=${queryParams.sort}`, queryParams);
   return data;
 };
 

@@ -2,6 +2,7 @@
   <main-layout title="Список учетных дел">
     <v-col>
       <data-table
+        @onOptionsChange="handleOptionsChange"
         :headers="headers"
         :items="stateDeedState.data"
         :items-length="stateDeedState.total"
@@ -139,6 +140,9 @@ import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '../shared/Filter/types';
 import { OutputFilters } from '../shared/Filter/FilterTypes/types';
+import { Pagination } from '@/types/Pagination';
+import { getFieldsToSort } from '@/utils/getFieldsToSort';
+import { ReplaceConditions } from '@/types';
 
 @Component({
   name: 'accountingBusinessList',
@@ -379,7 +383,36 @@ export default class AccountingBusinessList extends Vue {
  }
 
  fetchStateDeed() {
-   this.store.deed.fetchDeedControllerData();
+   const {
+     store,
+     items,
+     page,
+     size,
+     sort,
+   } = this;
+
+   const fieldsToReplace: ReplaceConditions[] = [
+     { from: 'periodFrom', to: 'periodFromCode, periodToCode' },
+   ];
+
+   this.store.deed.fetchDeedControllerData(
+     {
+       items,
+       page,
+       size,
+       sort: getFieldsToSort(fieldsToReplace, sort),
+     }
+   );
+ }
+
+ handleOptionsChange(options: Pagination): void {
+   const { page, size, sort } = options;
+
+   this.sort = sort || this.sort;
+   this.size = +size;
+   this.page = +page;
+
+   this.fetchStateDeed();
  }
 
  fetchControllerData() {
