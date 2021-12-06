@@ -1,14 +1,12 @@
+import { getImprovingWayController } from '@/data/services/improvingWayController/improvingWayController';
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
+import { ImprovingWayControllerStore } from './types';
 
-import { getDeedController } from '@/data/services/accountingBisiness/accountingBisiness';
-import { DeedControllerStore } from './types';
-
-export default class DeedControllerModule {
+export default class ImprovingWayControllerModule {
   @State()
-  state: DeedControllerStore = {
+  state: ImprovingWayControllerStore = {
     data: [],
-    total: null,
     error: null,
     isLoading: false,
   }
@@ -28,15 +26,14 @@ export default class DeedControllerModule {
     const { data, meta } = response;
 
     this.state.data = data;
-    this.state.total = meta.total;
   }
 
   @Action()
-  async fetchBudgetsData(params?: any): Promise<void> {
+  async fetchImprovingWayController(): Promise<void> {
     this.setDeedControllerIsLoading(true);
     this.setBudgetsError(null);
     try {
-      const data: any = await getDeedController(params);
+      const data: any = await getImprovingWayController();
 
       this.setDeedController(data);
     } catch (error) {

@@ -43,14 +43,34 @@ const router = new Router({
           component: AccountingBusinessCard,
         },
         {
-          path: '/accountingBusiness/create',
-          name: 'accountingBusiness-card',
+          path: '/accountingBusiness/:type',
+          name: 'accountingBusinessCardCreate',
           component: AccountingBusinessCard,
           meta: {
             breadcrumb: [
               { name: 'Орган государственной власти' },
             ],
           },
+        },
+        {
+          path: '/accountingBusiness/createFamily',
+          name: 'accountingBusinessFamilyCard',
+          component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
+        },
+        {
+          path: '/accountingBusiness/editFamily',
+          name: 'editFamilyCard',
+          component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
+        },
+        {
+          path: '/accountingBusiness/:id/:type/createDocument',
+          name: 'accountingBusinessDocumentCard',
+          component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
+        },
+        {
+          path: '/accountingBusiness/:id/:type/editDocument',
+          name: 'editDocument',
+          component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
         },
       ],
       meta: {

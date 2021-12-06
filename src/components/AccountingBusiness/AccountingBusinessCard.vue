@@ -30,6 +30,8 @@
               return-object
               variant="micro"
               :select-menu-props="{ offsetY: true }"
+              required
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -40,6 +42,7 @@
               item-text="name"
               item-value="id"
               return-object
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -50,6 +53,7 @@
               item-text="name"
               item-value="id"
               return-object
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -60,6 +64,8 @@
               item-value="id"
               return-object
               label=" Сфера занятости"
+              is-required
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -70,6 +76,7 @@
               item-text="name"
               item-value="id"
               return-object
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="6">
@@ -80,45 +87,42 @@
               item-text="name"
               item-value="id"
               return-object
+              :disabled="isShow"
             />
           </v-col>
-        </v-row>
-        <v-row>
           <v-col cols="6">
             <input-component
               v-model="form.area"
               label="Размер общей площади"
-            />
-          </v-col>
-          <v-col cols="6">
-            <input-component
-              v-model="form.amount_funds"
-              label="Расчетный объем средств"
+              :disabled="isDisabled"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="6">
             <Datepicker
-              v-model="form.regDate"
+              v-model="form.registrationDate "
               label="Дата постановки на учет"
+              :readonly="isShow"
             />
           </v-col>
-          <v-col cols="6">
+          <!-- <v-col cols="6">
             <Datepicker
-              v-model="form.dateChange"
+              v-model="form.changeDate"
               class="datePicker"
               :format="'DD.MM.YYYY'"
               label="Дата изменения"
               title-format="MMMM YYYY"
+              :readonly="isShow"
             />
-          </v-col>
+          </v-col> -->
         </v-row>
         <v-row>
           <v-col cols="12">
             <input-component
-              v-model="form.dateCreate"
+              v-model="form.changeReason"
               label="Причина изменения"
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -129,12 +133,16 @@
               item-text="name"
               item-value="id"
               return-object
+              :disabled="isDisabled"
             />
           </v-col>
           <v-col />
         </v-row>
         <v-row class="tab-card__button">
-          <v-col cols="auto">
+          <v-col
+            v-if="!isShow"
+            cols="auto"
+          >
             <button-component
               @click="putOnRecord"
               size="micro"
@@ -147,19 +155,6 @@
               title="Снять с учета"
             />
           </v-col>
-          <v-col cols="auto">
-            <button-component
-              @click="saveDataApplicant"
-              size="micro"
-              title="Сохранить"
-              class="button"
-            />
-            <button-component
-              @click="cancel"
-              size="micro"
-              title="Отменить"
-            />
-          </v-col>
         </v-row>
       </v-tab-item>
       <v-tab-item
@@ -169,18 +164,27 @@
         <v-col>
           <data-table
             :headers="headersFamily"
-            :items="form.familyMembers"
+            :items="familyMembers"
             :hide-footer="isEditable"
           >
             <template #[`item.actions`]="{ item }">
-              <div class="d-flex justify-center flex-nowrap">
+              <div
+                v-if="!isShow"
+                class="d-flex justify-center flex-nowrap"
+              >
                 <span class="table-action__wrapper">
-                  <base-action
-                    @click="handleOpenfamilyMembers(item)"
-                    hint="Редактировать"
+                  <router-link
+                    :to="{
+                      name: 'editFamilyCard',
+                    }"
                   >
-                    <edit-icon />
-                  </base-action>
+                    <base-action
+                      @click="handleOpenfamilyMembers(item)"
+                      hint="Редактировать"
+                    >
+                      <edit-icon />
+                    </base-action>
+                  </router-link>
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
@@ -195,56 +199,21 @@
           </data-table>
         </v-col>
         <v-row>
-          <v-col cols="12">
-            <autocomplete-component
-              v-model="familyPeople.individualPerson"
-              :items="individualPersonInfoController"
-              label="Заявитель"
-              item-text="fullName"
-              return-object
-              variant="micro"
-              :select-menu-props="{ offsetY: true }"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="6">
-            <Datepicker
-              v-model="familyPeople.birthDate"
-              label="Дата рождения"
-              :disabled="isEditable"
-            />
-          </v-col>
-          <v-col cols="6">
-            <input-component
-              v-model="familyPeople.relationship"
-              label="Родственные отношения"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <input-component
-              v-model="familyPeople.identityDoc"
-              label="Документ, удостоверяющий личность"
-              :disabled="isEditable"
-            />
-          </v-col>
-        </v-row>
-        <v-row class="tab-card__button-end">
-          <v-col cols="auto">
-            <button-component
-              @click="saveDataFamilyPeople"
-              size="micro"
-              title="Сохранить"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <button-component
-              @click="cancel"
-              size="micro"
-              title="Отменить"
-            />
+          <v-col
+            v-if="!isShow"
+            cols="12"
+          >
+            <router-link
+              :to="{
+                name: 'accountingBusinessFamilyCard',
+              }"
+            >
+              <button-component
+                variant="primary"
+                title="Добавить члена семьи"
+                size="micro"
+              />
+            </router-link>
           </v-col>
         </v-row>
       </v-tab-item>
@@ -255,18 +224,27 @@
         <v-col>
           <data-table
             :headers="headers"
-            :items="form.documents"
+            :items="formDoc"
             :hide-footer="isEditable"
           >
             <template #[`item.actions`]="{ item }">
-              <div class="d-flex justify-center flex-nowrap">
+              <div
+                v-if="!isShow"
+                class="d-flex justify-center flex-nowrap"
+              >
                 <span class="table-action__wrapper">
-                  <base-action
-                    @click="handleOpenDocument(item)"
-                    hint="Редактировать"
+                  <router-link
+                    :to="{
+                      name: 'editDocument',
+                    }"
                   >
-                    <edit-icon />
-                  </base-action>
+                    <base-action
+                      @click="handleOpenDocument(item)"
+                      hint="Редактировать"
+                    >
+                      <edit-icon />
+                    </base-action>
+                  </router-link>
                 </span>
                 <span class="table-action__wrapper">
                   <base-action
@@ -280,93 +258,29 @@
             </template>
           </data-table>
         </v-col>
-        <v-row>
-          <v-col cols="12">
-            <input-component
-              v-model="documentEditOrCreate.name"
-              label="Наименование"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="6">
-            <input-component
-              v-model="documentEditOrCreate.docNum"
-              label="Номер"
-            />
-          </v-col>
-          <v-col cols="6">
-            <Datepicker
-              v-model="documentEditOrCreate.docDate"
-              label="Дата"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <input-component
-              v-model="documentEditOrCreate.note"
-              label="Примечание"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="6">
-            <Datepicker
-              v-model="documentEditOrCreate.docEndDate"
-              label="Срок действия документа"
-            />
-          </v-col>
-          <v-col cols="6">
-            <checkbox-component
-              v-model="documentEditOrCreate.acting"
-              class="card__item"
-              label="Действующий"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <select-component
-              v-model="documentEditOrCreate.docGroup"
-              :items="docGroupController"
-              item-text="name"
-              item-value="id"
-              return-object
-              label="Группа"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="2">
-            <upload-file-component
-              v-model="documentEditOrCreate.file"
-              label="Файл"
-              placeholder="Загрузить"
-              prepend-icon="mdi-arrow-collapse-down"
-            />
-          </v-col>
-        </v-row>
-        <v-row class="tab-card__button-end">
-          <v-col cols="auto">
+        <v-col
+          v-if="!isShow"
+          cols="12"
+        >
+          <router-link
+            :to="{
+              name: 'accountingBusinessDocumentCard',
+            }"
+          >
             <button-component
-              @click="saveDocument"
+              variant="primary"
+              title="Добавить документ"
               size="micro"
-              title="Сохранить"
             />
-          </v-col>
-          <v-col cols="auto">
-            <button-component
-              @click="cancel"
-              size="micro"
-              title="Отменить"
-            />
-          </v-col>
-        </v-row>
+          </router-link>
+        </v-col>
       </v-tab-item>
     </v-tabs-items>
     <v-row class="tab-card__button-end">
-      <v-col cols="auto">
+      <v-col
+        v-if="!isShow"
+        cols="auto"
+      >
         <button-component
           @click="saveAllInfo"
           size="micro"
@@ -375,22 +289,36 @@
         />
       </v-col>
       <v-col cols="auto">
-        <router-link to="/accountingBusiness">
-          <button-component
-            @click="cancel"
-            size="micro"
-            title="Отменить"
-            class="button-save"
-          />
-        </router-link>
+        <modal-button
+          @onResumeClick="onCancelClick"
+          button-text="Закрыть"
+          modal-text="Все изменения будут потеряны?"
+          cancel-button-text="Нет"
+          resume-button-text="Да"
+          width="450"
+        />
       </v-col>
     </v-row>
     <dialog-component
-      v-model="isDeleteMeasureDialogShow"
-      @onSuccess="handleDeletePeopleOrDocumentSuccess"
+      v-model="isDeleteDocumentDialogShow"
+      @onSuccess="handleDeleteDocumentSuccess"
       cancel-title="Отменить"
       confirm-title="Продолжить"
-      width="600"
+      width="400"
+      prompt
+    >
+      <template #title>
+        <text-component variant="h4">
+          Запись будет удалена. Вы уверены?
+        </text-component>
+      </template>
+    </dialog-component>
+    <dialog-component
+      v-model="isDeletePeopleDialogShow"
+      @onSuccess="handleDeletePeopleSuccess"
+      cancel-title="Отменить"
+      confirm-title="Продолжить"
+      width="400"
       prompt
     >
       <template #title>
@@ -403,7 +331,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import DialogComponent from '@/components/shared/Dialog/Dialog.vue';
@@ -421,19 +349,11 @@ import EditIcon from '@/components/shared/IconComponent/icons/EditIcon.vue';
 import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
-import {
-  createDeedController,
-  getDeedControllerByID,
-  getDeedStatusController,
-  getDocGroupController,
-  getEmploymentController,
-  getImprovingWayController,
-  getIndividualPersonInfoController,
-  getOktmoController,
-  getQueuePriorityController,
-  getSpendingDirectionController,
-  updateDeedController,
-} from '@/data/services/accountingBisiness/accountingBisiness';
+import { useStore } from 'vuex-simple';
+import Store from '@/store/store';
+import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
+import ModalButton from '../shared/buttons/ModalButton.vue';
+import { cloneDeep } from 'lodash';
 
 @Component({
   components: {
@@ -453,50 +373,32 @@ import {
     EyeIcon,
     BaseAction,
     TextComponent,
+    ModalButton,
   },
 })
 
 export default class AccountingBusinessListCard extends Vue {
+  store: Store = useStore(this.$store);
   isSignatureModalOpen = false;
   isPreviewPrintModalOpen = false;
-  isDeleteMeasureDialogShow = false;
-  docGroupController = [];
-  employmentController = [];
-  improvingWayController = [];
-  queuePriorityController = [];
-  spendingDirectionController = [];
-  deedStatusController = [];
-  individualPersonInfoController = [];
-  oktmoController = [];
+  isDeleteDocumentDialogShow = false;
+  isDeletePeopleDialogShow = false;
   familyPeople = {};
   documentEditOrCreate = {};
   peopleId = '';
-  documentId: number | string = '';
   editDocument: number | string = '';
   indexPeople: number | string = '';
-  itemPeople: any | object = {
-    changeDate: '',
-    changeUser: '',
-    createDate: '',
-    createUser: '',
-    deedId: '',
-    id: '',
-    identityDoc: '',
-    individualPerson: '',
-    birthDate: '',
-    fullName: '',
-    idPerson: '',
-    relationship: '',
-  };
+  isDisabled = true;
 
   isEditable = true;
 
+  cancelDialog = false;
+
   tab = '';
-  info = {};
-  form = {
-    familyMembers: [{}],
-    documents: [{}],
-  };
+  docForDelete = {};
+  peopleForDelete = {};
+  form = {};
+  isShow = false;
 
   headersFamily = [
     {
@@ -556,116 +458,88 @@ export default class AccountingBusinessListCard extends Vue {
     },
   ];
 
-  mounted() {
-    this.getControllerData();
-    if (this.$route.params.id) {
-      this.getDeedControllerByID(this.$route.params.id);
+  async created() {
+    this.fetchControllerData();
+    if (this.$route.params.type === 'show') {
+      this.isShow = true;
+    }
+    console.log(Object.keys(this.store.deedItem.state.data).length, 'hhhh');
+    if (this.$route.params.type !== 'create') {
+      if (Object.keys(this.store.deedItem.state.data).length === 0) {
+        this.fetchById();
+      } else {
+        this.form = this.store.deedItem.state.data;
+      }
+    } else {
+      this.form = {};
     }
   }
 
-  getDeedControllerByID(id: any) {
-    getDeedControllerByID(id).then((data) => {
-      this.form = data;
-    });
+  get card() {
+    return this.store.deedItem.state.data;
   }
 
-  getControllerData() {
-    getDocGroupController().then((data) => {
-      this.docGroupController = data.data;
-    });
+  @Watch('card')
+  getDataForm(card: any) {
+    this.form = cloneDeep(card);
+  }
 
-    getEmploymentController().then((data) => {
-      this.employmentController = data.data;
-    });
+  async fetchById() {
+    await this.store.deedItem.fetchDeedControllerItem(this.$route.params.id);
+  }
 
-    getImprovingWayController().then((data) => {
-      this.improvingWayController = data.data;
-    });
+  get formDoc() {
+    return this.store.deedItem.state.data.documents;
+  }
 
-    getQueuePriorityController().then((data) => {
-      this.queuePriorityController = data.data;
-    });
+  get familyMembers() {
+    return this.store.deedItem.state.data.familyMembers;
+  }
 
-    getSpendingDirectionController().then((data) => {
-      this.spendingDirectionController = data.data;
-    });
+  get individualPersonInfoController() {
+    return this.store.personInfo.state.data;
+  }
 
-    getOktmoController().then((data) => {
-      this.oktmoController = data.data;
-    });
+  get improvingWayController() {
+    return this.store.improvingWay.state.data;
+  }
 
-    getDeedStatusController().then((data) => {
-      this.deedStatusController = data.data;
-    });
+  get employmentController() {
+    return this.store.employment.state.data;
+  }
 
-    getIndividualPersonInfoController().then((data) => {
-      this.individualPersonInfoController = data.data;
-    });
+  get queuePriorityController() {
+    return this.store.priority.state.data;
+  }
+
+  get spendingDirectionController() {
+    return this.store.spendingDirection.state.data;
+  }
+
+  get oktmoController() {
+    return this.store.oktmo.state.data;
+  }
+
+  get deedStatusController() {
+    return this.store.status.state.data;
+  }
+
+  fetchControllerData() {
+    this.store.status.fetchDeedStatusController();
+    this.store.personInfo.fetchIndividualPersonInfoController();
+    this.store.improvingWay.fetchImprovingWayController();
+    this.store.employment.fetchEmploymentController();
+    this.store.priority.fetchQueuePriorityController();
+    this.store.spendingDirection.fetchSpendingDirectionController();
+    this.store.oktmo.fetchOktmoControllerData();
   }
 
   handleOpenfamilyMembers(item: any) {
-    this.indexPeople = this.form.familyMembers.indexOf(item);
-    console.log(this.indexPeople, item, 'this.indexPeople');
-
-    this.familyPeople = {
-      changeDate: item.changeDate ? item.changeDate : null,
-      changeUser: item.changeUser ? item.changeUser : null,
-      createDate: item.createDate ? item.createDate : null,
-      createUser: item.createUser ? item.createUser : null,
-      deedId: item.deedId ? item.deedId : null,
-      id: item.id ? item.id : null,
-      identityDoc: item.personInfo.identityDoc ? item.personInfo.identityDoc.typeName : null,
-      individualPerson: item.personInfo ? item.personInfo : null,
-      birthDate: item.personInfo.birthDate ? item.personInfo.birthDate : null,
-      fullName: item.personInfo.fullName ? item.personInfo.fullName : null,
-      idPerson: item.personInfo.id ? item.personInfo.id : null,
-      relationship: item.relationship ? item.relationship : null,
-    };
+    this.store.deedItem.changeFamilyPeople(item);
   }
 
   handleOpenDocument(item: any) {
-    this.editDocument = this.form.documents.indexOf(item);
-    this.documentEditOrCreate = item;
-    console.log(this.form.documents.indexOf(item), 'item');
-  }
-
-  saveDataFamilyPeople() {
-    this.itemPeople = this.familyPeople;
-
-    const people = {
-      changeDate: '2021-11-25T23:47:09.453252',
-      changeUser: this.itemPeople.changeUser ? this.itemPeople.changeUser : null,
-      createDate: '2021-11-25T23:47:09.453252',
-      createUser: this.itemPeople.createUser ? this.itemPeople.createUser : null,
-      deedId: this.$route.params.id,
-      id: this.itemPeople.id ? this.itemPeople.id : null,
-      identityDoc: {
-        typeName: this.itemPeople.identityDoc ? this.itemPeople.identityDoc : null,
-      },
-      personInfo: this.itemPeople.individualPerson ? this.itemPeople.individualPerson : null,
-      relationship: this.itemPeople.relationship ? this.itemPeople.relationship : null,
-    };
-
-    console.log(people, 'ppp');
-
-    if (this.indexPeople === 0 || this.indexPeople) {
-      this.form.familyMembers[+this.indexPeople] = people;
-      console.log(this.form.familyMembers, 'this.form.familyMembers');
-    } else {
-      this.form.familyMembers.push(people);
-    }
-    this.familyPeople = {};
-    this.indexPeople = '';
-  }
-
-  saveDocument() {
-    if (this.editDocument === 0 || this.editDocument) {
-      this.form.documents[+this.editDocument] = this.documentEditOrCreate;
-    } else {
-      this.form.documents.push(this.documentEditOrCreate);
-    }
-    this.editDocument = '';
-    this.documentEditOrCreate = {};
+    this.store.deedItem.changeDocument(item);
   }
 
   putOnRecord() {
@@ -676,13 +550,9 @@ export default class AccountingBusinessListCard extends Vue {
     console.log('onDeregister');
   }
 
-  saveDataApplicant() {
-    console.log('saveDataApplicant');
-  }
-
-  saveAllInfo() {
+  async saveAllInfo() {
     if (!this.$route.params.id) {
-      createDeedController(this.form);
+      await this.store.createItem.fetchCreateDeedController(this.form);
       this.$router.replace({
         path: '/accountingBusiness',
       });
@@ -692,32 +562,33 @@ export default class AccountingBusinessListCard extends Vue {
         path: '/accountingBusiness',
       });
     }
-  }
-
-  cancel() {
-    this.familyPeople = {};
-    this.documentEditOrCreate = {};
-    console.log('cancel');
+    this.store.deedItem.clearItem();
   }
 
   handleDeleteFamilyPeople(item: string) {
-    this.indexPeople = this.form.familyMembers.indexOf(item);
-    this.isDeleteMeasureDialogShow = true;
+    this.peopleForDelete = item;
+    this.isDeletePeopleDialogShow = true;
   }
 
   handleDeleteDocument(document: string) {
-    this.documentId = this.form.documents.indexOf(document);
-    this.isDeleteMeasureDialogShow = true;
+    this.docForDelete = document;
+    this.isDeleteDocumentDialogShow = true;
   }
 
-  handleDeletePeopleOrDocumentSuccess() {
-    if (this.indexPeople === 0 || this.indexPeople) {
-      this.form.familyMembers.splice(+this.indexPeople, 1);
-      this.indexPeople = '';
-    } else if (this.editDocument === 0 || this.editDocument) {
-      this.form.documents.splice(+this.documentId, 1);
-      this.documentId = '';
-    }
+  handleDeleteDocumentSuccess() {
+    this.store.deedItem.deleteDocument(this.docForDelete);
+    this.docForDelete = {};
+  }
+
+  handleDeletePeopleSuccess() {
+    this.store.deedItem.deleteFamilyPeople(this.peopleForDelete);
+    this.peopleForDelete = {};
+  }
+
+  onCancelClick() {
+    this.cancelDialog = false;
+    this.store.deedItem.clearItem();
+    this.$router.push({ name: 'AccountingBusiness' });
   }
 }
 </script>
@@ -725,10 +596,6 @@ export default class AccountingBusinessListCard extends Vue {
 <style scoped lang="scss">
 .card {
   padding-left: 32px;
-}
-
-.card__item {
-  padding-top: 32px !important;
 }
 
 .tab-card {

@@ -2,9 +2,13 @@
   <main-layout title="Список учетных дел">
     <v-col>
       <data-table
-        @onSortChange="saveColumns"
         :headers="headers"
-        :items="measuresItems"
+        :items="stateDeedState.data"
+        :items-length="stateDeedState.total"
+        :loading="stateDeedState.isLoading"
+        :no-data-text="noDataText"
+        :per-page="size"
+        :sort-by="initialSort"
       >
         <template #[`tabs.after`]>
           <v-row>
@@ -37,9 +41,14 @@
                 class="ml-4"
                 icon="mdi-arrow-collapse-down"
               />
-              <router-link to="/accountingBusiness/create">
+              <router-link
+                :to="{
+                  name: 'accountingBusinessCardCreate',
+                  params: { type: 'create' },
+                }"
+              >
                 <icon-button
-                  @click="handleOpenMeasure"
+                  @click="handleOpenAdd"
                   class="ml-3"
                   type="text"
                   icon="mdi-plus-circle"
@@ -59,7 +68,7 @@
                 }"
               >
                 <base-action
-                  @click="handleOpenMeasure({ id: item.id })"
+                  @click="handleOpenMeasure(item.id)"
                   hint="Редактировать"
                 >
                   <edit-icon />
@@ -74,7 +83,7 @@
                 <delete-icon />
               </base-action>
             </span>
-            <!-- <span class="table-action__wrapper">
+            <span class="table-action__wrapper">
               <router-link
                 :to="{
                   name: 'accountingBusiness-card',
@@ -82,13 +91,13 @@
                 }"
               >
                 <base-action
-                  @click="handleOpenMeasure()"
+                  @click="handleOpenView(item.id)"
                   hint="Просмотр"
                 >
                   <eye-icon />
                 </base-action>
               </router-link>
-            </span> -->
+            </span>
           </div>
         </template>
       </data-table>
@@ -111,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import ButtonComponent from '../shared/buttons/DefaultButton.vue';
 import IconButton from '../shared/buttons/IconButton.vue';
 import FilterComponent from '../shared/Filter/Filter.vue';
@@ -129,20 +138,7 @@ import { useStore } from 'vuex-simple';
 
 import Store from '@/store/store';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '../shared/Filter/types';
-import {
-  deleteDeedController,
-  getDeedController,
-  getDeedStatusController,
-  getDocGroupController,
-  getEmploymentController,
-  getImprovingWayController,
-  getIndividualPersonInfoController,
-  getOktmoController,
-  getQueuePriorityController,
-  getSpendingDirectionController,
-} from '@/data/services/accountingBisiness/accountingBisiness';
 import { OutputFilters } from '../shared/Filter/FilterTypes/types';
-import { isEmpty } from 'lodash';
 
 @Component({
   name: 'accountingBusinessList',
@@ -163,6 +159,7 @@ import { isEmpty } from 'lodash';
   },
 })
 export default class AccountingBusinessList extends Vue {
+  store: Store = useStore(this.$store);
   searchName = '';
   deedDeleteId: number | string = '';
   items: OutputFilters = [];
@@ -170,18 +167,13 @@ export default class AccountingBusinessList extends Vue {
   page: number | string = 0;
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
-  subPrograms = [];
-  store = useStore(this.$store);
-  measuresItems = [];
-  docGroupController = [];
-  employmentController = [];
-  improvingWayController = [];
-  queuePriorityController = [];
-  spendingDirectionController = [];
-  oktmoController = [];
-  deedStatusController = [];
-  individualPersonInfoController = [];
-  filter = {};
+  filter = {
+    name: null,
+    improvingWayId: null,
+    employmentId: null,
+    queuePriority: null,
+    statusId: null,
+  };
 
   isDeleteMeasureDialogShow = false;
 
@@ -230,7 +222,7 @@ export default class AccountingBusinessList extends Vue {
         {
           name: 'statusId',
           label: 'Статус',
-          items: this.deedStatusController,
+          items: this.deedStatus,
           isDefault: true,
           showCode: true,
           valueType: ValueTypes.NUMBER,
@@ -262,12 +254,12 @@ export default class AccountingBusinessList extends Vue {
       value: 'area',
     },
     {
-      text: 'Расчетный объем средств',
-      value: 'amount_funds',
+      text: 'Направление расходования средств',
+      value: 'spendingDirection.name',
     },
     {
       text: 'Дата постановки на учет',
-      value: 'regDate',
+      value: 'registrationDate',
     },
     {
       text: 'Статус',
@@ -282,48 +274,49 @@ export default class AccountingBusinessList extends Vue {
  columns = [
    {
      isDefault: true,
+     isEditable: false,
      text: 'Фамилия Имя Отчество',
      value: 'applicant.fullName',
    },
    {
-     isDefault: false,
+     isDefault: true,
      isEditable: true,
      text: 'Способ улучшения ЖУ',
      value: 'improvingWay.name',
    },
    {
-     isDefault: false,
+     isDefault: true,
      isEditable: true,
      text: 'Сфера деятельности',
      value: 'employment.name',
    },
    {
-     isDefault: false,
+     isDefault: true,
+     isEditable: true,
+     text: 'Направление расходования средств',
+     value: 'spendingDirection.name',
+   },
+   {
+     isDefault: true,
      isEditable: true,
      text: 'Приоритет',
      value: 'queuePriority.name',
    },
    {
-     isDefault: false,
+     isDefault: true,
      isEditable: true,
      text: 'Размер общей площади',
      value: 'area',
      align: 'center',
    },
    {
-     isDefault: false,
-     isEditable: true,
-     text: 'Расчетный объем средств',
-     value: 'amount_funds',
-   },
-   {
-     isDefault: false,
+     isDefault: true,
      isEditable: true,
      text: 'Дата постановки на учет',
-     value: 'createDate',
+     value: 'registrationDate',
    },
    {
-     isDefault: false,
+     isDefault: true,
      isEditable: true,
      text: 'Статус',
      value: 'status.name',
@@ -331,92 +324,76 @@ export default class AccountingBusinessList extends Vue {
    {
      value: 'actions',
      text: 'Действия',
-     sortable: false,
-     isVisible: false,
      isEditable: false,
      isDefault: true,
-     align: 'center',
    },
  ];
 
  mounted() {
-   // eslint-disable-next-line no-unused-expressions
-   // this.store.deed.state.data;
-   this.getDeedController();
-   this.getControllerData();
+   this.fetchStateDeed();
+   this.fetchControllerData();
  }
 
- getDeedController() {
-   getDeedController().then(data => {
-     this.measuresItems = data.data;
-   });
+ get stateDeedState() {
+   return this.store.deed.state;
  }
 
- getControllerData() {
-   getDocGroupController().then((data) => {
-     this.docGroupController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get deedStatus() {
+   return this.store.status.state.data.map((item: any) => ({
+     text: item.name,
+     value: item.id,
+   }));
+ }
 
-   getEmploymentController().then((data) => {
-     this.employmentController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get individualPersonInfoController() {
+   return this.store.personInfo.state.data.map((item: any) => ({
+     text: item.fullName,
+     value: item.id,
+   }));
+ }
 
-   getImprovingWayController().then((data) => {
-     this.improvingWayController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get improvingWayController() {
+   return this.store.improvingWay.state.data.map((item: any) => ({
+     text: item.name,
+     value: item.id,
+   }));
+ }
 
-   getQueuePriorityController().then((data) => {
-     this.queuePriorityController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get employmentController() {
+   return this.store.employment.state.data.map((item: any) => ({
+     text: item.name,
+     value: item.id,
+   }));
+ }
 
-   getSpendingDirectionController().then((data) => {
-     this.spendingDirectionController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get queuePriorityController() {
+   return this.store.priority.state.data.map((item: any) => ({
+     text: item.name,
+     value: item.id,
+   }));
+ }
 
-   getOktmoController().then((data) => {
-     this.oktmoController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ get noDataText(): string {
+   const { error } = this.stateDeedState;
+   return error ? error.message : 'Данные отсутствуют';
+ }
 
-   getDeedStatusController().then((data) => {
-     this.deedStatusController = data.data.map((item: any) => ({
-       text: item.name,
-       value: item.id,
-     }));
-   });
+ fetchStateDeed() {
+   this.store.deed.fetchDeedControllerData();
+ }
 
-   getIndividualPersonInfoController().then((data) => {
-     this.individualPersonInfoController = data.data.map((item: any) => ({
-       text: item.fullName,
-       value: item.id,
-     }));
-   });
+ fetchControllerData() {
+   this.store.status.fetchDeedStatusController();
+   this.store.personInfo.fetchIndividualPersonInfoController();
+   this.store.improvingWay.fetchImprovingWayController();
+   this.store.employment.fetchEmploymentController();
+   this.store.priority.fetchQueuePriorityController();
  }
 
  handleSearch(outputFilters: OutputFilters): void {
-   console.log(outputFilters, 'outputFilters');
-
    outputFilters.forEach(item => {
-     console.log(item.value[0], 'hh');
-     // const val = Object.assign({`${item.name}`: item.name });
-     // console.log(val, 'nn');
+     if (item.name === 'name') {
+     }
    });
  }
 
@@ -433,23 +410,28 @@ export default class AccountingBusinessList extends Vue {
    console.log('handleResetSearch');
  }
 
+ async handleOpenView(id: any) {
+   // await this.store.deedItem.fetchDeedControllerItem(id);
+ }
+
+ // eslint-disable-next-line @typescript-eslint/no-empty-function
+ handleOpenAdd() {}
+
  handleDeleteDeed(deedDeleteId: number) {
-   console.log(deedDeleteId, 'deedDeleteId');
    this.deedDeleteId = deedDeleteId;
    this.isDeleteMeasureDialogShow = true;
  }
 
- handleDeleteMeasureSuccess() {
+ async handleDeleteMeasureSuccess() {
    if (this.deedDeleteId) {
-     deleteDeedController(this.deedDeleteId);
-
-     this.getDeedController();
+     await this.store.deleteItem.fetchDeleteDeedController(this.deedDeleteId);
+     this.fetchStateDeed();
      this.deedDeleteId = '';
    }
  }
 
- handleOpenMeasure() {
-   console.log('handleOpenMeasure');
+ async handleOpenMeasure(id: string) {
+   await this.store.deedItem.fetchDeedControllerItem(id);
  }
 
  handleExportMeasuresInXlsx() {

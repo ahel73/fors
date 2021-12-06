@@ -1,8 +1,7 @@
 import { AxiosError } from 'axios';
 
-export interface DeedControllerStore {
+export interface PersonInfoControllerStore {
   data: any[];
-  total: number | null;
   error: AxiosError | null;
   isLoading: boolean;
 }
