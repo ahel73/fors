@@ -11,6 +11,9 @@
           variant="micro"
           :select-menu-props="{ offsetY: true }"
           required
+          :rules="[
+            rules.required
+          ]"
         />
       </v-col>
     </v-row>
@@ -27,6 +30,9 @@
           v-model="itemPeople.relationship"
           label="Родственные отношения"
           required
+          :rules="[
+            rules.required
+          ]"
         />
       </v-col>
     </v-row>
@@ -121,6 +127,10 @@ export default class AccountingBusinessFamilyCard extends Vue {
 
   isEditable = true;
   itemPeople: any | object = {
+  };
+
+  rules = {
+    required: (value: any) => !!value || 'Обязательное поле',
   };
 
   mounted() {

@@ -4,6 +4,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { deleteDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
+import eventBus from '@/utils/bus/event-bus';
 
 export default class DeleteDeedControllerModule {
   @State()
@@ -19,8 +20,20 @@ export default class DeleteDeedControllerModule {
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
+
+    if (error?.isAxiosError) {
+      const { response } = error as AxiosError;
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: response?.data.message ?? fallbackMessage,
+          title: 'Ошибка',
+          type: 'error',
+        }
+      );
+    }
   }
 
   /*  @Mutation()

@@ -32,3 +32,8 @@ export const onRecordAccounting = async (data: any) => {
   const { content } = await httpClient.post<any>('deeds/actions/accounting', data);
   return content;
 };
+
+export const undoRecordAccounting = async (data: any) => {
+  const { content } = await httpClient.post<any>('/deeds/actions/undo-accounting', data);
+  return content;
+};

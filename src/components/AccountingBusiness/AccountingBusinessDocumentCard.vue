@@ -6,6 +6,9 @@
           v-model="documentEditOrCreate.name"
           label="Наименование"
           required
+          :rules="[
+            rules.required
+          ]"
         />
       </v-col>
     </v-row>
@@ -15,12 +18,19 @@
           v-model="documentEditOrCreate.docNum"
           label="Номер"
           required
+          :rules="[
+            rules.required
+          ]"
         />
       </v-col>
       <v-col cols="6">
         <Datepicker
           v-model="documentEditOrCreate.docDate"
           label="Дата"
+          is-required
+          :rules="[
+            rules.required
+          ]"
         />
       </v-col>
     </v-row>
@@ -41,7 +51,7 @@
       </v-col>
       <v-col cols="6">
         <checkbox-component
-          v-model="documentEditOrCreate.isActual"
+          v-model="documentEditOrCreate.active"
           class="card__item"
           label="Актуальный"
         />
@@ -124,6 +134,11 @@ export default class AccountingBusinessDocumentCard extends Vue {
   documentEditOrCreate = {
     index: '',
     id: null,
+    active: false,
+  };
+
+  rules = {
+    required: (value: any) => !!value || 'Обязательное поле',
   };
 
   mounted() {
@@ -160,6 +175,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
     this.documentEditOrCreate = {
       index: '',
       id: null,
+      active: false,
     };
   }
 

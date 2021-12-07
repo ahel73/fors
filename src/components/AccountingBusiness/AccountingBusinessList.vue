@@ -76,7 +76,7 @@
                 </base-action>
               </router-link>
             </span>
-            <span class="table-action__wrapper">
+            <span class="table-action__wrapper" v-if="item.status.id === 1">
               <base-action
                 @click="handleDeleteDeed(item.id)"
                 hint="Удалить"
@@ -425,6 +425,8 @@ export default class AccountingBusinessList extends Vue {
 
  handleSearch(outputFilters: OutputFilters): void {
    outputFilters.forEach(item => {
+     console.log(item, 'filtr');
+
      if (item.name === 'name') {
      }
    });

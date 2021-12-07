@@ -1,12 +1,12 @@
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
-import { createDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
+import { undoRecordAccounting, updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
 
-export default class CreateDeedControllerModule {
+export default class UndoRecordAccountingModule {
   @State()
   state: DeedControllerItemStore = {
     data: {} as DeedItemCard,
@@ -15,12 +15,12 @@ export default class CreateDeedControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setUndoRecordAccountingIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
+  setUndoRecordAccountingError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
 
     if (error?.isAxiosError) {
@@ -37,23 +37,23 @@ export default class CreateDeedControllerModule {
   }
 
   @Mutation()
-  setDeedController(response?: any): void {
+  setUndoRecordAccounting(response?: any): void {
     const data = response;
     this.state.data = data;
   }
 
   @Action()
-  async fetchCreateDeedController(form: any): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
-
+  async fetchUndoRecordAccounting(params: any): Promise<void> {
+    this.setUndoRecordAccountingIsLoading(true);
+    this.setUndoRecordAccountingError(null);
     try {
-      const data: any = await createDeedController(form);
-      this.setDeedController(data);
+      const data = await undoRecordAccounting(params);
+
+      this.setUndoRecordAccounting(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setUndoRecordAccountingError(error);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setUndoRecordAccountingIsLoading(false);
     }
   }
 }

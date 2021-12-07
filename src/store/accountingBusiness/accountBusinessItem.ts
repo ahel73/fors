@@ -5,6 +5,7 @@ import { getDeedControllerByID } from '@/data/services/accountingBusiness/accoun
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import { takeWhile } from 'lodash';
+import eventBus from '@/utils/bus/event-bus';
 
 export default class DeedControllerItemModule {
   @State()
@@ -22,8 +23,20 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
+
+    if (error?.isAxiosError) {
+      const { response } = error as AxiosError;
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: response?.data.message ?? fallbackMessage,
+          title: 'Ошибка',
+          type: 'error',
+        }
+      );
+    }
   }
 
   @Mutation()
@@ -159,10 +172,10 @@ export default class DeedControllerItemModule {
     this.state.data = {} as DeedItemCard;
   }
 
-  /* @Mutation()
+  @Mutation()
   saveState(item: any) {
     this.state.data = item;
-  } */
+  }
 
   @Action()
   async fetchDeedControllerItem(params?: any): Promise<void> {
@@ -223,8 +236,8 @@ export default class DeedControllerItemModule {
     this.clearDeedItem();
   }
 
-  /*  @Action()
+  @Action()
   saveStateItem(item: any) {
-    this.saveStateItem(item);
-  } */
+    this.saveState(item);
+  }
 }

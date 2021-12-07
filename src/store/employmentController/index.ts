@@ -1,4 +1,4 @@
-import { getEmploymentController } from '@/data/services/employmentControler/employmentControler';
+import { getEmploymentController } from '@/data/services/employmentController/employmentControler';
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 import { EmploymentControllerStore } from './types';

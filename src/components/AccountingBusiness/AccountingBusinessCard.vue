@@ -31,6 +31,9 @@
               variant="micro"
               :select-menu-props="{ offsetY: true }"
               required
+              :rules="[
+                rules.required
+              ]"
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
@@ -42,6 +45,10 @@
               item-text="name"
               item-value="id"
               return-object
+              is-required
+              :rules="[
+                rules.required
+              ]"
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
@@ -64,7 +71,6 @@
               item-value="id"
               return-object
               label=" Сфера занятости"
-              is-required
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
@@ -87,6 +93,10 @@
               item-text="name"
               item-value="id"
               return-object
+              is-required
+              :rules="[
+                rules.required
+              ]"
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
@@ -205,17 +215,12 @@
             v-if="!isShow"
             cols="12"
           >
-            <router-link
-              :to="{
-                name: 'accountingBusinessFamilyCard',
-              }"
-            >
-              <button-component
-                variant="primary"
-                title="Добавить члена семьи"
-                size="micro"
-              />
-            </router-link>
+            <button-component
+              @click="addNewFamilyPeople"
+              variant="primary"
+              title="Добавить члена семьи"
+              size="micro"
+            />
           </v-col>
         </v-row>
       </v-tab-item>
@@ -264,17 +269,12 @@
           v-if="!isShow"
           cols="12"
         >
-          <router-link
-            :to="{
-              name: 'accountingBusinessDocumentCard',
-            }"
-          >
-            <button-component
-              variant="primary"
-              title="Добавить документ"
-              size="micro"
-            />
-          </router-link>
+          <button-component
+            @click="addNewDocument"
+            variant="primary"
+            title="Добавить документ"
+            size="micro"
+          />
         </v-col>
       </v-tab-item>
     </v-tabs-items>
@@ -290,7 +290,20 @@
           variant="primary"
         />
       </v-col>
-      <v-col cols="auto">
+      <v-col
+        v-if="isShow"
+        cols="auto"
+      >
+        <button-component
+          @click="onCancelClick"
+          size="micro"
+          title="Закрыть"
+        />
+      </v-col>
+      <v-col
+        v-if="!isShow"
+        cols="auto"
+      >
         <modal-button
           @onResumeClick="onCancelClick"
           button-text="Закрыть"
@@ -376,10 +389,10 @@ import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
-import { onRecordAccounting, updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
+import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
-import { FamilyMembers } from '@/store/accountingBusiness/typesDeedItem';
+import eventBus from '@/utils/bus/event-bus';
 
 @Component({
   components: {
@@ -423,10 +436,16 @@ export default class AccountingBusinessListCard extends Vue {
   tab = '';
   docForDelete = {};
   peopleForDelete = {};
-  form = {};
+  form = {
+    changeReason: '',
+  };
 
   isShow = false;
   isAdd = false;
+
+  rules = {
+    required: (value: any) => !!value || 'Обязательное поле',
+  };
 
   headersFamily = [
     {
@@ -498,7 +517,12 @@ export default class AccountingBusinessListCard extends Vue {
         this.form = this.store.deedItem.state.data;
       }
     } else {
-      this.form = {};
+      this.form = {
+        changeReason: '',
+      };
+      if (Object.keys(this.store.deedItem.state.data).length !== 0) {
+        this.form = this.store.deedItem.state.data;
+      }
       this.isAdd = true;
     }
   }
@@ -567,33 +591,57 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   handleOpenfamilyMembers(item: any) {
+    this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeFamilyPeople(item);
   }
 
   handleOpenDocument(item: any) {
+    this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeDocument(item);
+  }
+
+  addNewFamilyPeople() {
+    this.store.deedItem.saveStateItem(this.form);
+    this.$router.push({ name: 'accountingBusinessFamilyCard' });
+  }
+
+  addNewDocument() {
+    this.store.deedItem.saveStateItem(this.form);
+    this.$router.push({ name: 'accountingBusinessDocumentCard' });
   }
 
   putOnRecord() {
     this.isOnRecordDialogShow = true;
+    this.recordDate = '';
   }
 
-  handleRecordSuccess() {
+  async handleRecordSuccess() {
     const data = {
       deedId: this.$route.params.id,
       registrationDate: this.recordDate,
     };
-    onRecordAccounting(data);
+    await this.store.record.fetchRecordAccounting(data);
+    this.fetchById();
     this.recordDate = '';
   }
 
-  onDeregister() {
-    console.log('onDeregister');
+  async onDeregister() {
+    const data = {
+      deedId: this.$route.params.id,
+      changeReason: this.form.changeReason,
+    };
+    await this.store.undoRecord.fetchUndoRecordAccounting(data);
+    this.fetchById();
   }
 
   async saveAllInfo() {
     if (!this.$route.params.id) {
-      await this.store.createItem.fetchCreateDeedController(this.form, this.familyMembers, this.formDoc);
+      const data = {
+        ...this.form,
+        documents: this.formDoc,
+        familyMembers: this.familyMembers,
+      };
+      await this.store.createItem.fetchCreateDeedController(data);
       this.$router.replace({
         path: '/accountingBusiness',
       });

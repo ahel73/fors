@@ -3,10 +3,12 @@ import DeedControllerModule from './accountingBusiness';
 import DeedControllerItemModule from './accountingBusiness/accountBusinessItem';
 import CreateDeedControllerModule from './accountingBusiness/createAccountingBusiness';
 import DeleteDeedControllerModule from './accountingBusiness/deteteAccountingBusiness';
+import RecordAccountingModule from './accountingBusiness/recordAccounting';
+import UndoRecordAccountingModule from './accountingBusiness/undoRecordAccounting';
 import UpdateDeedControllerModule from './accountingBusiness/updateAccountingBusiness';
 import DeedStatusControllerModule from './deedStatusController';
 import DocGroupControllerModule from './docGroupController';
-import EmploymentControllerModule from './employmentControler';
+import EmploymentControllerModule from './employmentController';
 import ImprovingWayControllerModule from './improvingWayController';
 import IndividualPersonInfoControllerModule from './individualPersonInfoController';
 import OktmoControllerModule from './oktmoController';
@@ -61,4 +63,10 @@ export default class {
 
   @Module()
   public personInfo = new IndividualPersonInfoControllerModule();
+
+  @Module()
+  public undoRecord = new UndoRecordAccountingModule();
+
+  @Module()
+  public record = new RecordAccountingModule();
 }
