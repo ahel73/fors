@@ -32,48 +32,56 @@
       >
         <v-row>
           <v-col cols="4">
-            Фамилия:
+            <span class="required-field">
+              Фамилия:
+            </span>
           </v-col>
           <v-col cols="8">
             <input-component
-              @input="up"
-              :value="$store.state.name"
+              @input="updateProps('surname', 'newPersonNeedy')"
+              :value="newPerson.surname"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="4">
-            Имя:
+            <span class="required-field">
+              Имя:
+            </span>
           </v-col>
           <v-col cols="8">
-            <input-component />
+            <input-component
+              @input="updateProps('name', 'newPersonNeedy')"
+              :value="newPerson.name"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="4">
-            Фамилия 2:
+            <span class="required-field">
+              Отчество:
+            </span>
           </v-col>
           <v-col cols="8">
-            <input
-              @input="up"
-              :value="$store.getters.value"
-            >
+            <input-component
+              @input="updateProps('patronymic', 'newPersonNeedy')"
+              :value="newPerson.patronymic"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="4">
-            Отчество:
-          </v-col>
-          <v-col cols="8">
-            <input-component />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="4">
-            Дата рождения:
+            <span class="required-field">
+              Дата рождения:
+            </span>
           </v-col>
           <v-col cols="4">
-            <date-picker />
+            <datepicker
+              @change="updatePropsSpech($event, 'birthDate', 'newPersonNeedy')"
+              @click:clear="updatePropsSpech( '', 'birthDate', 'newPersonNeedy')"
+              :starting-year="yearInterval"
+              :value="newPerson.birthDate"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -81,7 +89,13 @@
             Пол:
           </v-col>
           <v-col cols="4">
-            <radio-group-component />
+            <radio-group-component
+              @change="updatePropsSpech($event, 'sex', 'newPersonNeedy')"
+              inner-label-yes="Мужской"
+              inner-label-no="Женский"
+              value-yes="M"
+              value-no="W"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -89,7 +103,10 @@
             Место жительства:
           </v-col>
           <v-col cols="8">
-            <input-component />
+            <input-component
+              @input="updateProps('residence', 'newPersonNeedy')"
+              :value="newPerson.residence"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -97,7 +114,10 @@
             Место прибывания:
           </v-col>
           <v-col cols="8">
-            <input-component />
+            <input-component
+              @input="updateProps('location', 'newPersonNeedy')"
+              :value="newPerson.location"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -105,13 +125,21 @@
             Дата регистрации:
           </v-col>
           <v-col cols="4">
-            <date-picker />
+            <datepicker
+              @change="updatePropsSpech($event, 'regDate', 'newPersonNeedy')"
+              @click:clear="updatePropsSpech( '', 'regDate', 'newPersonNeedy')"
+              :starting-year="yearInterval"
+              :value="newPerson.regDate"
+            />
           </v-col>
           <v-col cols="1">
             Код МО:
           </v-col>
           <v-col cols="3">
-            <input-component />
+            <input-component
+              @input="updateProps('codMO', 'newPersonNeedy')"
+              :value="newPerson.codMO"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -119,24 +147,33 @@
             Документ удостоверяющий личность:
           </v-col>
           <v-col cols="8">
-            <input-component
-              @click="click"
-              :value="value"
-            />
+            <router-link :to="{name: 'FormAddDocument'}">
+              <input-component
+                :value="newPerson.identityDocs.length ? newPerson.identityDocs[0].type.name : ''"
+              />
+            </router-link>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="4">
-            СНИЛС:
+            <span class="required-field">
+              СНИЛС:
+            </span>
           </v-col>
           <v-col cols="4">
-            <input-component />
+            <input-component
+              @input="updateProps('snils', 'newPersonNeedy')"
+              :value="newPerson.snils"
+            />
           </v-col>
           <v-col cols="1">
             ИНН:
           </v-col>
           <v-col cols="3">
-            <input-component />
+            <input-component
+              @input="updateProps('inn', 'newPersonNeedy')"
+              :value="newPerson.inn"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -144,13 +181,19 @@
             Телефон:
           </v-col>
           <v-col cols="4">
-            <input-component />
+            <input-component
+              @input="updateProps('phoneNumber', 'newPersonNeedy')"
+              :value="newPerson.phoneNumber"
+            />
           </v-col>
           <v-col cols="1">
             ОГРНИП:
           </v-col>
           <v-col cols="3">
-            <input-component />
+            <input-component
+              @input="updateProps('ogrnip', 'newPersonNeedy')"
+              :value="newPerson.ogrnip"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -158,7 +201,10 @@
             Эл. почта:
           </v-col>
           <v-col cols="8">
-            <input-component />
+            <input-component
+              @input="updateProps('email', 'newPersonNeedy')"
+              :value="newPerson.email"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -166,7 +212,10 @@
             Статус:
           </v-col>
           <v-col cols="8">
-            <select-component :items="['Черновик', 2, 3]" />
+            <input-component
+              value="Черновик"
+              :disabled="true"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -232,25 +281,25 @@
           :items="[]"
           :hide-footer="true"
         >
-          <template #[`item.actions`]="{ item }">
-            <div class="d-flex justify-center flex-nowrap">
-              <span class="table-action__wrapper">
-                <base-action
-                  @click="handleOpenfamilyMembers(item)"
-                  hint="Редактировать"
-                >
-                  <edit-icon />
-                </base-action>
-              </span>
-              <span class="table-action__wrapper">
-                <base-action
-                  @click="handleDeleteFamilyPeople(item)"
-                  hint="Удалить"
-                >
-                  <delete-icon />
-                </base-action>
-              </span>
-            </div>
+          <!--item перенеси в фигурные скобки  -->
+          <template #[`item.actions`]="{}">
+            <v-icon
+              small
+              class="mr-2"
+            >
+              mdi-eye
+            </v-icon>
+            <v-icon
+              small
+              class="mr-2"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+            >
+              mdi-delete
+            </v-icon>
           </template>
         </data-table>
       </v-tab-item>
@@ -278,58 +327,76 @@
   </main-layout>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import { useStore } from 'vuex-simple';
+import Store from '@/store/store';
+// import { mapState } from 'vuex';
 import MainLayout from '@/layouts/MainLayout.vue';
 import InputComponent from '@/components/shared/inputs/InputComponent.vue';
-import DatePicker from '@/components/shared/Datepicker/Datepicker.vue';
+import Datepicker from '@/components/shared/Datepicker/Datepicker.vue';
 import RadioGroupComponent from '@/components/shared/inputs/RadioGroupComponent.vue';
 import SelectComponent from '@/components/shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
+import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
 
-export default {
+console.log(methods);
+
+@Component({
+  name: 'FormAddNewPeopleInNeety',
   components: {
     MainLayout,
     InputComponent,
-    DatePicker,
+    Datepicker,
     RadioGroupComponent,
     SelectComponent,
     ButtonComponent,
     IconButton,
     DataTable,
   },
-  data() {
-    return {
-      tab: '',
-      headers: [
-      ],
-    };
-  },
-  computed: {
-    value() {
-      return this.$store.getters.value;
-    },
-  },
-  methods: {
-    click() {
-      alert('открывается модальное окно добавления удостоверяющего документа');
-    },
-    up(event) {
-      console.log(event);
-      this.$store.state.name = 344;
-    },
-  },
-};
+})
+
+export default class FormAddNewPeopleInNeety extends Vue {
+  store: Store = useStore(this.$store);
+  myStore = this.store.peopleInNeety;
+  newPerson = this.myStore.state.newPersonNeedy;
+  tab = '';
+  yearInterval = (new Date()).getFullYear() - 100;
+  headers = [
+    { text: 'Фамилия', value: 'surname' },
+    { text: 'Имя', value: 'name' },
+    { text: 'Отчество', value: 'patronymic' },
+    { text: 'Дата рождения', value: 'birth' },
+    { text: 'ИНН', value: 'inn' },
+    { text: 'Место жительства/пребывания', value: 'residence' },
+    { text: 'Действия', value: 'actions' },
+  ];
+
+  updateProps = methods.updateProps.bind(this);
+  updatePropsSpech = methods.updatePropsSpech.bind(this);
+}
 </script>
 
 <style scoped lang="scss">
   .tab-card {
-    border: 1px solid black;
-    border-radius: 5px;
-    border-top: 5px solid rgb(209, 155, 63);
-    margin-bottom: 20px;
-    padding: 15px;
+    border-top: 1px solid rgb(193, 193, 193);
+    padding-top: 50px;
+  }
+
+  .required-field {
+    position: relative;
+  }
+
+  .required-field::after {
+    bottom: 40%;
+    color: rgb(238, 61, 61);
+    content: "\F06C4";
+    font-family: "Material Design Icons";
+    font-size: 80%;
+    font-weight: bold;
+    position: absolute;
   }
 
   .global-button {
@@ -338,5 +405,9 @@ export default {
 
   .left-auto {
     margin-left: auto;
+  }
+
+  .global-button {
+    margin-top: 30px
   }
 </style>

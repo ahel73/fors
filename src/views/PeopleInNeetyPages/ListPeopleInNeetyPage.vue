@@ -4,7 +4,10 @@
   >
     <v-row>
       <v-col>
-        <data-table>
+        <data-table
+          :headers="$store.__vxs_modules__.get('peopleInNeety').module.state.headerTablePeopleInNeety"
+          :items="$store.__vxs_modules__.get('peopleInNeety').module.state.listPeopleInNeety"
+        >
           <template #[`tabs.after`]>
             <v-row>
               <v-col
@@ -37,6 +40,28 @@
               </v-col>
             </v-row>
           </template>
+          <template #[`item.actions`]="{ item }">
+            <v-icon
+              @click="event(item)"
+              small
+              class="mr-2"
+            >
+              mdi-eye
+            </v-icon>
+            <v-icon
+              @click="event(item)"
+              small
+              class="mr-2"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              @click="deleteItem(item)"
+              small
+            >
+              mdi-delete
+            </v-icon>
+          </template>
         </data-table>
       </v-col>
     </v-row>
@@ -44,17 +69,19 @@
 </template>
 
 <script lang="ts">
-// import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { useStore } from 'vuex-simple';
-// import Store from '@/store/store';
+import Store from '@/store/store';
 import MainLayout from '@/layouts/MainLayout.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
 import ColumnsView from '@/components/shared/table/ColumnsView/ColumnsView.vue';
 import FilterComponent from '@/components/shared/Filter/Filter.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
-// import { TableHeaders } from '@/components/shared/table/DataTable.types';
+import axios from 'axios';
+import httpClient from '@/data/http';
+import { query } from '@/utils';
 
-export default {
+@Component({
   name: 'ListPeopleInNeetyPage',
   components: {
     MainLayout,
@@ -63,15 +90,25 @@ export default {
     FilterComponent,
     IconButton,
   },
-  data() {
-    return {
-      // .
-    };
-  },
-  computed: {
-    // .
-  },
-};
+})
+
+export default class ListPeopleInNeetyPage extends Vue {
+  store: Store = useStore(this.$store);
+
+  getDeedController = async (params: any = {} as any): Promise<any> => {
+    const { page = 0, sort = '-id', size } = params;
+    const queryParams = query({ ...params, page, sort, size });
+    const { data } = await httpClient.post<any>('/individual-persons/find');
+    return data;
+  }
+
+  created() {
+    console.log('created');
+
+    this.getDeedController()
+      .then(user => this.store.peopleInNeety.updatelistPeopleInNeety(user.data));
+  }
+}
 </script>
 
 <style scoped lang="scss">

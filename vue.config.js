@@ -5,11 +5,21 @@ module.exports = {
   transpileDependencies: ['vuetify'],
 
   devServer: {
+    // proxy: {
+    //   '^/configurator/api': {
+    //     target: 'https://mgp-dev.fors.ru/configurator/api',
+    //     changeOrigin: true,
+    //     pathRewrite: { '^/configurator/api': '' },
+    //   },
+    //   '^/security/api': {
+    //     target: 'https://mgp-dev.fors.ru',
+    //   },
+    // },
     proxy: {
-      '^/configurator/api': {
-        target: 'https://mgp-dev.fors.ru/configurator/api',
+      '^/housing-subsidies/api': {
+        target: 'https://mgp-dev.fors.ru/housing-subsidies/api',
         changeOrigin: true,
-        pathRewrite: { '^/configurator/api': '' },
+        pathRewrite: { '^/housing-subsidies/api': '' },
       },
       '^/security/api': {
         target: 'https://mgp-dev.fors.ru',

@@ -33,7 +33,111 @@ const router = new Router({
       component: () => import('@/views/MainPage.vue'),
       props: true,
     },
-    // Мой роуты
+    // раздел Алексея
+    // {
+    //   path: '/participants-consolidated',
+    //   meta: {
+    //     breadcrumbs: [
+    //       {
+    //         label: 'Сводный список участников',
+    //       },
+    //     ],
+    //   },
+    //   name: 'ParticipantsListPage',
+    //   component: () => import('@/views/ParticipantsConsolidatedListPage.vue'),
+    //   props: true,
+    // },
+    // {
+    //   path: '/participants',
+    //   meta: {
+    //     breadcrumbs: [
+    //       {
+    //         label: 'Список участников',
+    //       },
+    //     ],
+    //   },
+    //   name: 'ParticipantsListPage2',
+    //   component: () => import('@/views/ParticipantsListPage.vue'),
+    //   props: true,
+    // },
+    // {
+    //   path: '/hiring-participant-card/:id',
+    //   meta: {
+    //     breadcrumbs: [
+    //       {
+    //         label: 'Карточка участника договора найма',
+    //       },
+    //     ],
+    //   },
+    //   name: 'HiringParticipantFormPage',
+    //   component: () => import('@/views/HiringParticipantFormPage.vue'),
+    //   props: true,
+    // },
+    // {
+    //   path: '/payout-participant-card/:id',
+    //   meta: {
+    //     breadcrumbs: [
+    //       {
+    //         label: 'Карточка участника социальной выплаты',
+    //       },
+    //     ],
+    //   },
+    //   name: 'PayoutParticipantFormPage',
+    //   component: () => import('@/views/PayoutParticipantFormPage.vue'),
+    //   props: true,
+    // },
+    // Раздел Инесы
+    // {
+    //   path: '/accountingBusiness',
+    //   children: [
+    //     {
+    //       path: '/accountingBusiness/:id/:type',
+    //       name: 'accountingBusiness-card',
+    //       component: AccountingBusinessCard,
+    //     },
+    //     {
+    //       path: '/accountingBusiness/:type',
+    //       name: 'accountingBusinessCardCreate',
+    //       component: AccountingBusinessCard,
+    //       meta: {
+    //         breadcrumb: [
+    //           { name: 'Орган государственной власти' },
+    //         ],
+    //       },
+    //     },
+    //     {
+    //       path: '/accountingBusiness/createFamily',
+    //       name: 'accountingBusinessFamilyCard',
+    //       component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
+    //     },
+    //     {
+    //       path: '/accountingBusiness/editFamily',
+    //       name: 'editFamilyCard',
+    //       component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
+    //     },
+    //     {
+    //       path: '/accountingBusiness/:id/:type/createDocument',
+    //       name: 'accountingBusinessDocumentCard',
+    //       component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
+    //     },
+    //     {
+    //       path: '/accountingBusiness/:id/:type/editDocument',
+    //       name: 'editDocument',
+    //       component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
+    //     },
+    //   ],
+    //   meta: {
+    //     breadcrumbs: [
+    //       {
+    //         label: 'Учетное дело',
+    //       },
+    //     ],
+    //   },
+    //   name: 'AccountingBusiness',
+    //   component: () => import('@/views/AccountingBusiness/AccountingBusiness.vue'),
+    //   props: true,
+    // },
+    // Мой Раздел
     {
       path: '/list-people-in-neety',
       meta: {
@@ -73,7 +177,33 @@ const router = new Router({
       component: () => import('@/views/PeopleInNeetyPages/FormAddNewWorkerActivity.vue'),
       props: true,
     },
-    // Мои конец
+    {
+      path: '/add-document',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Добавление удостоверяющего документа',
+          },
+        ],
+      },
+      name: 'FormAddDocument',
+      component: () => import('@/views/PeopleInNeetyPages/FormAddDocument.vue'),
+      props: true,
+    },
+    {
+      path: '/add-employer',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Добавление нового работодателя',
+          },
+        ],
+      },
+      name: 'FormAddNewEmployer',
+      component: () => import('@/views/PeopleInNeetyPages/FormAddNewEmployer.vue'),
+      props: true,
+    },
+    // Мои конец FormAddNewEmployer.vue
     {
       path: '*',
       redirect: '/',
