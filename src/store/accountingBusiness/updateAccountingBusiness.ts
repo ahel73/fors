@@ -4,6 +4,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
+import eventBus from '@/utils/bus/event-bus';
 
 export default class UpdateDeedControllerModule {
   @State()
@@ -14,34 +15,54 @@ export default class UpdateDeedControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setUpdateDeedControllerIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setUpdateBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
+
+    if (error?.isAxiosError) {
+      const { response } = error as AxiosError;
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: response?.data.message ?? fallbackMessage,
+          title: 'Ошибка',
+          type: 'error',
+        }
+      );
+    }
   }
 
   @Mutation()
-  setDeedController(response?: any): void {
+  setUpdateDeedController(response?: any): void {
     const data = response;
     this.state.data = data;
   }
 
   @Action()
   async fetchUpdateDeedController(params: any, form: any): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setUpdateDeedControllerIsLoading(true);
+    this.setUpdateBudgetsError(null);
     try {
-      console.log(params, form, 'f');
-      const data = await updateDeedController(params, form);
+      const data = await updateDeedController(params, form).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Успешно обновлено',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
 
-      this.setDeedController(data);
+      this.setUpdateDeedController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setUpdateBudgetsError(error);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setUpdateDeedControllerIsLoading(false);
     }
   }
 }

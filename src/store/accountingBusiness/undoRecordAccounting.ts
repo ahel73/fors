@@ -47,7 +47,16 @@ export default class UndoRecordAccountingModule {
     this.setUndoRecordAccountingIsLoading(true);
     this.setUndoRecordAccountingError(null);
     try {
-      const data = await undoRecordAccounting(params);
+      const data = await undoRecordAccounting(params).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Успешно снят с учета',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
 
       this.setUndoRecordAccounting(data);
     } catch (error) {

@@ -9,6 +9,7 @@ import UpdateDeedControllerModule from './accountingBusiness/updateAccountingBus
 import DeedStatusControllerModule from './deedStatusController';
 import DocGroupControllerModule from './docGroupController';
 import EmploymentControllerModule from './employmentController';
+import FileRepositoryModule from './fileRepository';
 import ImprovingWayControllerModule from './improvingWayController';
 import IndividualPersonInfoControllerModule from './individualPersonInfoController';
 import OktmoControllerModule from './oktmoController';
@@ -69,4 +70,7 @@ export default class {
 
   @Module()
   public record = new RecordAccountingModule();
+
+  @Module()
+  public fileRepository = new FileRepositoryModule()
 }

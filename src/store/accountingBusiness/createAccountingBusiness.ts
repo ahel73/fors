@@ -48,7 +48,16 @@ export default class CreateDeedControllerModule {
     this.setBudgetsError(null);
 
     try {
-      const data: any = await createDeedController(form);
+      const data: any = await createDeedController(form).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Успешно создано',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
       this.setDeedController(data);
     } catch (error) {
       this.setBudgetsError(error);

@@ -47,7 +47,16 @@ export default class RecordAccountingModule {
     this.setRecordAccountingIsLoading(true);
     this.setRecordAccountingError(null);
     try {
-      const data = await onRecordAccounting(params);
+      const data = await onRecordAccounting(params).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Успешно поставлен на учет',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
 
       this.setRecordAccounting(data);
     } catch (error) {
