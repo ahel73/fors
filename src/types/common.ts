@@ -53,3 +53,10 @@ export interface ReplaceConditions {
   from: string;
   to: string;
 }
+
+export interface FilterParams {
+    name?: string;
+    size?: string;
+    page?: string;
+    sort?: string;
+}

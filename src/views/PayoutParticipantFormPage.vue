@@ -3,7 +3,10 @@
     title="Участник списка на социальную выплату"
   >
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Номер очереди:
       </v-col>
       <v-col>
@@ -11,7 +14,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         ФИО:
       </v-col>
       <v-col>
@@ -19,7 +25,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Место работы:
       </v-col>
       <v-col>
@@ -27,7 +36,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Должность:
       </v-col>
       <v-col>
@@ -35,7 +47,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Дата приёма:
       </v-col>
       <v-col>
@@ -43,7 +58,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Сфера занятости:
       </v-col>
       <v-col>
@@ -51,7 +69,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Направление расходования средств:
       </v-col>
       <v-col>
@@ -59,7 +80,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Приоритет:
       </v-col>
       <v-col>
@@ -67,7 +91,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         ОКТМО:
       </v-col>
       <v-col>
@@ -77,7 +104,7 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Кол-во человек:
           </v-col><v-col>
             <input-component />
@@ -86,7 +113,7 @@
       </v-col>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Стоимость, 1 кв.м.:
           </v-col>
           <v-col>
@@ -98,7 +125,7 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Площадь, кв.м.:
           </v-col><v-col>
             <input-component :disabled="true" />
@@ -107,7 +134,7 @@
       </v-col>
       <v-col>
         <v-row>
-          <v-col>
+          <v-col cols="3">
             Согласована часть средств:
           </v-col><v-col>
             <checkbox-component />
@@ -115,53 +142,58 @@
         </v-row>
       </v-col>
     </v-row>
+    <div class="bordered">
+      <v-row>
+        <v-col style="height: 60px;">
+          Объем средств, предусмотренных на строительство (приобретение) жилья, тысяч рублей
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-row>
+            <v-col cols="3">
+              Федеральный бюджет:
+            </v-col><v-col>
+              <input-component :disabled="true" />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row>
+            <v-col cols="3">
+              Региональный бюджет:
+            </v-col><v-col>
+              <input-component />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-row>
+            <v-col cols="3">
+              Местный бюджет:
+            </v-col><v-col>
+              <input-component :disabled="true" />
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col>
+          <v-row>
+            <v-col cols="3">
+              Внебюджетные источники:
+            </v-col><v-col>
+              <input-component />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
     <v-row>
-      <v-col style="height: 60px;">
-        Объем средств, предусмотренных на строительство (приобретение) жилья, тысяч рублей
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            Федеральный бюджет:
-          </v-col><v-col>
-            <input-component :disabled="true" />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-            Региональный бюджет:
-          </v-col><v-col>
-            <checkbox-component />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col>
-            Местный бюджет:
-          </v-col><v-col>
-            <input-component :disabled="true" />
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-            Внебюджетные источники:
-          </v-col><v-col>
-            <checkbox-component />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Дата постановки на учёт:
       </v-col>
       <v-col>
@@ -169,7 +201,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col
+        cols="3"
+        class="row-name"
+      >
         Номер учетного дела:
       </v-col>
       <v-col>
@@ -179,6 +214,7 @@
     <v-row>
       <v-col cols="10">
         <button-component
+          @click="onPartialConformClick()"
           title="Согласовать часть средств"
           size="micro"
           variant="primary"
@@ -243,17 +279,10 @@ import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue'
 export default class PayoutParticipantFormPage extends Vue {
   store: Store = useStore(this.$store);
 
-  itemIdToDelete: number | null = null;
   deleteDialog = false
 
-  headers: TableHeaders[] = []
-
-  get mainLayoutText() {
-    return `Сводный список участников ${this.itemIdToDelete}`;
-  }
-
-  get regions() {
-    return this.store.participants.state?.regions;
+  onPartialConformClick() {
+    alert('Здесь происходит магия согласования части средств');
   }
 
   mounted() {
@@ -270,5 +299,16 @@ export default class PayoutParticipantFormPage extends Vue {
   .col {
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  .row-name {
+    padding-top: 4px;
+  }
+
+  .bordered {
+    margin: 24px 0;
+    padding: 24px 16px;
+    border-radius: 16px;
+    border: 1px solid black;
   }
 </style>

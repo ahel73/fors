@@ -6,7 +6,7 @@
       <v-col>
         <data-table
           :headers="headers"
-          :items="items"
+          :items="participants"
         >
           <template #[`tabs.after`]>
             <v-row>
@@ -28,27 +28,33 @@
                 <v-row>
                   <v-col cols="8">
                     <select-component
+                      v-model="region"
                       variant="micro"
                       label="Муниципальный район"
-                      :items="[1, 2, 3]"
+                      :items="regions"
+                      item-text="name"
+                      return-object
                     />
                   </v-col>
                   <v-col cols="4">
                     <select-component
+                      v-model="year"
                       variant="micro"
                       label="Финансовый год"
-                      :items="[1,2,3]"
+                      :items="[2021,2022,2023]"
                     />
                   </v-col>
                 </v-row>
                 <v-row class="d-flex justify-end">
                   <button-component
+                    @click="onAcceptSearchClick()"
                     title="Применить"
                     size="micro"
                     variant="primary"
                     style="margin-right: 15px"
                   />
                   <button-component
+                    @click="onCancelSearchClick()"
                     title="Отменить"
                     size="micro"
                     style="margin-right: 15px"
@@ -82,7 +88,7 @@
                   </template>
                 </icon-button>
                 <icon-button
-                  @click.prevent.native="onAddClick()"
+                  @click.prevent.native="onConsolidateClick()"
                   class="ml-3"
                   type="text"
                   icon="mdi-plus-circle"
@@ -96,6 +102,7 @@
     </v-row>
     <v-row>
       <button-component
+        @click.prevent.native="onConformClick()"
         title="Согласовать"
         size="micro"
         variant="primary"
@@ -127,6 +134,8 @@ import IconComponent from '@/components/shared/IconComponent/IconComponent.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { TableHeaders } from '@/components/shared/table/DataTable.types';
+import { FilterTypes } from '@/components/shared/Filter/types';
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 
 @Component({
   name: 'ParticipantsList',
@@ -146,6 +155,15 @@ import { TableHeaders } from '@/components/shared/table/DataTable.types';
 export default class ParticipantsListPage extends Vue {
   store: Store = useStore(this.$store);
 
+  items: OutputFilters = [];
+  size: string | number = 10;
+  page: string | number = 0;
+  sort: string | undefined = '-id';
+  initialSort: string | undefined = '-id';
+
+  year = moment().year();
+  region = null;
+
   columns: Columns<unknown>[] = [
     { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: false },
     { isDefault: true, text: 'Фамилия Имя Отчество', value: 'fio', sortable: false },
@@ -156,6 +174,11 @@ export default class ParticipantsListPage extends Vue {
     { isDefault: true, text: 'Дата постановки на учёт', value: 'registrationDate', sortable: false },
     { isDefault: true, text: 'Тестовое значение', value: 'budgets', sortable: false },
   ]
+
+  get filters(): FilterTypes {
+    return {
+    };
+  }
 
   headers: TableHeaders[] = []
 
@@ -183,20 +206,52 @@ export default class ParticipantsListPage extends Vue {
   }
 
   get processedYear() {
-    return moment().year() + ' год';
+    return this.year + ' год';
   }
 
   get regions() {
     return this.store.participants.state?.regions;
   }
 
-  get items() {
+  get participants() {
     return this.store.participants.state?.items;
   }
 
   mounted() {
-    this.store.participants.fetchMembers({ type: this.currentType });
-    // this.store.participants.fetchRegions();
+    this.store.participants.fetchMembers({ type: this.currentType, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+    this.store.participants.fetchRegions();
+    // this.store.participants.fetchYears();
+  }
+
+  handleSearch(outputFilters: OutputFilters): void {
+    this.items = outputFilters;
+    console.log(outputFilters);
+  }
+
+  handleReset(): void {
+    this.items = [];
+  }
+
+  saveColumns(): void {
+    const data = { columns: this.columns, sort: this.sort, items: this.items };
+    console.log(data);
+  }
+
+  onAcceptSearchClick() {
+    console.log(this.region, this.year);
+  }
+
+  onCancelSearchClick() {
+    this.region = null;
+    this.year = moment().year();
+  }
+
+  onConsolidateClick() {
+    alert('Здесь происходит магия формирования сводного списка сотрудником РОУ');
+  }
+
+  onConformClick() {
+    this.store.participants.conformMembers({ type: this.currentType });
   }
 }
 </script>

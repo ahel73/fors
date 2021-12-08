@@ -1,9 +1,11 @@
-import { Action, Getter, Mutation, State } from 'vuex-simple';
+import { Action, Mutation, State } from 'vuex-simple';
 import {
   fetchParticipantsList,
   fetchRegions,
+  postConformParticipants,
 } from '@/data';
 import {
+  FilterParams,
   WorkingRegion,
 } from '@/types';
 import { ParticipantsState } from './types';
@@ -53,7 +55,7 @@ export default class ParticipantsModule {
     sort?: string;
     type: string;
   }) {
-    const filterParams: unknown = {
+    const filterParams: FilterParams = {
       name: name,
       page: page,
       size: size,
@@ -63,5 +65,15 @@ export default class ParticipantsModule {
       const result = await fetchParticipantsList(filterParams, type);
       this.setItems(result);
     }
+  }
+
+  @Action()
+  async conformMembers({
+    type
+  } : {
+    type: string;
+  }) {
+    const result = await postConformParticipants(type);
+    console.log(result);
   }
 }
