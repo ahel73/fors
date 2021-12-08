@@ -32,11 +32,11 @@ export default class DeedControllerModule {
   }
 
   @Action()
-  async fetchDeedControllerData(params?: any, filter?: any): Promise<void> {
+  async fetchDeedControllerData(params?: any): Promise<void> {
     this.setDeedControllerIsLoading(true);
     this.setBudgetsError(null);
     try {
-      const data: any = await getDeedController(params, filter);
+      const data: any = await getDeedController(params);
 
       this.setDeedController(data);
     } catch (error) {

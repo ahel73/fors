@@ -13,34 +13,34 @@ export default class DocGroupControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setDocGroupControllerIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setDocGroupControllerError(error: AxiosError | null): void {
     this.state.error = error;
   }
 
   @Mutation()
-  setDeedController(response: any): void {
-    const { data, meta } = response;
+  setDocGroupController(response: any): void {
+    const { data } = response;
 
     this.state.data = data;
   }
 
   @Action()
   async fetchDocGroupController(): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setDocGroupControllerIsLoading(true);
+    this.setDocGroupControllerError(null);
     try {
       const data: any = await getDocGroupController();
 
-      this.setDeedController(data);
+      this.setDocGroupController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setDocGroupControllerError(error);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setDocGroupControllerIsLoading(false);
     }
   }
 }

@@ -17,13 +17,13 @@ export default class QueuePriorityControllerModule {
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setPriorityError(error: AxiosError | null): void {
     this.state.error = error;
   }
 
   @Mutation()
   setPriorityController(response: any): void {
-    const { data, meta } = response;
+    const { data } = response;
 
     this.state.data = data;
   }
@@ -31,13 +31,13 @@ export default class QueuePriorityControllerModule {
   @Action()
   async fetchQueuePriorityController(): Promise<void> {
     this.setPriorityControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setPriorityError(null);
     try {
       const data: any = await getQueuePriorityController();
 
       this.setPriorityController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setPriorityError(error);
     } finally {
       this.setPriorityControllerIsLoading(false);
     }

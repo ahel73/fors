@@ -24,7 +24,7 @@ export default class DeedStatusControllerModule {
 
   @Mutation()
   setStatusController(response: any): void {
-    const { data, meta } = response;
+    const { data } = response;
 
     this.state.data = data;
   }

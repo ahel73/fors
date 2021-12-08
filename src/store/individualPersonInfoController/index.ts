@@ -17,13 +17,13 @@ export default class IndividualPersonInfoControllerModule {
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setPersonInfoError(error: AxiosError | null): void {
     this.state.error = error;
   }
 
   @Mutation()
   setPersonInfoController(response: any): void {
-    const { data, meta } = response;
+    const { data } = response;
 
     this.state.data = data;
   }
@@ -31,13 +31,13 @@ export default class IndividualPersonInfoControllerModule {
   @Action()
   async fetchIndividualPersonInfoController(): Promise<void> {
     this.setPersonInfoControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setPersonInfoError(null);
     try {
       const data: any = await getIndividualPersonInfoController();
 
       this.setPersonInfoController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setPersonInfoError(error);
     } finally {
       this.setPersonInfoControllerIsLoading(false);
     }

@@ -12,34 +12,34 @@ export default class ImprovingWayControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setImprovingWayControllerIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setImprovingWayControllerError(error: AxiosError | null): void {
     this.state.error = error;
   }
 
   @Mutation()
-  setDeedController(response: any): void {
-    const { data, meta } = response;
+  setImprovingWayController(response: any): void {
+    const { data } = response;
 
     this.state.data = data;
   }
 
   @Action()
   async fetchImprovingWayController(): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setImprovingWayControllerIsLoading(true);
+    this.setImprovingWayControllerError(null);
     try {
       const data: any = await getImprovingWayController();
 
-      this.setDeedController(data);
+      this.setImprovingWayController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setImprovingWayControllerError(error);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setImprovingWayControllerIsLoading(false);
     }
   }
 }

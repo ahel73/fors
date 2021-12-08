@@ -86,14 +86,14 @@
             />
           </v-col>
           <v-col cols="6">
-            <select-component
+            <autocomplete-component
               v-model="form.oktmo"
               label="Код ОКТМО"
               :items="oktmoController"
-              item-text="name"
-              item-value="id"
+              item-text="code"
+              variant="micro"
               return-object
-              is-required
+              required
               :rules="[
                 rules.required
               ]"
@@ -114,18 +114,10 @@
               v-model="form.registrationDate "
               label="Дата постановки на учет"
               :readonly="isShow"
+              view-format="DD.MM.YYYY HH:MM"
+              output-format="YYYY-MM-DD HH:MM"
             />
           </v-col>
-          <!-- <v-col cols="6">
-            <Datepicker
-              v-model="form.changeDate"
-              class="datePicker"
-              :format="'DD.MM.YYYY'"
-              label="Дата изменения"
-              title-format="MMMM YYYY"
-              :readonly="isShow"
-            />
-          </v-col> -->
         </v-row>
         <v-row>
           <v-col

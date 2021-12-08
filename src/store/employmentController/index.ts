@@ -12,34 +12,34 @@ export default class EmploymentControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setEmploymentControllerIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null): void {
+  setEmploymentControllerError(error: AxiosError | null): void {
     this.state.error = error;
   }
 
   @Mutation()
-  setDeedController(response: any): void {
-    const { data, meta } = response;
+  setEmploymentController(response: any): void {
+    const { data } = response;
 
     this.state.data = data;
   }
 
   @Action()
   async fetchEmploymentController(): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
+    this.setEmploymentControllerIsLoading(true);
+    this.setEmploymentControllerError(null);
     try {
       const data: any = await getEmploymentController();
 
-      this.setDeedController(data);
+      this.setEmploymentController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setEmploymentControllerError(error);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setEmploymentControllerIsLoading(false);
     }
   }
 }

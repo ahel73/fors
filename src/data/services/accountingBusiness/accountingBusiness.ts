@@ -1,7 +1,7 @@
 import httpClient from '@/data/http';
 import { query } from '@/utils';
 
-export const getDeedController = async (params: any = {} as any, fil?: any): Promise<any> => {
+export const getDeedController = async (params: any = {} as any): Promise<any> => {
   const { page, sort, size, filter, ...payload } = params;
   const queryParams = ({ page, sort, size });
   const filterData = ({ filter });
