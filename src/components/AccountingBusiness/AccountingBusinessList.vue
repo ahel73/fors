@@ -76,7 +76,10 @@
                 </base-action>
               </router-link>
             </span>
-            <span class="table-action__wrapper" v-if="item.status.id === 1">
+            <span
+              v-if="item.statusName === 'Черновик'"
+              class="table-action__wrapper"
+            >
               <base-action
                 @click="handleDeleteDeed(item.id)"
                 hint="Удалить"
@@ -143,6 +146,8 @@ import { OutputFilters } from '../shared/Filter/FilterTypes/types';
 import { Pagination } from '@/types/Pagination';
 import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
+import { isEmpty } from 'lodash';
+import { SelectItem } from '../shared/inputs/SelectComponent.vue';
 
 @Component({
   name: 'accountingBusinessList',
@@ -175,7 +180,7 @@ export default class AccountingBusinessList extends Vue {
     name: null,
     improvingWayId: null,
     employmentId: null,
-    queuePriority: null,
+    queuePriorityId: null,
     statusId: null,
   };
 
@@ -185,7 +190,7 @@ export default class AccountingBusinessList extends Vue {
     return {
       selectFilters: [
         {
-          name: 'name', // поле по которому ищет бэк
+          name: 'name',
           label: 'Фамилия Имя Отчество',
           items: this.individualPersonInfoController,
           isDefault: true,
@@ -200,7 +205,6 @@ export default class AccountingBusinessList extends Vue {
           // defaultValue: this.programIds,
           items: this.improvingWayController,
           isDefault: true,
-          // multiple: true,
           showCode: true,
           valueType: ValueTypes.NUMBER,
           type: FilterTypeNames.SELECT_FILTER,
@@ -239,19 +243,19 @@ export default class AccountingBusinessList extends Vue {
   headers = [
     {
       text: 'Фамилия Имя Отчество',
-      value: 'applicant.fullName',
+      value: 'applicantFullName',
     },
     {
       text: 'Способ улучшения ЖУ',
-      value: 'improvingWay.name',
+      value: 'improvingWayName',
     },
     {
       text: 'Сфера деятельности',
-      value: 'employment.name',
+      value: 'employmentName',
     },
     {
       text: 'Приоритет',
-      value: 'queuePriority.name',
+      value: 'queuePriorityName',
     },
     {
       text: 'Размер общей площади',
@@ -259,7 +263,7 @@ export default class AccountingBusinessList extends Vue {
     },
     {
       text: 'Направление расходования средств',
-      value: 'spendingDirection.name',
+      value: 'spendingDirectionName',
     },
     {
       text: 'Дата постановки на учет',
@@ -267,7 +271,7 @@ export default class AccountingBusinessList extends Vue {
     },
     {
       text: 'Статус',
-      value: 'status.name',
+      value: 'statusName',
     },
     {
       text: 'Действия',
@@ -280,31 +284,31 @@ export default class AccountingBusinessList extends Vue {
      isDefault: true,
      isEditable: false,
      text: 'Фамилия Имя Отчество',
-     value: 'applicant.fullName',
+     value: 'applicantFullName',
    },
    {
      isDefault: true,
      isEditable: true,
      text: 'Способ улучшения ЖУ',
-     value: 'improvingWay.name',
+     value: 'improvingWayName',
    },
    {
      isDefault: true,
      isEditable: true,
      text: 'Сфера деятельности',
-     value: 'employment.name',
+     value: 'employmentName',
    },
    {
      isDefault: true,
      isEditable: true,
      text: 'Направление расходования средств',
-     value: 'spendingDirection.name',
+     value: 'spendingDirectionName',
    },
    {
      isDefault: true,
      isEditable: true,
      text: 'Приоритет',
-     value: 'queuePriority.name',
+     value: 'queuePriorityName',
    },
    {
      isDefault: true,
@@ -323,7 +327,7 @@ export default class AccountingBusinessList extends Vue {
      isDefault: true,
      isEditable: true,
      text: 'Статус',
-     value: 'status.name',
+     value: 'statusName',
    },
    {
      value: 'actions',
@@ -389,6 +393,7 @@ export default class AccountingBusinessList extends Vue {
      page,
      size,
      sort,
+     filter,
    } = this;
 
    const fieldsToReplace: ReplaceConditions[] = [
@@ -401,6 +406,7 @@ export default class AccountingBusinessList extends Vue {
        page,
        size,
        sort: getFieldsToSort(fieldsToReplace, sort),
+       filter,
      }
    );
  }
@@ -424,12 +430,29 @@ export default class AccountingBusinessList extends Vue {
  }
 
  handleSearch(outputFilters: OutputFilters): void {
-   outputFilters.forEach(item => {
-     console.log(item, 'filtr');
-
+   this.filter = {
+     name: null,
+     improvingWayId: null,
+     employmentId: null,
+     queuePriorityId: null,
+     statusId: null,
+   };
+   outputFilters.filter(item => {
+     const [itemV] = item.value;
      if (item.name === 'name') {
+       this.filter.name = itemV?.text;
+     } else if (item.name === 'improvingWayId') {
+       this.filter.improvingWayId = itemV?.value;
+     } else if (item.name === 'employmentId') {
+       this.filter.employmentId = itemV?.value;
+     } else if (item.name === 'queuePriority') {
+       this.filter.queuePriorityId = itemV?.value;
+     } else if (item.name === 'statusId') {
+       this.filter.statusId = itemV?.value;
      }
    });
+
+   this.fetchStateDeed();
  }
 
  saveColumns(): void {
@@ -439,6 +462,13 @@ export default class AccountingBusinessList extends Vue {
 
  handleReset(): void {
    this.items = [];
+   this.filter = {
+     name: null,
+     improvingWayId: null,
+     employmentId: null,
+     queuePriorityId: null,
+     statusId: null,
+   };
  }
 
  handleResetSearch() {

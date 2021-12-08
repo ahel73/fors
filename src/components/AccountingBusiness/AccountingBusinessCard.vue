@@ -128,11 +128,14 @@
           </v-col> -->
         </v-row>
         <v-row>
-          <v-col cols="12">
+          <v-col
+            v-if="statusCard === 2"
+            cols="12"
+          >
             <input-component
               v-model="form.changeReason"
               label="Причина изменения"
-              :disabled="isShow || statusCard !== 2"
+              :disabled="isShow"
             />
           </v-col>
           <v-col cols="12">
@@ -635,23 +638,49 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   async saveAllInfo() {
-    if (!this.$route.params.id) {
-      const data = {
-        ...this.form,
-        documents: this.formDoc,
-        familyMembers: this.familyMembers,
-      };
-      await this.store.createItem.fetchCreateDeedController(data);
-      this.$router.replace({
-        path: '/accountingBusiness',
-      });
+    if (this.form.applicant === undefined) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Обязательное поле "Заявитель" не заполненно',
+          type: 'error',
+        }
+      );
+    } else if (this.form.improvingWay === undefined) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Обязательное поле "Способ УЖУ" не заполненно',
+          type: 'error',
+        }
+      );
+    } else if (this.form.oktmo === undefined) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Обязательное поле "Способ УЖУ" не заполненно',
+          type: 'error',
+        }
+      );
     } else {
-      updateDeedController(this.$route.params.id, this.form);
-      this.$router.replace({
-        path: '/accountingBusiness',
-      });
+      if (!this.$route.params.id) {
+        const data = {
+          ...this.form,
+          documents: this.formDoc,
+          familyMembers: this.familyMembers,
+        };
+        await this.store.createItem.fetchCreateDeedController(data);
+        this.$router.replace({
+          path: '/accountingBusiness',
+        });
+      } else {
+        updateDeedController(this.$route.params.id, this.form);
+        this.$router.replace({
+          path: '/accountingBusiness',
+        });
+      }
+      this.store.deedItem.clearItem();
     }
-    this.store.deedItem.clearItem();
   }
 
   handleDeleteFamilyPeople(item: string) {
@@ -678,6 +707,12 @@ export default class AccountingBusinessListCard extends Vue {
     this.cancelDialog = false;
     this.store.deedItem.clearItem();
     this.$router.push({ name: 'AccountingBusiness' });
+  }
+
+  @Watch('form.improvingWay')
+  checkRequiredField(improvingWay: string) {
+    if (improvingWay.id === '1') {
+    }
   }
 }
 </script>

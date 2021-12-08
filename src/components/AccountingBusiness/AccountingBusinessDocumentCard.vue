@@ -6,9 +6,7 @@
           v-model="documentEditOrCreate.name"
           label="Наименование"
           required
-          :rules="[
-            rules.required
-          ]"
+          :rules="[rules.required]"
         />
       </v-col>
     </v-row>
@@ -18,9 +16,7 @@
           v-model="documentEditOrCreate.docNum"
           label="Номер"
           required
-          :rules="[
-            rules.required
-          ]"
+          :rules="[rules.required]"
         />
       </v-col>
       <v-col cols="6">
@@ -28,9 +24,7 @@
           v-model="documentEditOrCreate.docDate"
           label="Дата"
           is-required
-          :rules="[
-            rules.required
-          ]"
+          :rules="[rules.required]"
         />
       </v-col>
     </v-row>
@@ -72,9 +66,11 @@
     <v-row>
       <v-col cols="2">
         <upload-file-component
-          v-model="documentEditOrCreate.file"
+          @onChange="(file) => uploadFile(file, '')"
+          @downloadFile="downloadFile"
+          @deleteFile="(id) => deleteFile(id, '')"
           label="Файл"
-          placeholder="Загрузить"
+          :files-list="documentEditOrCreate.file"
           prepend-icon="mdi-arrow-collapse-down"
         />
       </v-col>
@@ -114,6 +110,7 @@ import UploadFileComponent from '../shared/inputs/UploadFileComponent.vue';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
+import eventBus from '@/utils/bus/event-bus';
 
 @Component({
   name: 'accountingBusinessDocumentCard',
@@ -164,19 +161,73 @@ export default class AccountingBusinessDocumentCard extends Vue {
     this.store.docController.fetchDocGroupController();
   }
 
-  saveDocument() {
-    if (this.documentEditOrCreate.index || this.documentEditOrCreate.id) {
-      this.store.deedItem.updateDocument(this.documentEditOrCreate);
-    } else {
-      this.documentEditOrCreate.index = Math.floor(Math.random() * 10000).toString();
-      this.store.deedItem.addDocument(this.documentEditOrCreate);
+  uploadFile(files: File[], field: 'file'): void {
+    console.log(files, 'files');
+    if (files.length > 0) {
+      const [file] = files;
+      this.store.fileRepository.uploadFileAction({ file });
+      /* .then(() => {
+            if (!this.fileRepositoryEror) {
+              const { fileName, id } = this.fileRepositoryData as FileRepositoryResponse;
+              const blankFileInfo = {
+                id: null,
+                name: fileName,
+                originalId: id,
+              };
+              this.stateProgramItem[field]?.length
+                ? this.stateProgramItem[field]?.push(blankFileInfo)
+                : Vue.set(this.stateProgramItem, field, [blankFileInfo]);
+            }
+          }); */
     }
-    this.$router.go(-1);
-    this.documentEditOrCreate = {
-      index: '',
-      id: null,
-      active: false,
-    };
+  }
+
+  downloadFile(id: string): void {
+    this.store.fileRepository.downloadFileAction(id);
+  }
+
+  deleteFile(id: string, field: 'conclusion' | 'implementationPlan'): void {
+    this.store.fileRepository.deleteFileAction(id);
+    /* .then(() => {
+        if (!this.fileRepositoryEror) {
+          const fileList = this.stateProgramItem[field]?.filter(item => item.originalId !== id);
+          Vue.set(this.stateProgramItem, field, fileList);
+        }
+      }); */
+  }
+
+  saveDocument() {
+    if (this.documentEditOrCreate.name === undefined) {
+      eventBus.$emit('notification:message', {
+        text: 'Обязательное поле "Наименование" не заполненно',
+        type: 'error',
+      });
+    } else if (this.documentEditOrCreate.docNum === undefined) {
+      eventBus.$emit('notification:message', {
+        text: 'Обязательное поле "Номер" не заполненно',
+        type: 'error',
+      });
+    } else if (this.documentEditOrCreate.docDate === undefined) {
+      eventBus.$emit('notification:message', {
+        text: 'Обязательное поле "Дата" не заполненно',
+        type: 'error',
+      });
+    } else {
+      if (this.documentEditOrCreate.index || this.documentEditOrCreate.id) {
+        this.store.deedItem.updateDocument(this.documentEditOrCreate);
+      } else {
+        this.documentEditOrCreate.index = Math.floor(
+          Math.random() * 10000
+        ).toString();
+        this.store.deedItem.addDocument(this.documentEditOrCreate);
+      }
+      this.$router.go(-1);
+      this.documentEditOrCreate = {
+        index: '',
+        id: null,
+        active: false,
+      };
+    }
   }
 
   onCancelClick() {

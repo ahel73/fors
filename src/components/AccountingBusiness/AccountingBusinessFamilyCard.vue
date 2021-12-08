@@ -77,6 +77,7 @@ import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
+import eventBus from '@/utils/bus/event-bus';
 
 const mapForm = (data: any) => ({
   ...data,
@@ -157,13 +158,30 @@ export default class AccountingBusinessFamilyCard extends Vue {
   }
 
   saveDataFamilyPeople() {
-    if (this.$route.name === 'editFamilyCard') {
-      this.store.deedItem.updateFamilyPeople(mapForm(this.itemPeople));
+    if (this.itemPeople.individualPerson === undefined) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Обязательное поле "Фамилия Имя Отчество" не заполненно',
+          type: 'error',
+        }
+      );
+    } else if (this.itemPeople.relationship === undefined) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Обязательное поле "Родственные отношения" не заполненно',
+          type: 'error',
+        }
+      );
     } else {
-      this.store.deedItem.addFamilyPeople(mapForm(this.itemPeople));
+      if (this.$route.name === 'editFamilyCard') {
+        this.store.deedItem.updateFamilyPeople(mapForm(this.itemPeople));
+      } else {
+        this.store.deedItem.addFamilyPeople(mapForm(this.itemPeople));
+      }
+      this.$router.go(-1);
     }
-
-    this.$router.go(-1);
   }
 
   onCancelClick() {
