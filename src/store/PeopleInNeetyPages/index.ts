@@ -17,26 +17,7 @@ export default class PeopleInNeetyModule {
     ],
 
     // массив с нуждающимися лицами
-    listPeopleInNeety: [
-      {
-        id: 1,
-        surname: 'Нагаев',
-        name: 'Алексей',
-        patronymic: 'Николаевич',
-        birthDate: '05.10.1973',
-        inn: '8668688686886',
-        residence: 'Орловская область, Орёл',
-      },
-      {
-        id: 2,
-        surname: 'Иванов',
-        name: 'Пётр',
-        patronymic: 'Сергеевич',
-        birthDate: '25.05.1986',
-        inn: '46677999075',
-        residence: 'Тверская область, Тверь',
-      },
-    ],
+    listPeopleInNeety: [],
     listEmployers: [],
     newPersonNeedy: {
       surname: '',
@@ -46,16 +27,18 @@ export default class PeopleInNeetyModule {
       sex: '',
       residence: '',
       location: '',
-      regDate: '',
-      codMO: '',
-      identityDocs: [],
+      registrationDate: '',
+      areaCode: '',
+      identityDoc: null,
       snils: '',
       inn: '',
       ogrnip: '',
       phoneNumber: '',
       email: '',
       status: { id: 1, name: 'Черновик', active: true },
+      works: [],
     },
+    updatePersonNeedy: null,
     newIdentityDoc: {
       seriesNum: '',
       issueDate: '',
@@ -69,40 +52,59 @@ export default class PeopleInNeetyModule {
       pfrRegNum: '',
       active: true,
     },
+    newWorkerAction: {
+      workFunction: '',
+      employmentDate: '',
+      dismissalDate: '',
+      dismissalReason: '',
+      employer: null,
+      pfr: true,
+      baseDoc: '',
+    },
   }
 
+  // Обновляем свойства вложенного объекта
   @Mutation()
   update({ name, value, object }: UpdatePropsObject) {
-    console.log('name: ' + name + ' | value: ' + value);
+  // .console.log('name: ' + name + ' | value: ' + value);
     this.state[object][name] = value;
-    console.log(this.state.newPersonNeedy);
+    // console.log(this.state.newPersonNeedy);
   }
 
+  // Обновляем свойства первого уровня стейта
+  @Mutation()
+  updateProp({ name, value } : UpdatePropsObject) {
+    console.log('name: ' + name + ' | value: ' + value);
+    this.state[name] = value;
+  }
+
+  // Добавляем граждан в массив для вывода в табличном виде
   @Mutation()
   updatelistPeopleInNeety(array: PersonNeedy[] | []) {
     this.state.listPeopleInNeety = array;
   }
 
+  // Добавляем гражданина для просмотра в карточном виде
+  @Mutation()
+  viewing(item) {
+    this.state.updatePersonNeedy = item;
+  }
+
+  // Добавляем какие либо объекты в массивы, например трудовая деятельность
   @Mutation()
   saveObj({ objDoc, nameList } : SaveObj) {
     console.log(nameList);
     if (nameList === 'identityDocs') {
-      this.state.newPersonNeedy.identityDocs[0] = objDoc;
+      this.state.newPersonNeedy.identityDoc = objDoc;
+    } else if (nameList === 'work') {
+      this.state.newPersonNeedy.works?.push(objDoc);
     } else {
       this.state[nameList].push(objDoc);
     }
   }
 
   @Mutation()
-  clearObj(objDoc: any) {
-    this.state.newIdentityDoc = objDoc;
-  }
-
-  getQueryApi(queryString: string): any {
-    const ajax = new XMLHttpRequest();
-    ajax.open('post', queryString, false);
-    ajax.send();
-    console.log(JSON.parse(ajax.responseText));
-    return JSON.parse(ajax.responseText);
+  clearObj({ verifyObj, nameObjState }: any) {
+    this.state[nameObjState] = verifyObj;
   }
 }

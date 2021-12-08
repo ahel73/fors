@@ -1,5 +1,8 @@
 <template>
-  <main-layout title="Физическое лицо">
+  <main-layout
+    class="form-add-new-people-in-neety"
+    title="Физическое лицо"
+  >
     <v-row>
       <v-col>
         <router-link :to="{name: 'ListPeoplePage'}">
@@ -39,7 +42,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('surname', 'newPersonNeedy')"
-              :value="newPerson.surname"
+              :value="newPerson.surname || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -52,7 +56,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('name', 'newPersonNeedy')"
-              :value="newPerson.name"
+              :value="newPerson.name || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -65,7 +70,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('patronymic', 'newPersonNeedy')"
-              :value="newPerson.patronymic"
+              :value="newPerson.patronymic || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -77,10 +83,16 @@
           </v-col>
           <v-col cols="4">
             <datepicker
+              v-if="flagNew"
               @change="updatePropsSpech($event, 'birthDate', 'newPersonNeedy')"
               @click:clear="updatePropsSpech( '', 'birthDate', 'newPersonNeedy')"
               :starting-year="yearInterval"
-              :value="newPerson.birthDate"
+              :value="newPerson.birthDate || ''"
+            />
+            <input-component
+              v-else
+              :value="newPerson.birthDate || ''"
+              :disabled="true"
             />
           </v-col>
         </v-row>
@@ -90,12 +102,18 @@
           </v-col>
           <v-col cols="4">
             <radio-group-component
+              v-if="flagNew"
               @change="updatePropsSpech($event, 'sex', 'newPersonNeedy')"
               inner-label-yes="Мужской"
               inner-label-no="Женский"
               value-yes="M"
               value-no="W"
             />
+            <span
+              v-else
+            >
+              {{ (newPerson.sex === 'M') ? 'Мужчина' : 'Женщина' }}
+            </span>
           </v-col>
         </v-row>
         <v-row>
@@ -105,7 +123,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('residence', 'newPersonNeedy')"
-              :value="newPerson.residence"
+              :value="newPerson.residence || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -116,7 +135,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('location', 'newPersonNeedy')"
-              :value="newPerson.location"
+              :value="newPerson.location || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -126,10 +146,17 @@
           </v-col>
           <v-col cols="4">
             <datepicker
+              v-if="flagNew"
               @change="updatePropsSpech($event, 'regDate', 'newPersonNeedy')"
-              @click:clear="updatePropsSpech( '', 'regDate', 'newPersonNeedy')"
+              @click:clear="updatePropsSpech( '', 'registrationDate', 'newPersonNeedy')"
               :starting-year="yearInterval"
-              :value="newPerson.regDate"
+              :value="newPerson.registrationDate || ''"
+              :disabled="!flagNew"
+            />
+            <input-component
+              v-else
+              :value="newPerson.registrationDate || ''"
+              :disabled="true"
             />
           </v-col>
           <v-col cols="1">
@@ -137,8 +164,9 @@
           </v-col>
           <v-col cols="3">
             <input-component
-              @input="updateProps('codMO', 'newPersonNeedy')"
-              :value="newPerson.codMO"
+              @input="updateProps('areaCode', 'newPersonNeedy')"
+              :value="newPerson.areaCode || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -147,9 +175,10 @@
             Документ удостоверяющий личность:
           </v-col>
           <v-col cols="8">
-            <router-link :to="{name: 'FormAddDocument'}">
+            <router-link :to="flagNew ? {name: 'FormAddDocument'} : ''">
               <input-component
-                :value="newPerson.identityDocs.length ? newPerson.identityDocs[0].type.name : ''"
+                :value="newPerson.identityDoc ? newPerson.identityDoc.type.name : ''"
+                :disabled="!flagNew"
               />
             </router-link>
           </v-col>
@@ -163,7 +192,8 @@
           <v-col cols="4">
             <input-component
               @input="updateProps('snils', 'newPersonNeedy')"
-              :value="newPerson.snils"
+              :value="newPerson.snils || ''"
+              :disabled="!flagNew"
             />
           </v-col>
           <v-col cols="1">
@@ -172,7 +202,8 @@
           <v-col cols="3">
             <input-component
               @input="updateProps('inn', 'newPersonNeedy')"
-              :value="newPerson.inn"
+              :value="newPerson.inn || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -183,7 +214,8 @@
           <v-col cols="4">
             <input-component
               @input="updateProps('phoneNumber', 'newPersonNeedy')"
-              :value="newPerson.phoneNumber"
+              :value="newPerson.phoneNumber || ''"
+              :disabled="!flagNew"
             />
           </v-col>
           <v-col cols="1">
@@ -192,7 +224,8 @@
           <v-col cols="3">
             <input-component
               @input="updateProps('ogrnip', 'newPersonNeedy')"
-              :value="newPerson.ogrnip"
+              :value="newPerson.ogrnip || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -203,7 +236,8 @@
           <v-col cols="8">
             <input-component
               @input="updateProps('email', 'newPersonNeedy')"
-              :value="newPerson.email"
+              :value="newPerson.email || ''"
+              :disabled="!flagNew"
             />
           </v-col>
         </v-row>
@@ -213,48 +247,8 @@
           </v-col>
           <v-col cols="8">
             <input-component
-              value="Черновик"
+              :value="flagNew ? 'Черновик' : newPerson.status.name"
               :disabled="true"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="auto">
-            <button-component
-              size="micro"
-              title="Зарегистрировать"
-              variant="primary"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <button-component
-              size="micro"
-              title="Отменить регистрацию"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <button-component
-              size="micro"
-              title="Восстановить"
-              class="button-save"
-            />
-          </v-col>
-          <v-col
-            class="left-auto"
-            cols="auto"
-          >
-            <button-component
-              size="micro"
-              title="Сохранить"
-              variant="primary"
-              class="button-save"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <button-component
-              size="micro"
-              title="Отменить"
-              class="button-save"
             />
           </v-col>
         </v-row>
@@ -264,7 +258,10 @@
         class="tab-card"
         key="workerActivity"
       >
-        <v-row>
+        <v-row
+          v-if="flagNew"
+          class="top-row"
+        >
           <v-col>
             <router-link :to="{name: 'FormAddNewWorkerActivity'}">
               <icon-button
@@ -277,36 +274,37 @@
           </v-col>
         </v-row>
         <data-table
-          :headers="headers"
-          :items="[]"
+          :headers="headersWorks"
+          :items="newPerson.works"
           :hide-footer="true"
         >
-          <!--item перенеси в фигурные скобки  -->
           <template #[`item.actions`]="{}">
             <v-icon
-              small
-              class="mr-2"
-            >
-              mdi-eye
-            </v-icon>
-            <v-icon
+              v-if="flagNew"
               small
               class="mr-2"
             >
               mdi-pencil
             </v-icon>
             <v-icon
+              v-if="flagNew"
               small
             >
               mdi-delete
             </v-icon>
+            <span v-if="!flagNew">
+              -
+            </span>
           </template>
         </data-table>
       </v-tab-item>
     </v-tabs-items>
     <!-- Глобальные кнопки -->
     <v-row class="global-button">
-      <v-col cols="auto">
+      <v-col
+        v-if="flagNew"
+        cols="auto"
+      >
         <button-component
           size="micro"
           title="Сохранить"
@@ -314,7 +312,10 @@
           class="button-save"
         />
       </v-col>
-      <v-col cols="auto">
+      <v-col
+        v-if="flagNew"
+        cols="auto"
+      >
         <router-link :to="{name: 'ListPeoplePage'}">
           <button-component
             size="micro"
@@ -322,6 +323,17 @@
             class="button-save"
           />
         </router-link>
+      </v-col>
+      <v-col
+        v-if="!flagNew"
+        cols="auto"
+      >
+        <button-component
+          @click="exitReview('ListPeoplePage', 'updatePersonNeedy')"
+          size="micro"
+          title="Закрыть"
+          class="button-save"
+        />
       </v-col>
     </v-row>
   </main-layout>
@@ -342,8 +354,6 @@ import IconButton from '@/components/shared/buttons/IconButton.vue';
 import DataTable from '@/components/shared/table/DataTable.vue';
 import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
 
-console.log(methods);
-
 @Component({
   name: 'FormAddNewPeopleInNeety',
   components: {
@@ -361,7 +371,8 @@ console.log(methods);
 export default class FormAddNewPeopleInNeety extends Vue {
   store: Store = useStore(this.$store);
   myStore = this.store.peopleInNeety;
-  newPerson = this.myStore.state.newPersonNeedy;
+  flagNew = !this.myStore.state.updatePersonNeedy
+  newPerson = this.myStore.state.updatePersonNeedy || this.myStore.state.newPersonNeedy;
   tab = '';
   yearInterval = (new Date()).getFullYear() - 100;
   headers = [
@@ -374,8 +385,17 @@ export default class FormAddNewPeopleInNeety extends Vue {
     { text: 'Действия', value: 'actions' },
   ];
 
+  headersWorks = [
+    { text: 'Место работы', value: 'employer.shortName' },
+    { text: 'Трудовая функция', value: 'workFunction' },
+    { text: 'Дата приёма', value: 'employmentDate' },
+    { text: 'Действия', value: 'actions' },
+  ];
+
   updateProps = methods.updateProps.bind(this);
   updatePropsSpech = methods.updatePropsSpech.bind(this);
+  push = methods.push;
+  exitReview = methods.exitReview;
 }
 </script>
 
@@ -409,5 +429,9 @@ export default class FormAddNewPeopleInNeety extends Vue {
 
   .global-button {
     margin-top: 30px
+  }
+
+  .form-add-new-people-in-neety .top-row {
+    margin-bottom: 20px;
   }
 </style>

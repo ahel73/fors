@@ -69,6 +69,7 @@
               ['name', 'type'],
               newEmployer,
               'listEmployers',
+              'FormAddNewWorkerActivity',
             )"
             size="micro"
             title="Сохранить"
@@ -77,13 +78,17 @@
           />
         </v-col>
         <v-col cols="auto">
-          <router-link :to="{name: 'FormAddNewPeopleInNeety'}">
-            <button-component
-              size="micro"
-              title="Отмена"
-              class="button-save"
-            />
-          </router-link>
+          <button-component
+            @click="clearObj(
+              { active: true },
+              newEmployer,
+              'newEmployer',
+              'FormAddNewWorkerActivity',
+            )"
+            size="micro"
+            title="Отмена"
+            class="button-save"
+          />
         </v-col>
       </v-row>
     </div>

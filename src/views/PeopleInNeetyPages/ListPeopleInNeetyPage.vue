@@ -42,7 +42,7 @@
           </template>
           <template #[`item.actions`]="{ item }">
             <v-icon
-              @click="event(item)"
+              @click="viewing(item, '/individual-persons/')"
               small
               class="mr-2"
             >
@@ -77,9 +77,10 @@ import DataTable from '@/components/shared/table/DataTable.vue';
 import ColumnsView from '@/components/shared/table/ColumnsView/ColumnsView.vue';
 import FilterComponent from '@/components/shared/Filter/Filter.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
-import axios from 'axios';
+// import axios from 'axios';
 import httpClient from '@/data/http';
 import { query } from '@/utils';
+import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
 
 @Component({
   name: 'ListPeopleInNeetyPage',
@@ -94,19 +95,37 @@ import { query } from '@/utils';
 
 export default class ListPeopleInNeetyPage extends Vue {
   store: Store = useStore(this.$store);
+  myStore = this.store.peopleInNeety;
 
-  getDeedController = async (params: any = {} as any): Promise<any> => {
+   push = methods.push;
+
+  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
     const { page = 0, sort = '-id', size } = params;
     const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.post<any>('/individual-persons/find');
+    const { data } = await httpClient.post<any>(queryString);
     return data;
   }
 
-  created() {
-    console.log('created');
+  getOne = async (queryString: string, id: any) => {
+    const { data } = await httpClient.get<any>(`${queryString}${id}`);
+    return data;
+  };
 
-    this.getDeedController()
-      .then(user => this.store.peopleInNeety.updatelistPeopleInNeety(user.data));
+  viewing(item, string) {
+    this.getOne(string, item.id)
+      .then(item => {
+        console.log(item);
+        this.store.peopleInNeety.viewing(item);
+        this.push('FormAddNewPeopleInNeety');
+      });
+  }
+
+  created() {
+    this.getGroop('/individual-persons/find/')
+      .then(user => {
+        console.log(user.data);
+        this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
+      });
   }
 }
 </script>

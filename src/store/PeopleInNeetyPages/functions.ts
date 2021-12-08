@@ -9,10 +9,17 @@ export const methods = {
   },
 
   push(namePath: string) {
+    console.log(namePath);
     this.$router.push({ name: namePath });
   },
 
-  saveObj(requiredFields: [], verifyObj: any, nameList: string) {
+  // Записываем созданный объект в массив для вывода,  проверяеи оббязательные поля
+  saveObj(
+    requiredFields = [], // имена полей объекта которые должны быть заполнены
+    verifyObj: any, // Объект который добавляем в массив
+    nameList: string, // Имя массива в который добавляем
+    nameView = 'FormAddNewPeopleInNeety' // Имя страницы на которую необходимо перейти после добавления
+  ) {
     const newDoc = verifyObj;
     for (const a in newDoc) {
       if (requiredFields.includes(a) && !newDoc[a]) {
@@ -25,10 +32,17 @@ export const methods = {
       objDoc: JSON.parse(JSON.stringify(newDoc)),
       nameList: nameList,
     });
-    this.push('FormAddNewPeopleInNeety');
+    this.push(nameView);
   },
 
-  clearObj(objType: any, verifyObj: any) {
+  clearObj(
+    objType: any, // Объект свойства которого идентичны свойствам проеверяемого объекта а их значения типам которые должны иметь данные свойства
+    verifyObj: any, // ссылка на очищаемый объект
+    nameObjState = 'newIdentityDoc', // строка с именем объекта которому надо присвоить в качестве значения очищенный объект
+    nameView = 'FormAddNewPeopleInNeety' // Имя страницы на которую необходимо перейти после добавления объекта
+    // (Значения по умолчанию используется что бы не испортить старый код)
+
+  ) {
     verifyObj = JSON.parse(JSON.stringify(verifyObj));
     for (const a in verifyObj) {
       if (a in objType) {
@@ -37,7 +51,21 @@ export const methods = {
         verifyObj[a] = '';
       }
     }
-    this.store.peopleInNeety.clearObj(verifyObj);
-    this.push('FormAddNewPeopleInNeety');
+    console.log('очищенный объект', verifyObj);
+    console.log('куда переходим', nameObjState);
+    this.store.peopleInNeety.clearObj({ verifyObj, nameObjState });
+    this.push(nameView);
+  },
+
+  // Уходим со страницы на нужную страницу при необходимости очищаем обьект первого уровня
+  exitReview(nameViews = '', name = '', value = null) {
+    console.log(nameViews + ' ' + name);
+    console.log(this.$router);
+    if (name) {
+      this.store.peopleInNeety.updateProp({ name, value });
+    }
+    if (nameViews) {
+      this.push(nameViews);
+    }
   },
 };

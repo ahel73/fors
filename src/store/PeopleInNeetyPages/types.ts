@@ -42,58 +42,53 @@ export interface Employer {
 }
 
 interface WorkerAction {
-  id: string | number,
+  id?: string | number,
   individualPersonId?: string | number,
-  workPalceId?: string | number,
-  workFunc: string,
+  workFunction: string,
   employmentDate: string,
   dismissalDate: string,
   dismissalReason: string,
-  baseDoc: string,
-  status?: {
-      id: string | number,
-      name: string,
-      active: string | boolean,
-  },
+  baseDoc?: string,
   createUser?: string | boolean | null,
   createDate?: string,
   changeUser?: string | boolean | null,
   changeDate?: string | boolean | null,
   checkDate?: string
-  checker?: string,
+  checkUser?: string | null,
   pfr: string | boolean,
+  employer: { id?: string | number, shortName: string } | null
 }
 
-interface PersonNeedy {
-  id?: string | number,
-  surname: string,
-  name: string,
-  patronymic: string,
-  birthDate: string,
-  sex?: string, // временно необязательный
-  residence: string,
-  location?: string, // временно необязательный
-  regDate?: string, // временно необязательный
-  codMO?: string, // временно необязательный + его нет в структуре от Александра
-  snils?: string, // временно необязательный
-  inn?: string, // временно необязательный
+export interface PersonNeedy {
+  id?: string | number | null,
+  surname: string | null,
+  name: string | null,
+  patronymic: string | null,
+  birthDate: string | null,
+  sex?: string | null, // временно необязательный
+  residence: string | null,
+  location?: string | null, // временно необязательный
+  registrationDate?: string | null, // временно необязательный
+  areaCode?: string | null, // временно необязательный + его нет в структуре от Александра
+  snils?: string | null, // временно необязательный
+  inn?: string | null, // временно необязательный
   ogrnip?: string, // временно необязательный
   phoneNumber?: string, // временно необязательный
-  email?: string, // временно необязательный
-  status?: StatusPerson, // временно необязательный
-  lkFlId?: string | number,
-  areacode?: string | number,
+  email?: string | null, // временно необязательный
+  status?: StatusPerson | null, // временно необязательный
+  lkFlId?: string | number | null,
+  areacode?: string | number | null,
   createUser?: string | number | null,
-  createDate?: string,
+  createDate?: string | null,
   changeUser?: string | number | null,
-  changeDate?: string,
-  identityDocs?: IdentityDoc[] | [], // временно необязательный
+  changeDate?: string | null,
+  identityDoc?: IdentityDoc | null, // временно необязательный
   works?: WorkerAction[] | [] // временно необязательный
 }
 export interface UpdatePropsObject {
   name: string | number,
   value: string,
-  object: string,
+  object?: string,
 }
 
 export interface SaveObj {
@@ -105,6 +100,8 @@ export interface DataPeopleInNeety {
   listPeopleInNeety: PersonNeedy[] | [],
   listEmployers: Employer[] | [],
   newPersonNeedy: PersonNeedy,
+  updatePersonNeedy: any,
   newIdentityDoc: IdentityDoc,
   newEmployer: Employer,
+  newWorkerAction?: WorkerAction,
 }
