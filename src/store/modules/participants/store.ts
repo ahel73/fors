@@ -4,6 +4,8 @@ import {
   fetchRegions,
   fetchYears,
   postConformParticipants,
+  postCreateSummaryParticipants,
+  postImprovingWays,
 } from '@/data';
 import {
   FilterParams,
@@ -21,6 +23,7 @@ export default class ParticipantsModule {
     searchName: '',
     items: [],
     region: null,
+    improvingWays: [],
   }
 
   @Mutation()
@@ -53,6 +56,11 @@ export default class ParticipantsModule {
     this.state.financialYears = payload;
   }
 
+  @Mutation()
+  setImprovingWays(payload: WorkingRegion[]) {
+    this.state.improvingWays = payload;
+  }
+
   @Action()
   async setSearch(year: number | null, region: WorkingRegion | null) {
     this.setFinancialYear(year);
@@ -73,13 +81,12 @@ export default class ParticipantsModule {
 
   @Action()
   async fetchMembers({
-    name, page, size, sort, type,
+    name, page, size, sort,
   } : {
     name?: string;
     page?: string;
     size?: string;
     sort?: string;
-    type: string;
   }) {
     const filterParams: FilterParams = {
       name: name,
@@ -88,10 +95,8 @@ export default class ParticipantsModule {
       sort: sort,
     };
     try {
-      if (type === 'payout' || type === 'hiring') {
-        const result = await fetchParticipantsList(filterParams, type);
-        this.setItems(result);
-      }
+      const result = await fetchParticipantsList(filterParams);
+      this.setItems(result);
     } catch (error) {
       eventBus.$emit(
         'notification:message',
@@ -106,11 +111,32 @@ export default class ParticipantsModule {
 
   @Action()
   async conformMembers({
-    type, year
+    improvingWay, financialYear, areaCode
   } : {
-    type: string;
-    year: number | null;
+    improvingWay: WorkingRegion;
+    financialYear: number | null;
+    areaCode: string | null;
   }) {
-    const result = await postConformParticipants(type);
+    const result = await postConformParticipants({ improvingWay, financialYear, areaCode });
+    console.log(result);
+  }
+
+  @Action()
+  async createSummaryList({
+    improvingWay, financialYear, regionCode
+  } : {
+    improvingWay: WorkingRegion;
+    financialYear: number | null;
+    regionCode: string | null;
+  }) {
+    const result = await postCreateSummaryParticipants({ improvingWay, financialYear, regionCode });
+    console.log(result);
+  }
+
+  @Action()
+  async fetchImprovingWays() {
+    const result = await postImprovingWays();
+    this.setImprovingWays(result);
+    return result;
   }
 }

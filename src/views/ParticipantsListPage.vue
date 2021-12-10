@@ -162,6 +162,7 @@ import { TableHeaders } from '@/components/shared/table/DataTable.types';
 import { FilterTypes } from '@/components/shared/Filter/types';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import eventBus from '@/utils/bus/event-bus';
+import { WorkingRegion } from '@/types';
 
 @Component({
   name: 'ParticipantsList',
@@ -218,32 +219,27 @@ export default class ParticipantsListPage extends Vue {
 
   headers: TableHeaders[] = []
 
-  types = {
-    payout: 'Социальные выплаты',
-    hiring: 'Договор найма',
-  }
-
   get mainLayoutText() {
-    return `Список участников ${this.currentTypeText} ${this.processedYear}`;
+    return `Список участников "${this.currentImprovingWay?.name}" ${this.processedYear}`;
   }
 
-  get currentTypeText() {
-    const type = this.currentType;
-    if (type === 'payout' || type === 'hiring') {
-      return this.types[type];
+  get currentImprovingWay() {
+    try {
+      return this.store.participants.state?.improvingWays.find((item: WorkingRegion) => item.id === this.currentId);
+    } catch {
+      return { id: 0, name: '', code: '' };
     }
-    return 'Тест';
   }
 
-  get currentType() {
-    return this.$route.query && this.$route.query.type
-      ? this.$route.query.type.toString()
-      : 'null';
+  get currentId() {
+    return this.$route.query && this.$route.query.id
+      ? +this.$route.query.id
+      : 0;
   }
 
   get processedYear() {
     if (!this.store.participants.state.financialYear) return '';
-    return this.store.participants.state.financialYear + ' год';
+    return 'за ' + this.store.participants.state.financialYear + ' год';
   }
 
   get regions() {
@@ -272,10 +268,12 @@ export default class ParticipantsListPage extends Vue {
   }
 
   mounted() {
-    this.store.participants.fetchMembers({ type: this.currentType, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
-    this.store.participants.fetchRegions();
-    this.store.participants.fetchYears();
-    this.store.me.fetchMe();
+    this.store.participants.fetchImprovingWays().then((improvingWay) => {
+      this.store.participants.fetchMembers({ size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+      this.store.participants.fetchRegions();
+      this.store.participants.fetchYears();
+      this.store.me.fetchMe();
+    });
   }
 
   handleSearch(outputFilters: OutputFilters): void {
@@ -302,11 +300,15 @@ export default class ParticipantsListPage extends Vue {
   }
 
   onConsolidateClick() {
-    alert('Здесь происходит магия формирования сводного списка сотрудником РОУ');
+    if (this.currentImprovingWay) {
+      this.store.participants.createSummaryList({ improvingWay: this.currentImprovingWay, financialYear: this.year, regionCode: this.region });
+    }
   }
 
   onConformClick() {
-    this.store.participants.conformMembers({ type: this.currentType, year: this.year });
+    if (this.currentImprovingWay) {
+      this.store.participants.conformMembers({ improvingWay: this.currentImprovingWay, financialYear: this.year, areaCode: this.region });
+    }
   }
 
   onEditClick(id: number) {

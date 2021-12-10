@@ -9,4 +9,5 @@ export interface ParticipantsState {
   searchName: string;
   items: unknown[];
   region: WorkingRegion | null;
+  improvingWays: WorkingRegion[];
 }

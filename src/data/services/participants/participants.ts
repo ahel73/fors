@@ -2,8 +2,8 @@ import httpClient from '@/data/http';
 import { WorkingRegion } from '@/types/WorkingRegion';
 import { FilterParams } from '@/types';
 
-const fetchParticipantsList = async (params: FilterParams, type: string) : Promise<WorkingRegion[]> => {
-  const { data } = await httpClient.post(`/${type}-list-members/find`, { ...params });
+const fetchParticipantsList = async (params: FilterParams) : Promise<WorkingRegion[]> => {
+  const { data } = await httpClient.post('/payout-list-members/find', { ...params });
   return data.data;
 };
 
@@ -24,11 +24,21 @@ const fetchRegions = async (): Promise<WorkingRegion[]> => {
   return data;
 };
 
-const postConformParticipants = async (type: string) : Promise<unknown> => {
-  // const { data } = await httpClient.get('/regions');
+const postImprovingWays = async (): Promise<WorkingRegion[]> => {
+  const { data } = await httpClient.post('/improving-ways/find');
+  return data.data;
+};
 
-  // return data;
-  return true;
+const postConformParticipants = async (params: any) : Promise<unknown> => {
+  const { data } = await httpClient.post('/list-members/actions/agreement', { ...params });
+
+  return data;
+};
+
+const postCreateSummaryParticipants = async (params: any) : Promise<unknown> => {
+  const { data } = await httpClient.post('/summary-list-members', { ...params });
+
+  return data;
 };
 
 const fetchParticipantCard = async (id: string, type: string) : Promise<unknown> => {
@@ -49,4 +59,6 @@ export {
   postConformParticipants,
   fetchParticipantCard,
   putParticipantCard,
+  postImprovingWays,
+  postCreateSummaryParticipants,
 };
