@@ -154,7 +154,8 @@ export default class AccountingBusinessFamilyCard extends Vue {
   }
 
   getControllerData() {
-    this.store.personInfo.fetchIndividualPersonInfoController();
+    const params = { familyMember: true }
+    this.store.personInfo.fetchIndividualPersonInfoController(params);
   }
 
   saveDataFamilyPeople() {

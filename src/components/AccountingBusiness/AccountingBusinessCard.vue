@@ -114,8 +114,8 @@
               v-model="form.registrationDate "
               label="Дата постановки на учет"
               :readonly="isShow"
-              view-format="DD.MM.YYYY HH:MM"
-              output-format="YYYY-MM-DD HH:MM"
+              view-format="DD.MM.YYYY"
+              output-format="YYYY-MM-DD"
             />
           </v-col>
         </v-row>
@@ -231,10 +231,12 @@
           >
             <template #[`item.actions`]="{ item }">
               <div
-                v-if="!isShow"
                 class="d-flex justify-center flex-nowrap"
               >
-                <span class="table-action__wrapper">
+                <span
+                  v-if="!isShow"
+                  class="table-action__wrapper"
+                >
                   <router-link
                     :to="{
                       name: 'editDocument',
@@ -248,12 +250,26 @@
                     </base-action>
                   </router-link>
                 </span>
-                <span class="table-action__wrapper">
+                <span
+                  v-if="!isShow"
+                  class="table-action__wrapper"
+                >
                   <base-action
                     @click="handleDeleteDocument(item)"
                     hint="Удалить"
                   >
                     <delete-icon />
+                  </base-action>
+                </span>
+                <span
+                  v-if="isShow && item.fileUid"
+                  class="table-action__wrapper"
+                >
+                  <base-action
+                    @click="downloadFile(item.fileUid)"
+                    hint="Скачать"
+                  >
+                    <download-icon />
                   </base-action>
                 </span>
               </div>
@@ -378,13 +394,13 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import UploadFileComponent from '../shared/inputs/UploadFileComponent.vue';
 import DataTable from '../shared/table/DataTable.vue';
 import DeleteIcon from '@/components/shared/IconComponent/icons/DeleteIcon.vue';
+import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import EditIcon from '@/components/shared/IconComponent/icons/EditIcon.vue';
 import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import TextComponent from '@/components/shared/Text/Text.vue';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
-import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
@@ -404,6 +420,7 @@ import eventBus from '@/utils/bus/event-bus';
     DataTable,
     DeleteIcon,
     EditIcon,
+    DownloadIcon,
     EyeIcon,
     BaseAction,
     TextComponent,
@@ -433,6 +450,7 @@ export default class AccountingBusinessListCard extends Vue {
   peopleForDelete = {};
   form = {
     changeReason: '',
+    registrationDate: '2011-11-11T11:11:00',
   };
 
   isShow = false;
@@ -514,6 +532,7 @@ export default class AccountingBusinessListCard extends Vue {
     } else {
       this.form = {
         changeReason: '',
+        registrationDate: '2011-11-11T11:11:00',
       };
       if (Object.keys(this.store.deedItem.state.data).length !== 0) {
         this.form = this.store.deedItem.state.data;
@@ -533,6 +552,7 @@ export default class AccountingBusinessListCard extends Vue {
   @Watch('card')
   getDataForm(card: any) {
     this.form = cloneDeep(card);
+    this.individualPersonInfoController.push(this.form.applicant);
   }
 
   async fetchById() {
@@ -576,8 +596,9 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   fetchControllerData() {
+    const params = { deed: false };
     this.store.status.fetchDeedStatusController();
-    this.store.personInfo.fetchIndividualPersonInfoController();
+    this.store.personInfo.fetchIndividualPersonInfoController(params);
     this.store.improvingWay.fetchImprovingWayController();
     this.store.employment.fetchEmploymentController();
     this.store.priority.fetchQueuePriorityController();
@@ -598,6 +619,10 @@ export default class AccountingBusinessListCard extends Vue {
   addNewFamilyPeople() {
     this.store.deedItem.saveStateItem(this.form);
     this.$router.push({ name: 'accountingBusinessFamilyCard' });
+  }
+
+  downloadFile(id: string): void {
+    this.store.fileRepository.downloadFileAction(id);
   }
 
   addNewDocument() {
@@ -646,6 +671,15 @@ export default class AccountingBusinessListCard extends Vue {
           type: 'error',
         }
       );
+    } else if (this.form.improvingWay !== undefined && this.form.improvingWay.id === 1 &&
+    (this.form.spendingDirection === undefined || this.form.employment === undefined)) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Проверьте корректность заполнения полей "Направление расходования средств" и "Сфера занятости"',
+          type: 'error',
+        }
+      );
     } else if (this.form.oktmo === undefined) {
       eventBus.$emit(
         'notification:message',
@@ -666,7 +700,12 @@ export default class AccountingBusinessListCard extends Vue {
           path: '/accountingBusiness',
         });
       } else {
-        updateDeedController(this.$route.params.id, this.form);
+        const data = {
+          ...this.form,
+          id: this.$route.params.id,
+        };
+        console.log(data, 'fff');
+        await this.store.updateItem.fetchUpdateDeedController(data);
         this.$router.replace({
           path: '/accountingBusiness',
         });
@@ -687,6 +726,7 @@ export default class AccountingBusinessListCard extends Vue {
 
   handleDeleteDocumentSuccess() {
     this.store.deedItem.deleteDocument(this.docForDelete);
+    // this.store.fileRepository.deleteFileAction(this.docForDelete.fileUid);
     this.docForDelete = {};
   }
 
@@ -699,12 +739,6 @@ export default class AccountingBusinessListCard extends Vue {
     this.cancelDialog = false;
     this.store.deedItem.clearItem();
     this.$router.push({ name: 'AccountingBusiness' });
-  }
-
-  @Watch('form.improvingWay')
-  checkRequiredField(improvingWay: string) {
-    if (improvingWay.id === '1') {
-    }
   }
 }
 </script>

@@ -29,11 +29,11 @@ export default class IndividualPersonInfoControllerModule {
   }
 
   @Action()
-  async fetchIndividualPersonInfoController(): Promise<void> {
+  async fetchIndividualPersonInfoController(params?: any): Promise<void> {
     this.setPersonInfoControllerIsLoading(true);
     this.setPersonInfoError(null);
     try {
-      const data: any = await getIndividualPersonInfoController();
+      const data: any = await getIndividualPersonInfoController(params);
 
       this.setPersonInfoController(data);
     } catch (error) {

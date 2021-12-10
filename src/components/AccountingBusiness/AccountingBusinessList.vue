@@ -177,7 +177,7 @@ export default class AccountingBusinessList extends Vue {
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
   filter = {
-    name: null,
+    applicantId: null,
     improvingWayId: null,
     employmentId: null,
     queuePriorityId: null,
@@ -422,8 +422,9 @@ export default class AccountingBusinessList extends Vue {
  }
 
  fetchControllerData() {
+   const params = { familyMember: false }
    this.store.status.fetchDeedStatusController();
-   this.store.personInfo.fetchIndividualPersonInfoController();
+   this.store.personInfo.fetchIndividualPersonInfoController(params);
    this.store.improvingWay.fetchImprovingWayController();
    this.store.employment.fetchEmploymentController();
    this.store.priority.fetchQueuePriorityController();
@@ -431,7 +432,7 @@ export default class AccountingBusinessList extends Vue {
 
  handleSearch(outputFilters: OutputFilters): void {
    this.filter = {
-     name: null,
+     applicantId: null,
      improvingWayId: null,
      employmentId: null,
      queuePriorityId: null,
@@ -440,7 +441,7 @@ export default class AccountingBusinessList extends Vue {
    outputFilters.filter(item => {
      const [itemV] = item.value;
      if (item.name === 'name') {
-       this.filter.name = itemV?.text;
+       this.filter.applicantId = itemV?.value;
      } else if (item.name === 'improvingWayId') {
        this.filter.improvingWayId = itemV?.value;
      } else if (item.name === 'employmentId') {
@@ -463,7 +464,7 @@ export default class AccountingBusinessList extends Vue {
  handleReset(): void {
    this.items = [];
    this.filter = {
-     name: null,
+     applicantId: null,
      improvingWayId: null,
      employmentId: null,
      queuePriorityId: null,

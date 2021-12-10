@@ -9,8 +9,8 @@ export const getDeedController = async (params: any = {} as any): Promise<any> =
   return data;
 };
 
-export const updateDeedController = async (id: any, form: any) => {
-  const { data } = await httpClient.put<any>(`/deeds/${id}`, form);
+export const updateDeedController = async (params: any) => {
+  const { data } = await httpClient.put<any>(`/deeds/${params.id}`, params);
   return data;
 };
 

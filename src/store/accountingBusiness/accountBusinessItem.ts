@@ -4,7 +4,6 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { getDeedControllerByID } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
-import { takeWhile } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
 
 export default class DeedControllerItemModule {
@@ -69,16 +68,39 @@ export default class DeedControllerItemModule {
 
   @Mutation()
   editDocument(item: any): void {
+    console.log(item, 'edit');
     if (item.id) {
       this.state.data.documents.filter(value => {
         if (value.id === item.id) {
-          this.state.documentEdit = item;
+          if (item.fileName) {
+            if (item.fileName.length !== 1) {
+              const fileName: any[] = [];
+              fileName.push({ name: item.fileName });
+              item.fileName = fileName;
+              this.state.documentEdit = item;
+            } else {
+              this.state.documentEdit = item;
+            }
+          } else {
+            this.state.documentEdit = item;
+          }
         }
       });
     } else {
       this.state.data.documents.filter(value => {
         if (value.index === item.index) {
-          this.state.documentEdit = item;
+          if (item.fileName) {
+            if (item.fileName.length !== 1) {
+              const fileName: any[] = [];
+              fileName.push({ name: item.fileName });
+              item.fileName = fileName;
+              this.state.documentEdit = item;
+            } else {
+              this.state.documentEdit = item;
+            }
+          } else {
+            this.state.documentEdit = item;
+          }
         }
       });
     }
@@ -103,16 +125,35 @@ export default class DeedControllerItemModule {
 
   @Mutation()
   updateDoc(item: any): void {
+    console.log(item, 'item');
     if (item.id) {
-      this.state.data.documents.find(value => {
+      this.state.data.documents.find((value, i) => {
         if (value.id === item.id) {
-          value = item;
+          if (item.fileName) {
+            if (item.fileName.length !== 1) {
+              this.state.data.documents[i] = item;
+            } else {
+              item.fileName = item.fileName[0].name;
+              this.state.data.documents[i] = item;
+            }
+          } else {
+            this.state.data.documents[i] = item;
+          }
         }
       });
     } else {
-      this.state.data.documents.find(value => {
+      this.state.data.documents.find((value, i) => {
         if (value.index === item.index) {
-          value = item;
+          if (item.fileName) {
+            if (item.fileName.length !== 1) {
+              this.state.data.documents[i] = item;
+            } else {
+              item.fileName = item.fileName[0].name;
+              this.state.data.documents[i] = item;
+            }
+          } else {
+            this.state.data.documents[i] = item;
+          }
         }
       });
     }
@@ -203,6 +244,7 @@ export default class DeedControllerItemModule {
 
   @Action()
   updateDocument(item: any) {
+    console.log(item, 'itemUp');
     this.updateDoc(item);
   }
 

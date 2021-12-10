@@ -43,11 +43,12 @@ export default class UpdateDeedControllerModule {
   }
 
   @Action()
-  async fetchUpdateDeedController(params: any, form: any): Promise<void> {
+  async fetchUpdateDeedController(params: any): Promise<void> {
+    console.log(params, 'hh');
     this.setUpdateDeedControllerIsLoading(true);
     this.setUpdateBudgetsError(null);
     try {
-      const data = await updateDeedController(params, form).then(() => {
+      const data = await updateDeedController(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {

@@ -14,6 +14,9 @@ module.exports = {
       '^/security/api': {
         target: 'https://mgp-dev.fors.ru',
       },
+      '^/file-repository-service': {
+        target: 'https://mgp-dev.fors.ru',
+      },
     },
   },
 };

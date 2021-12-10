@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { Mutation, Action, State } from 'vuex-simple';
+import { Mutation, Action, State, Action } from 'vuex-simple';
 
 import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
 import { FileRepositoryStore } from '@/store/fileRepository/types';
@@ -39,8 +39,13 @@ export default class FileRepositoryModule {
     this.state.data = data;
   }
 
+  @Mutation()
+  clearStore() {
+    this.state.data = null;
+  }
+
   @Action()
-  async uploadFileAction(params: FileRequest): Promise<void> {
+  async uploadFileAction(params: any): Promise<void> {
     this.setFileRepositoryIsLoading(true);
     this.setFileRepositoryError(null);
     try {
@@ -102,5 +107,10 @@ export default class FileRepositoryModule {
     } finally {
       this.setFileRepositoryIsLoading(false);
     }
+  }
+
+  @Action()
+  clearStoreFile() {
+    this.clearStore();
   }
 }

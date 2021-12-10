@@ -66,11 +66,11 @@
     <v-row>
       <v-col cols="2">
         <upload-file-component
-          @onChange="(file) => uploadFile(file, '')"
-          @downloadFile="downloadFile"
-          @deleteFile="(id) => deleteFile(id, '')"
+          @onChange="(file) => uploadFile(file)"
+          @downloadFile="downloadFile(documentEditOrCreate.fileUid)"
+          @deleteFile="(id) => deleteFile(documentEditOrCreate.fileUid)"
           label="Файл"
-          :files-list="documentEditOrCreate.file"
+          :files-list="documentEditOrCreate.fileName"
           prepend-icon="mdi-arrow-collapse-down"
         />
       </v-col>
@@ -111,6 +111,9 @@ import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import eventBus from '@/utils/bus/event-bus';
+import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
+import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
+import { AxiosError } from 'axios';
 
 @Component({
   name: 'accountingBusinessDocumentCard',
@@ -132,6 +135,8 @@ export default class AccountingBusinessDocumentCard extends Vue {
     index: '',
     id: null,
     active: false,
+    fileName: '',
+    fileUid: '',
   };
 
   rules = {
@@ -151,6 +156,15 @@ export default class AccountingBusinessDocumentCard extends Vue {
 
   fetchDocument() {
     this.documentEditOrCreate = this.itemDocument;
+    console.log(this.documentEditOrCreate, 'this.documentEditOrCreate11');
+  }
+
+  fileRepositoryData(): FileRepositoryResponse | MultipleFileResponseData | null {
+    return this.store.fileRepository.state.data;
+  }
+
+  fileRepositoryEror(): AxiosError | null {
+    return this.store.fileRepository.state.error;
   }
 
   get docGroupController() {
@@ -161,24 +175,9 @@ export default class AccountingBusinessDocumentCard extends Vue {
     this.store.docController.fetchDocGroupController();
   }
 
-  uploadFile(files: File[], field: 'file'): void {
-    console.log(files, 'files');
-    if (files.length > 0) {
-      const [file] = files;
-      this.store.fileRepository.uploadFileAction({ file });
-      /* .then(() => {
-            if (!this.fileRepositoryEror) {
-              const { fileName, id } = this.fileRepositoryData as FileRepositoryResponse;
-              const blankFileInfo = {
-                id: null,
-                name: fileName,
-                originalId: id,
-              };
-              this.stateProgramItem[field]?.length
-                ? this.stateProgramItem[field]?.push(blankFileInfo)
-                : Vue.set(this.stateProgramItem, field, [blankFileInfo]);
-            }
-          }); */
+  async uploadFile(file: any): Promise<void> {
+    if (file) {
+      await this.store.fileRepository.uploadFileAction({ file });
     }
   }
 
@@ -186,14 +185,10 @@ export default class AccountingBusinessDocumentCard extends Vue {
     this.store.fileRepository.downloadFileAction(id);
   }
 
-  deleteFile(id: string, field: 'conclusion' | 'implementationPlan'): void {
-    this.store.fileRepository.deleteFileAction(id);
-    /* .then(() => {
-        if (!this.fileRepositoryEror) {
-          const fileList = this.stateProgramItem[field]?.filter(item => item.originalId !== id);
-          Vue.set(this.stateProgramItem, field, fileList);
-        }
-      }); */
+  async deleteFile(id: string): Promise<void> {
+    await this.store.fileRepository.deleteFileAction(id);
+    this.documentEditOrCreate.fileName = '';
+    this.documentEditOrCreate.fileUid = '';
   }
 
   saveDocument() {
@@ -202,7 +197,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
         text: 'Обязательное поле "Наименование" не заполненно',
         type: 'error',
       });
-    } else if (this.documentEditOrCreate.docNum === undefined) {
+    } else if (this.documentEditOrCreate?.docNum === undefined) {
       eventBus.$emit('notification:message', {
         text: 'Обязательное поле "Номер" не заполненно',
         type: 'error',
@@ -213,7 +208,15 @@ export default class AccountingBusinessDocumentCard extends Vue {
         type: 'error',
       });
     } else {
+      const dataFile = this.store.fileRepository.state.data;
+      console.log(dataFile, 'dataFile');
+      if (dataFile) {
+        this.documentEditOrCreate.fileName = dataFile?.fileName;
+        this.documentEditOrCreate.fileUid = dataFile?.id;
+        this.store.fileRepository.clearStoreFile();
+      }
       if (this.documentEditOrCreate.index || this.documentEditOrCreate.id) {
+        console.log(this.documentEditOrCreate, 'this.documentEditOrCreate');
         this.store.deedItem.updateDocument(this.documentEditOrCreate);
       } else {
         this.documentEditOrCreate.index = Math.floor(
@@ -226,6 +229,8 @@ export default class AccountingBusinessDocumentCard extends Vue {
         index: '',
         id: null,
         active: false,
+        fileName: '',
+        fileUid: '',
       };
     }
   }
