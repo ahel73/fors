@@ -41,7 +41,7 @@ const router = new Router({
           },
         ],
       },
-      name: 'ParticipantsListPage',
+      name: 'ParticipantsConsolidatedListPage',
       component: () => import('@/views/ParticipantsConsolidatedListPage.vue'),
       props: true,
     },

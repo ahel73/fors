@@ -10,4 +10,5 @@ export interface Person {
   phone: string;
   email: string;
   region: string;
+  level?: string;
 }

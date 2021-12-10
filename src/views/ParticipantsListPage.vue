@@ -41,7 +41,7 @@
                       v-model="year"
                       variant="micro"
                       label="Финансовый год"
-                      :items="[2021,2022,2023]"
+                      :items="years"
                     />
                   </v-col>
                 </v-row>
@@ -88,6 +88,7 @@
                   </template>
                 </icon-button>
                 <icon-button
+                  v-if="userLevel === 'MSH'"
                   @click.prevent.native="onConsolidateClick()"
                   class="ml-3"
                   type="text"
@@ -97,10 +98,32 @@
               </v-col>
             </v-row>
           </template>
+          <template #[`item.deedWorkEmployerShortNameWithFunc`]="{ item }">
+            {{ getDeedWorkString(item) }}
+          </template>
+          <template #[`item.registrationDate`]="{ item }">
+            {{ getRegistrationDate(item.deedRegistrationDate) }}
+          </template>
+          <template #[`item.actions`]="{ item: { id } }">
+            <div class="d-flex justify-center flex-nowrap">
+              <span class="table-action__wrapper">
+                <base-action
+                  @click="onEditClick(id)"
+                  hint="Смотреть"
+                >
+                  <template #customIcon>
+                    <v-icon>
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                </base-action>
+              </span>
+            </div>
+          </template>
         </data-table>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="userLevel === 'MSH'">
       <button-component
         @click.prevent.native="onConformClick()"
         title="Согласовать"
@@ -109,6 +132,7 @@
         style="margin-right: 15px"
       />
       <button-component
+        v-if="false"
         title="Добавить вакансию"
         size="micro"
         variant="primary"
@@ -133,9 +157,11 @@ import IconButton from '@/components/shared/buttons/IconButton.vue';
 import IconComponent from '@/components/shared/IconComponent/IconComponent.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
+import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import { TableHeaders } from '@/components/shared/table/DataTable.types';
 import { FilterTypes } from '@/components/shared/Filter/types';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
+import eventBus from '@/utils/bus/event-bus';
 
 @Component({
   name: 'ParticipantsList',
@@ -149,6 +175,7 @@ import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
     IconComponent,
     DownloadIcon,
     ButtonComponent,
+    BaseAction,
   },
 })
 
@@ -161,18 +188,27 @@ export default class ParticipantsListPage extends Vue {
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
 
-  year = moment().year();
+  year: number | null = null;
   region = null;
 
   columns: Columns<unknown>[] = [
     { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: false },
-    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'fio', sortable: false },
-    { isDefault: true, text: 'Место работы, должность', value: 'position', sortable: false },
-    { isDefault: true, text: 'Сфера занятости', value: 'workPlace', sortable: false },
-    { isDefault: true, text: 'Направление расходования средств', value: 'spendingDirectionId', sortable: false },
-    { isDefault: true, text: 'Приоритет', value: 'queuePriorityId', sortable: false },
+    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'deedApplicantFullName', sortable: false },
+    { isDefault: true, text: 'Место работы, должность', value: 'deedWorkEmployerShortNameWithFunc', sortable: false },
+    { isDefault: true, text: 'Сфера занятости', value: 'deedEmploymentName', sortable: false },
+    { isDefault: true, text: 'Направление расходования средств', value: 'deedSpendingDirectionName', sortable: false },
+    { isDefault: true, text: 'Приоритет', value: 'deedQueuePriorityName', sortable: false },
     { isDefault: true, text: 'Дата постановки на учёт', value: 'registrationDate', sortable: false },
     { isDefault: true, text: 'Тестовое значение', value: 'budgets', sortable: false },
+    {
+      isDefault: true,
+      value: 'actions',
+      text: 'Действия',
+      sortable: false,
+      isVisible: false,
+      isEditable: false,
+      align: 'center',
+    },
   ]
 
   get filters(): FilterTypes {
@@ -206,21 +242,40 @@ export default class ParticipantsListPage extends Vue {
   }
 
   get processedYear() {
-    return this.year + ' год';
+    if (!this.store.participants.state.financialYear) return '';
+    return this.store.participants.state.financialYear + ' год';
   }
 
   get regions() {
     return this.store.participants.state?.regions;
   }
 
+  get years() {
+    return this.store.participants.state?.financialYears;
+  }
+
   get participants() {
     return this.store.participants.state?.items;
+  }
+
+  get userLevel() {
+    return this.store.me.state?.data?.level || 'default';
+  }
+
+  getDeedWorkString(item: any) {
+    if (!item.deedWorkEmployerShortName || !item.deedWorkFunc) return '';
+    return item.deedWorkEmployerShortName + ', ' + item.deedWorkFunc;
+  }
+
+  getRegistrationDate(item: string) {
+    return moment(item).format('DD.MM.YYYY HH:mm');
   }
 
   mounted() {
     this.store.participants.fetchMembers({ type: this.currentType, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
     this.store.participants.fetchRegions();
-    // this.store.participants.fetchYears();
+    this.store.participants.fetchYears();
+    this.store.me.fetchMe();
   }
 
   handleSearch(outputFilters: OutputFilters): void {
@@ -238,12 +293,12 @@ export default class ParticipantsListPage extends Vue {
   }
 
   onAcceptSearchClick() {
-    console.log(this.region, this.year);
+    this.store.participants.setSearch(this.year, this.region);
   }
 
   onCancelSearchClick() {
     this.region = null;
-    this.year = moment().year();
+    this.year = null;
   }
 
   onConsolidateClick() {
@@ -251,7 +306,11 @@ export default class ParticipantsListPage extends Vue {
   }
 
   onConformClick() {
-    this.store.participants.conformMembers({ type: this.currentType });
+    this.store.participants.conformMembers({ type: this.currentType, year: this.year });
+  }
+
+  onEditClick(id: number) {
+    this.$router.push({ name: 'PayoutParticipantFormPage', params: { id: id.toString() } });
   }
 }
 </script>

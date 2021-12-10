@@ -2,122 +2,135 @@
   <main-layout
     title="Участник списка на социальную выплату"
   >
-    <v-row>
+    <v-row class="mt-4">
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Номер очереди:
-      </v-col>
-      <v-col>
-        <input-component />
+        <input-component
+          :value="participantCard.queueNum"
+          :disabled="true"
+          label="Номер очереди"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        ФИО:
-      </v-col>
-      <v-col>
-        <input-component />
+        <input-component
+          :value="participantCard.deed.applicant.fullName"
+          :disabled="true"
+          label="ФИО"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Место работы:
-      </v-col>
-      <v-col>
-        <input-component />
+        <input-component
+          :value="participantCard.deed.work.employer.shortName"
+          :disabled="true"
+          label="Место работы"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Должность:
-      </v-col>
-      <v-col>
-        <input-component />
+        <input-component
+          :value="participantCard.deed.work.workFunction"
+          :disabled="true"
+          label="Должность"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Дата приёма:
-      </v-col>
-      <v-col>
-        <date-picker />
+        <date-picker
+          :value="participantCard.deed.work.employmentDate"
+          :disabled="true"
+          :readonly="true"
+          output-format="YYYY-MM-DDTHH:mm:SS"
+          view-format="DD.MM.YYYY HH:mm"
+          label="Дата приёма"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Сфера занятости:
-      </v-col>
-      <v-col>
-        <select-component :items="[1, 2, 3]" />
+        <input-component
+          :value="participantCard.deed.employment.name"
+          :disabled="true"
+          label="Сфера занятости"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Направление расходования средств:
-      </v-col>
-      <v-col>
-        <select-component :items="[1, 2, 3]" />
+        <input-component
+          :value="participantCard.deed.spendingDirection.name"
+          :disabled="true"
+          label="Направление расходования средств"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Приоритет:
-      </v-col>
-      <v-col>
-        <select-component :items="[1, 2, 3]" />
+        <input-component
+          :value="participantCard.deed.queuePriority.name"
+          label="Приоритет"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        ОКТМО:
-      </v-col>
-      <v-col>
-        <input-component />
+        <input-component
+          :value="participantCard.deed.oktmo.name"
+          label="ОКТМО"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
         <v-row>
           <v-col cols="3">
-            Кол-во человек:
-          </v-col><v-col>
-            <input-component />
+            <input-component
+              :value="participantCard.personsCount"
+              :disabled="true"
+              label="Кол-во человек"
+            />
           </v-col>
         </v-row>
       </v-col>
       <v-col>
         <v-row>
           <v-col cols="3">
-            Стоимость, 1 кв.м.:
-          </v-col>
-          <v-col>
-            <input-component :disabled="true" />
+            <input-component
+              :value="participantCard.price"
+              :disabled="true"
+              label="Стоимость, 1 кв.м."
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -126,18 +139,21 @@
       <v-col>
         <v-row>
           <v-col cols="3">
-            Площадь, кв.м.:
-          </v-col><v-col>
-            <input-component :disabled="true" />
+            <input-component
+              :value="participantCard.deed.area"
+              :disabled="true"
+              label="Площадь, кв.м."
+            />
           </v-col>
         </v-row>
       </v-col>
       <v-col>
         <v-row>
           <v-col cols="3">
-            Согласована часть средств:
-          </v-col><v-col>
-            <checkbox-component />
+            <checkbox-component
+              :value="participantCard.isPartAgreed"
+              label="Согласована часть средств"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -149,41 +165,57 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col>
+        <v-col cols="3">
           <v-row>
-            <v-col cols="3">
-              Федеральный бюджет:
-            </v-col><v-col>
-              <input-component :disabled="true" />
+            <v-col cols="6">
+              <input-component
+                @change="(value) => changeValue('federalSum', value)"
+                :value="participantCard.federalSum"
+                type="number"
+                :hide-spin-buttons="true"
+                label="Федеральный бюджет"
+              />
             </v-col>
           </v-row>
         </v-col>
-        <v-col>
+        <v-col cols="3">
           <v-row>
-            <v-col cols="3">
-              Региональный бюджет:
-            </v-col><v-col>
-              <input-component />
+            <v-col cols="6">
+              <input-component
+                @change="(value) => changeValue('regionalSum', value)"
+                :value="participantCard.regionalSum"
+                type="number"
+                :hide-spin-buttons="true"
+                label="Региональный бюджет"
+              />
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col>
+        <v-col cols="3">
           <v-row>
-            <v-col cols="3">
-              Местный бюджет:
-            </v-col><v-col>
-              <input-component :disabled="true" />
+            <v-col cols="6">
+              <input-component
+                @change="(value) => changeValue('localSum', value)"
+                :value="participantCard.localSum"
+                type="number"
+                :hide-spin-buttons="true"
+                label="Местный бюджет"
+              />
             </v-col>
           </v-row>
         </v-col>
-        <v-col>
+        <v-col cols="3">
           <v-row>
-            <v-col cols="3">
-              Внебюджетные источники:
-            </v-col><v-col>
-              <input-component />
+            <v-col cols="6">
+              <input-component
+                @change="(value) => changeValue('extrabudgetarySum', value)"
+                :value="participantCard.extrabudgetarySum"
+                type="number"
+                :hide-spin-buttons="true"
+                label="Внебюджетные источники"
+              />
             </v-col>
           </v-row>
         </v-col>
@@ -191,24 +223,29 @@
     </div>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Дата постановки на учёт:
-      </v-col>
-      <v-col>
-        <input-component />
+        <date-picker
+          :value="participantCard.deed.registrationDate"
+          :disabled="true"
+          :readonly="true"
+          output-format="YYYY-MM-DDTHH:mm:SS"
+          view-format="DD.MM.YYYY HH:mm"
+          label="Дата постановки на учёт"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3"
+        cols="6"
         class="row-name"
       >
-        Номер учетного дела:
-      </v-col>
-      <v-col>
-        <input-component :disabled="true" />
+        <input-component
+          :value="participantCard.deed.id"
+          label="Номер учетного дела"
+          :disabled="true"
+        />
       </v-col>
     </v-row>
     <v-row>
@@ -226,12 +263,14 @@
         class="d-flex justify-end"
       >
         <button-component
+          @click="onSaveCardClick()"
           title="Сохранить"
           size="micro"
           variant="primary"
           style="margin-right: 15px"
         />
         <button-component
+          @click="onCancelCardClick()"
           title="Отменить"
           size="micro"
         />
@@ -285,8 +324,34 @@ export default class PayoutParticipantFormPage extends Vue {
     alert('Здесь происходит магия согласования части средств');
   }
 
+  async onSaveCardClick() {
+    if (this.currentId !== 'newCard') {
+      await this.store.participantCard.updateData({ id: this.currentId, type: 'payout' });
+      this.$router.back();
+    }
+  }
+
+  async onCancelCardClick() {
+    this.$router.back();
+  }
+
+  async changeValue(field: string, value: any) {
+    console.log(value);
+    await this.store.participantCard.changeCardValue({ field: field, value: value });
+  }
+
+  get currentId() {
+    return this.$route.params?.id || 'newCard';
+  }
+
+  get participantCard() {
+    return this.store.participantCard.state?.card;
+  }
+
   mounted() {
-    // this.store.participants.fetchRegions();
+    if (this.currentId !== 'newCard') {
+      this.store.participantCard.fetchData({ id: this.currentId, type: 'payout' });
+    }
   }
 }
 </script>
@@ -302,13 +367,13 @@ export default class PayoutParticipantFormPage extends Vue {
   }
 
   .row-name {
-    padding-top: 4px;
+    padding-top: 8px;
   }
 
   .bordered {
     margin: 24px 0;
     padding: 24px 16px;
     border-radius: 16px;
-    border: 1px solid black;
+    border: 1px solid #c1c1c1;
   }
 </style>

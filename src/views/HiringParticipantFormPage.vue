@@ -233,10 +233,6 @@ export default class HiringParticipantFormPage extends Vue {
   get regions() {
     return this.store.participants.state?.regions;
   }
-
-  mounted() {
-    // this.store.participants.fetchRegions();
-  }
 }
 </script>
 

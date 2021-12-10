@@ -46,7 +46,6 @@ export default class ParticipantsConsolidatedModule {
     size?: string;
     sort?: string;
   }) {
-    console.log(name, page, size, sort);
     const filterParams: object = {
       name: name,
       page: page,

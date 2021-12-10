@@ -6,7 +6,7 @@
       <v-col>
         <data-table
           :headers="headers"
-          :items="items"
+          :items="participants"
         >
           <template #[`tabs.after`]>
             <v-row>
@@ -28,6 +28,7 @@
                 <v-row>
                   <v-col cols="8">
                     <select-component
+                      v-model="region"
                       variant="micro"
                       label="Субъект"
                       :items="[1, 2, 3]"
@@ -35,9 +36,10 @@
                   </v-col>
                   <v-col cols="4">
                     <select-component
+                      v-model="year"
                       variant="micro"
                       label="Финансовый год"
-                      :items="[1,2,3]"
+                      :items="[2021,2022,2023]"
                     />
                   </v-col>
                 </v-row>
@@ -105,6 +107,7 @@
         style="margin-right: 15px"
       />
       <button-component
+        v-if="false"
         title="Добавить участника"
         size="micro"
         variant="primary"
@@ -117,6 +120,7 @@
         style="margin-right: 15px"
       />
       <button-component
+        v-if="false"
         title="На доработку"
         size="micro"
         variant="primary"
@@ -147,6 +151,8 @@ import IconComponent from '@/components/shared/IconComponent/IconComponent.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { TableHeaders } from '@/components/shared/table/DataTable.types';
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
+import moment from 'moment';
 
 @Component({
   name: 'ParticipantsList',
@@ -167,6 +173,15 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   store: Store = useStore(this.$store);
   deleteDialog = false
 
+  items: OutputFilters = [];
+  size: string | number = 10;
+  page: string | number = 0;
+  sort: string | undefined = '-id';
+  initialSort: string | undefined = '-id';
+
+  year = moment().year();
+  region = null;
+
   headers: TableHeaders[] = [];
 
   columns: Columns[] = [
@@ -181,18 +196,18 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   ]
 
   get mainLayoutText() {
-    return `Сводный список участников ${this.currentType}`;
+    return `Сводный список участников ${this.processedYear}`;
   }
 
-  get currentType() {
-    return this.$route.query ? this.$route.query.type : 'Тест';
+  get processedYear() {
+    return this.year + ' год';
   }
 
   get regions() {
     return this.store.participants.state?.regions;
   }
 
-  get items() {
+  get participants() {
     return this.store.participantsConsolidated.state?.items;
   }
 
