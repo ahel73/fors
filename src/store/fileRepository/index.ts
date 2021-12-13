@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { Mutation, Action, State, Action } from 'vuex-simple';
+import { Mutation, State, Action } from 'vuex-simple';
 
 import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
 import { FileRepositoryStore } from '@/store/fileRepository/types';

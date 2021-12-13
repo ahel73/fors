@@ -262,7 +262,7 @@
                   </base-action>
                 </span>
                 <span
-                  v-if="isShow && item.fileUid"
+                  v-if="item.fileUid"
                   class="table-action__wrapper"
                 >
                   <base-action
@@ -404,6 +404,9 @@ import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
+import { formatDate } from '@/utils';
+import moment from 'moment';
 
 @Component({
   components: {
@@ -448,10 +451,7 @@ export default class AccountingBusinessListCard extends Vue {
   tab = '';
   docForDelete = {};
   peopleForDelete = {};
-  form = {
-    changeReason: '',
-    registrationDate: '2011-11-11T11:11:00',
-  };
+  form = {} as DeedItemCard;
 
   isShow = false;
   isAdd = false;
@@ -530,10 +530,7 @@ export default class AccountingBusinessListCard extends Vue {
         this.form = this.store.deedItem.state.data;
       }
     } else {
-      this.form = {
-        changeReason: '',
-        registrationDate: '2011-11-11T11:11:00',
-      };
+      this.form = {} as DeedItemCard;
       if (Object.keys(this.store.deedItem.state.data).length !== 0) {
         this.form = this.store.deedItem.state.data;
       }
@@ -568,42 +565,43 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   get individualPersonInfoController() {
-    return this.store.personInfo.state.data;
+    return this.store.directory.state.personInfo;
   }
 
   get improvingWayController() {
-    return this.store.improvingWay.state.data;
+    return this.store.directory.state.improvingWay;
   }
 
   get employmentController() {
-    return this.store.employment.state.data;
+    return this.store.directory.state.employment;
   }
 
   get queuePriorityController() {
-    return this.store.priority.state.data;
+    return this.store.directory.state.priority;
   }
 
   get spendingDirectionController() {
-    return this.store.spendingDirection.state.data;
+    return this.store.directory.state.spendingDirection;
   }
 
   get oktmoController() {
-    return this.store.oktmo.state.data;
+    return this.store.directory.state.oktmo;
   }
 
   get deedStatusController() {
-    return this.store.status.state.data;
+    return this.store.directory.state.deedStatus;
   }
 
   fetchControllerData() {
     const params = { deed: false };
-    this.store.status.fetchDeedStatusController();
-    this.store.personInfo.fetchIndividualPersonInfoController(params);
-    this.store.improvingWay.fetchImprovingWayController();
-    this.store.employment.fetchEmploymentController();
-    this.store.priority.fetchQueuePriorityController();
-    this.store.spendingDirection.fetchSpendingDirectionController();
-    this.store.oktmo.fetchOktmoControllerData();
+    this.store.directory.fetchDeedStatusController();
+    this.store.directory.fetchEmploymentController();
+
+    this.store.directory.fetchIndividualPersonInfoController(params);
+    this.store.directory.fetchImprovingWayController();
+    this.store.directory.fetchQueuePriorityController();
+    this.store.directory.fetchSpendingDirectionController();
+    this.store.directory.fetchOktmoControllerData();
   }
 
   handleOpenfamilyMembers(item: any) {
@@ -655,6 +653,8 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   async saveAllInfo() {
+    // eslint-disable-next-line no-undef
+    this.form.registrationDate = moment(this.form.registrationDate).format('YYYY-MM-DDTHH:mm:ss.SSS').toString();
     if (this.form.applicant === undefined) {
       eventBus.$emit(
         'notification:message',

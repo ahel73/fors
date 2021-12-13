@@ -347,35 +347,35 @@ export default class AccountingBusinessList extends Vue {
  }
 
  get deedStatus() {
-   return this.store.status.state.data.map((item: any) => ({
+   return this.store.directory.state.deedStatus.map((item: any) => ({
      text: item.name,
      value: item.id,
    }));
  }
 
  get individualPersonInfoController() {
-   return this.store.personInfo.state.data.map((item: any) => ({
+   return this.store.directory.state.personInfo.map((item: any) => ({
      text: item.fullName,
      value: item.id,
    }));
  }
 
  get improvingWayController() {
-   return this.store.improvingWay.state.data.map((item: any) => ({
+   return this.store.directory.state.improvingWay.map((item: any) => ({
      text: item.name,
      value: item.id,
    }));
  }
 
  get employmentController() {
-   return this.store.employment.state.data.map((item: any) => ({
+   return this.store.directory.state.employment.map((item: any) => ({
      text: item.name,
      value: item.id,
    }));
  }
 
  get queuePriorityController() {
-   return this.store.priority.state.data.map((item: any) => ({
+   return this.store.directory.state.priority.map((item: any) => ({
      text: item.name,
      value: item.id,
    }));
@@ -422,12 +422,13 @@ export default class AccountingBusinessList extends Vue {
  }
 
  fetchControllerData() {
-   const params = { familyMember: false }
-   this.store.status.fetchDeedStatusController();
-   this.store.personInfo.fetchIndividualPersonInfoController(params);
-   this.store.improvingWay.fetchImprovingWayController();
-   this.store.employment.fetchEmploymentController();
-   this.store.priority.fetchQueuePriorityController();
+   const params = {};
+   this.store.directory.fetchDeedStatusController();
+   this.store.directory.fetchEmploymentController();
+
+   this.store.directory.fetchIndividualPersonInfoController(params);
+   this.store.directory.fetchImprovingWayController();
+   this.store.directory.fetchQueuePriorityController();
  }
 
  handleSearch(outputFilters: OutputFilters): void {
@@ -439,17 +440,17 @@ export default class AccountingBusinessList extends Vue {
      statusId: null,
    };
    outputFilters.filter(item => {
-     const [itemV] = item.value;
+     const [itemValue] = item.value;
      if (item.name === 'name') {
-       this.filter.applicantId = itemV?.value;
+       this.filter.applicantId = itemValue?.value;
      } else if (item.name === 'improvingWayId') {
-       this.filter.improvingWayId = itemV?.value;
+       this.filter.improvingWayId = itemValue?.value;
      } else if (item.name === 'employmentId') {
-       this.filter.employmentId = itemV?.value;
+       this.filter.employmentId = itemValue?.value;
      } else if (item.name === 'queuePriority') {
-       this.filter.queuePriorityId = itemV?.value;
+       this.filter.queuePriorityId = itemValue?.value;
      } else if (item.name === 'statusId') {
-       this.filter.statusId = itemV?.value;
+       this.filter.statusId = itemValue?.value;
      }
    });
 

@@ -115,6 +115,22 @@ import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRe
 import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
 import { AxiosError } from 'axios';
 
+interface Document {
+    index: string,
+    id: number,
+    active: boolean,
+    fileName: string,
+    fileUid: string,
+    name: string,
+    docNum: number,
+    docDate: Date,
+}
+
+interface File {
+  fileName: string,
+  id: string,
+}
+
 @Component({
   name: 'accountingBusinessDocumentCard',
   components: {
@@ -132,12 +148,8 @@ import { AxiosError } from 'axios';
 export default class AccountingBusinessDocumentCard extends Vue {
   store: Store = useStore(this.$store);
   documentEditOrCreate = {
-    index: '',
-    id: null,
     active: false,
-    fileName: '',
-    fileUid: '',
-  };
+  } as Document;
 
   rules = {
     required: (value: any) => !!value || 'Обязательное поле',
@@ -168,11 +180,11 @@ export default class AccountingBusinessDocumentCard extends Vue {
   }
 
   get docGroupController() {
-    return this.store.docController.state.data;
+    return this.store.directory.state.deedDocGroup;
   }
 
   getControllerData() {
-    this.store.docController.fetchDocGroupController();
+    this.store.directory.fetchDocGroupController();
   }
 
   async uploadFile(file: any): Promise<void> {
@@ -209,7 +221,6 @@ export default class AccountingBusinessDocumentCard extends Vue {
       });
     } else {
       const dataFile = this.store.fileRepository.state.data;
-      console.log(dataFile, 'dataFile');
       if (dataFile) {
         this.documentEditOrCreate.fileName = dataFile?.fileName;
         this.documentEditOrCreate.fileUid = dataFile?.id;
@@ -225,13 +236,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
         this.store.deedItem.addDocument(this.documentEditOrCreate);
       }
       this.$router.go(-1);
-      this.documentEditOrCreate = {
-        index: '',
-        id: null,
-        active: false,
-        fileName: '',
-        fileUid: '',
-      };
+      this.documentEditOrCreate = {} as Document;
     }
   }
 

@@ -68,7 +68,7 @@ export interface DeedItemCard {
   improvingWay: Item,
   oktmo: Item,
   queuePriority: Item,
-  registrationDate: string
+  registrationDate: string,
   spendingDirection: Item,
   status: Item,
   subjectId: number
