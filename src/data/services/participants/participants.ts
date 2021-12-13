@@ -8,7 +8,7 @@ const fetchParticipantsList = async (params: FilterParams) : Promise<WorkingRegi
 };
 
 const fetchConsolidatedParticipantsList = async (params: object): Promise<WorkingRegion[]> => {
-  const { data } = await httpClient.post('/hiring-list-members/find', { ...params });
+  const { data } = await httpClient.post('/payout-list-members/find', { ...params });
   return data.data;
 };
 
