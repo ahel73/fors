@@ -15,6 +15,7 @@ export default class DirectoryControllerModule {
     oktmo: [],
     priority: [],
     spendingDirection: [],
+    familyPeopleInFamily: [],
     error: null,
     isLoading: false,
   }
@@ -57,7 +58,6 @@ export default class DirectoryControllerModule {
   @Mutation()
   setPersonInfoController(response: any): void {
     const { data } = response;
-
     this.state.personInfo = data;
   }
 
@@ -198,5 +198,15 @@ export default class DirectoryControllerModule {
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
+  }
+
+  @Mutation()
+  familyMembers(data: any) {
+    this.state.familyPeopleInFamily = data;
+  }
+
+  @Action()
+  findFamilyMembers(data: any) {
+    this.familyMembers(data);
   }
 }

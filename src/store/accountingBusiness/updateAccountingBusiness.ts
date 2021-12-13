@@ -44,7 +44,6 @@ export default class UpdateDeedControllerModule {
 
   @Action()
   async fetchUpdateDeedController(params: any): Promise<void> {
-    console.log(params, 'hh');
     this.setUpdateDeedControllerIsLoading(true);
     this.setUpdateBudgetsError(null);
     try {

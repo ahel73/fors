@@ -371,7 +371,6 @@
             class="datePicker"
             :format="'DD.MM.YYYY'"
             label="Дата постановки на учет"
-            title-format="MMMM YYYY"
           />
         </v-col>
       </template>
@@ -382,16 +381,12 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 
-import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import DialogComponent from '@/components/shared/Dialog/Dialog.vue';
 import InputComponent from '@/components/shared/inputs/InputComponent.vue';
 import PdfView from '@/components/shared/DocumentActions/PdfView/PdfView.vue';
 import AutocompleteComponent from '../shared/inputs/AutocompleteComponent.vue';
-import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import Datepicker from '../shared/Datepicker/Datepicker.vue';
-import CheckboxComponent from '../shared/inputs/CheckboxComponent.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
-import UploadFileComponent from '../shared/inputs/UploadFileComponent.vue';
 import DataTable from '../shared/table/DataTable.vue';
 import DeleteIcon from '@/components/shared/IconComponent/icons/DeleteIcon.vue';
 import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.vue';
@@ -405,21 +400,19 @@ import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
 import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
-import { formatDate } from '@/utils';
 import moment from 'moment';
+import SelectComponent from '../shared/inputs/SelectComponent.vue';
+import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 
 @Component({
   components: {
-    ButtonComponent,
     DialogComponent,
     InputComponent,
     AutocompleteComponent,
     SelectComponent,
     Datepicker,
-    CheckboxComponent,
     MainLayout,
     PdfView,
-    UploadFileComponent,
     DataTable,
     DeleteIcon,
     EditIcon,
@@ -428,6 +421,7 @@ import moment from 'moment';
     BaseAction,
     TextComponent,
     ModalButton,
+    ButtonComponent,
   },
 })
 
@@ -616,6 +610,7 @@ export default class AccountingBusinessListCard extends Vue {
 
   addNewFamilyPeople() {
     this.store.deedItem.saveStateItem(this.form);
+    this.store.directory.findFamilyMembers(this.familyMembers);
     this.$router.push({ name: 'accountingBusinessFamilyCard' });
   }
 
@@ -704,7 +699,6 @@ export default class AccountingBusinessListCard extends Vue {
           ...this.form,
           id: this.$route.params.id,
         };
-        console.log(data, 'fff');
         await this.store.updateItem.fetchUpdateDeedController(data);
         this.$router.replace({
           path: '/accountingBusiness',

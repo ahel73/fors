@@ -9,6 +9,7 @@ export interface DirectoryControllerStore {
   oktmo: [],
   priority: [],
   spendingDirection: [],
+  familyPeopleInFamily: [],
   error: AxiosError | null;
   isLoading: boolean;
 }

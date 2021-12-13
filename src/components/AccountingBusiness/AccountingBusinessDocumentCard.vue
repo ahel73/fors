@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import MainLayout from '@/layouts/MainLayout.vue';
 import AutocompleteComponent from '../shared/inputs/AutocompleteComponent.vue';
 import Datepicker from '../shared/Datepicker/Datepicker.vue';
@@ -168,7 +168,6 @@ export default class AccountingBusinessDocumentCard extends Vue {
 
   fetchDocument() {
     this.documentEditOrCreate = this.itemDocument;
-    console.log(this.documentEditOrCreate, 'this.documentEditOrCreate11');
   }
 
   fileRepositoryData(): FileRepositoryResponse | MultipleFileResponseData | null {
@@ -227,7 +226,6 @@ export default class AccountingBusinessDocumentCard extends Vue {
         this.store.fileRepository.clearStoreFile();
       }
       if (this.documentEditOrCreate.index || this.documentEditOrCreate.id) {
-        console.log(this.documentEditOrCreate, 'this.documentEditOrCreate');
         this.store.deedItem.updateDocument(this.documentEditOrCreate);
       } else {
         this.documentEditOrCreate.index = Math.floor(

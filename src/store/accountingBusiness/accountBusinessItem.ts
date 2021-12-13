@@ -68,7 +68,6 @@ export default class DeedControllerItemModule {
 
   @Mutation()
   editDocument(item: any): void {
-    console.log(item, 'edit');
     if (item.id) {
       this.state.data.documents.filter(value => {
         if (value.id === item.id) {
@@ -125,7 +124,6 @@ export default class DeedControllerItemModule {
 
   @Mutation()
   updateDoc(item: any): void {
-    console.log(item, 'item');
     if (item.id) {
       this.state.data.documents.find((value, i) => {
         if (value.id === item.id) {
@@ -183,7 +181,6 @@ export default class DeedControllerItemModule {
       if (index !== -1) {
         this.state.data.documents.splice(index, 1);
       }
-      console.log(this.state.data.documents, 'del');
     } else {
       const index = this.state.data.documents.findIndex(n => n.index === item.index);
       if (index !== -1) {
@@ -199,7 +196,6 @@ export default class DeedControllerItemModule {
       if (index !== -1) {
         this.state.data.familyMembers.splice(index, 1);
       }
-      console.log(this.state.data.familyMembers, 'del');
     } else {
       const index = this.state.data.familyMembers.findIndex(n => n.index === item.index);
       if (index !== -1) {
@@ -244,7 +240,6 @@ export default class DeedControllerItemModule {
 
   @Action()
   updateDocument(item: any) {
-    console.log(item, 'itemUp');
     this.updateDoc(item);
   }
 

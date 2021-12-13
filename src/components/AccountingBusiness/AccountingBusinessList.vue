@@ -36,7 +36,7 @@
                 :columns="columns"
               />
               <icon-button
-                @click="handleExportMeasuresInXlsx"
+                @click="handleExportDeedInXlsx"
                 type="text"
                 text="Экспорт списка"
                 class="ml-4"
@@ -49,7 +49,6 @@
                 }"
               >
                 <icon-button
-                  @click="handleOpenAdd"
                   class="ml-3"
                   type="text"
                   icon="mdi-plus-circle"
@@ -69,7 +68,7 @@
                 }"
               >
                 <base-action
-                  @click="handleOpenMeasure(item.id)"
+                  @click="handleOpenDeedItem(item.id)"
                   hint="Редактировать"
                 >
                   <edit-icon />
@@ -124,8 +123,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import ButtonComponent from '../shared/buttons/DefaultButton.vue';
+import { Component, Vue } from 'vue-property-decorator';
+import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import IconButton from '../shared/buttons/IconButton.vue';
 import FilterComponent from '../shared/Filter/Filter.vue';
 import InputComponent from '../shared/inputs/InputComponent.vue';
@@ -146,8 +145,6 @@ import { OutputFilters } from '../shared/Filter/FilterTypes/types';
 import { Pagination } from '@/types/Pagination';
 import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
-import { isEmpty } from 'lodash';
-import { SelectItem } from '../shared/inputs/SelectComponent.vue';
 
 @Component({
   name: 'accountingBusinessList',
@@ -202,7 +199,6 @@ export default class AccountingBusinessList extends Vue {
         {
           name: 'improvingWayId',
           label: 'Способ улучшения ЖУ',
-          // defaultValue: this.programIds,
           items: this.improvingWayController,
           isDefault: true,
           showCode: true,
@@ -459,7 +455,6 @@ export default class AccountingBusinessList extends Vue {
 
  saveColumns(): void {
    const data = { columns: this.columns, sort: this.sort, items: this.items };
-   // saveRegistrySettings({ data: data, registry: RegistryType.PROGRAMS });
  }
 
  handleReset(): void {
@@ -473,16 +468,9 @@ export default class AccountingBusinessList extends Vue {
    };
  }
 
- handleResetSearch() {
-   console.log('handleResetSearch');
- }
-
  async handleOpenView(id: any) {
-   // await this.store.deedItem.fetchDeedControllerItem(id);
+   await this.store.deedItem.fetchDeedControllerItem(id);
  }
-
- // eslint-disable-next-line @typescript-eslint/no-empty-function
- handleOpenAdd() {}
 
  handleDeleteDeed(deedDeleteId: number) {
    this.deedDeleteId = deedDeleteId;
@@ -497,12 +485,12 @@ export default class AccountingBusinessList extends Vue {
    }
  }
 
- async handleOpenMeasure(id: string) {
+ async handleOpenDeedItem(id: string) {
    await this.store.deedItem.fetchDeedControllerItem(id);
  }
 
- handleExportMeasuresInXlsx() {
-   console.log('handleExportMeasuresInXlsx');
+ handleExportDeedInXlsx() {
+   // ToDo handleExportDeedInXlsx
  }
 }
 </script>

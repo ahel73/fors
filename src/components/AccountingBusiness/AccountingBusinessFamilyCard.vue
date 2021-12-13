@@ -4,7 +4,7 @@
       <v-col cols="12">
         <autocomplete-component
           v-model="itemPeople.individualPerson"
-          :items="individualPersonInfoController"
+          :items="peopleNotFamily"
           label="Фамилия Имя Отчество"
           item-text="fullName"
           return-object
@@ -126,6 +126,8 @@ export default class AccountingBusinessFamilyCard extends Vue {
     id: null,
   };
 
+  peopleNotFamily = [];
+
   isEditable = true;
   itemPeople: any | object = {
   };
@@ -136,6 +138,7 @@ export default class AccountingBusinessFamilyCard extends Vue {
 
   mounted() {
     this.getControllerData();
+    this.getPeopleNotFamily();
     if (this.$route.name === 'editFamilyCard') {
       this.getPeopleData();
     }
@@ -151,6 +154,23 @@ export default class AccountingBusinessFamilyCard extends Vue {
 
   get individualPersonInfoController() {
     return this.store.directory.state.personInfo;
+  }
+
+  get peopleInFamily() {
+    return this.store.directory.state.familyPeopleInFamily;
+  }
+
+  getPeopleNotFamily() {
+    this.peopleNotFamily = [];
+    this.individualPersonInfoController.filter((item, i) => {
+      if (this.peopleInFamily) {
+        if (item.id !== this.peopleInFamily[i]?.personInfo?.id) {
+          this.peopleNotFamily.push(item);
+        }
+      } else {
+        this.peopleNotFamily = this.individualPersonInfoController;
+      }
+    });
   }
 
   getControllerData() {
