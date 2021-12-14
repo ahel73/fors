@@ -1,9 +1,37 @@
 <template>
   <main-layout title="Новый работодатель">
     <div class="form-add-new-work-action">
+      <!-- Тип -->
       <v-row>
         <v-col cols="4">
           <span class="required-field">
+            Тип:
+          </span>
+        </v-col>
+        <v-col cols="6">
+          <autocomplete-component
+            :items="typeEmployer"
+            :label="'Тип'"
+            :required="true"
+            :error="requiredField.type"
+          >
+            <template #selection="data">
+              {{ data.item.name }}
+            </template>
+            <template #item="{item}">
+              <v-list-item-content
+                @click="updatePropsSpech(item, 'type', 'newEmployer')"
+              >
+                {{ item.name }}
+              </v-list-item-content>
+            </template>
+          </autocomplete-component>
+        </v-col>
+      </v-row>
+      <!-- Наименование -->
+      <v-row>
+        <v-col cols="4">
+          <span>
             Наименование:
           </span>
         </v-col>
@@ -14,37 +42,49 @@
           />
         </v-col>
       </v-row>
+      <!-- Краткое наимнование -->
       <v-row>
         <v-col cols="4">
           <span class="required-field">
-            Тип:
+            Краткое наимнование:
           </span>
         </v-col>
-        <v-col cols="6">
-          <autocomplete-component
-            :items="['ИП', 'ООО', 'ГУ', 'МУП', 'ОАО',]"
-          >
-            <template #selection="data">
-              {{ data.item }}
-            </template>
-            <template #item="{item}">
-              <v-list-item-content
-                @click="updatePropsSpech(item, 'type', 'newEmployer')"
-              >
-                {{ item }}
-              </v-list-item-content>
-            </template>
-          </autocomplete-component>
+        <v-col cols="8">
+          <input-component
+            @input="updateProps('shortName', 'newEmployer')"
+            :value="newEmployer.shortName"
+            :label="'Краткое наимнование'"
+            :is-error="requiredField.shortName"
+            :required="true"
+          />
         </v-col>
       </v-row>
+      <!-- ИНН -->
+      <v-row>
+        <v-col cols="4">
+          <span class="required-field">
+            ИНН:
+          </span>
+        </v-col>
+        <v-col cols="8">
+          <input-component
+            @input="updateProps('inn', 'newEmployer')"
+            :value="newEmployer.inn"
+            :label="'ИНН'"
+            :is-error="requiredField.inn"
+            :required="true"
+          />
+        </v-col>
+      </v-row>
+      <!-- Регистрационный номер в ПФР -->
       <v-row>
         <v-col cols="4">
           Регистрационный номер в ПФР:
         </v-col>
         <v-col cols="6">
           <input-component
-            @input="updateProps('pfrRegNum', 'newEmployer')"
-            :value="newEmployer.pfrRegNum"
+            @input="updateProps('pfrRegistrationNumber', 'newEmployer')"
+            :value="newEmployer.pfrRegistrationNumber"
           />
         </v-col>
       </v-row>
@@ -54,7 +94,7 @@
         </v-col>
         <v-col cols="8">
           <checkbox-component
-            @change="updatePropsSpech( !newIdentityDoc.active, 'active', 'newIdentityDoc')"
+            @change="updatePropsSpech( !newEmployer.active, 'active', 'newEmployer')"
             :value="newEmployer.active"
           />
         </v-col>
@@ -65,12 +105,18 @@
           cols="auto"
         >
           <button-component
-            @click="saveObj(
-              ['name', 'type'],
-              newEmployer,
-              'listEmployers',
-              'FormAddNewWorkerActivity',
-            )"
+            @click="
+              flagError=verificationObject(newEmployer, requiredField);
+              if (!flagError) {
+                dispatchObject(newEmployer, '/employers/')
+                clearObj(
+                  { active: true },
+                  newEmployer,
+                  'newEmployer',
+                  'FormAddNewWorkerActivity',
+                )
+              }
+            "
             size="micro"
             title="Сохранить"
             variant="primary"
@@ -106,6 +152,8 @@ import InputComponent from '@/components/shared/inputs/InputComponent.vue';
 import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue';
 import AutocompleteComponent from '@/components/shared/inputs/AutocompleteComponent.vue';
 import Datepicker from '@/components/shared/Datepicker/Datepicker.vue';
+import httpClient from '@/data/http';
+import { query } from '@/utils';
 
 @Component({
   name: 'FormAddNewEmployer',
@@ -123,12 +171,37 @@ export default class FormAddNewEmployer extends Vue {
   store: Store = useStore(this.$store);
   myStore = this.store.peopleInNeety;
   newEmployer = this.myStore.state.newEmployer;
+  typeEmployer = [];
+  requiredField = {
+    type: false,
+    shortName: false,
+    inn: false,
+  };
+
+  flagError = false;
 
   updateProps = methods.updateProps.bind(this);
   updatePropsSpech = methods.updatePropsSpech.bind(this);
   push = methods.push
   saveObj = methods.saveObj
   clearObj = methods.clearObj
+  dispatchObject = methods.dispatchObject.bind(this);
+  verificationObject = methods.verificationObject.bind(this);
+
+  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
+    const { page = 0, sort = '-id', size } = params;
+    const queryParams = query({ ...params, page, sort, size });
+    const { data } = await httpClient.get<any>(queryString);
+    return data;
+  }
+
+  created() {
+    this.getGroop('/employer-types/')
+      .then(user => {
+        console.log(user);
+        this.typeEmployer = user;
+      });
+  }
 }
 </script>
 

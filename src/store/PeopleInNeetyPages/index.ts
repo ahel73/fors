@@ -18,49 +18,53 @@ export default class PeopleInNeetyModule {
 
     // массив с нуждающимися лицами
     listPeopleInNeety: [],
-    listEmployers: [],
     newPersonNeedy: {
-      surname: '',
-      name: '',
-      patronymic: '',
-      birthDate: '',
-      sex: '',
-      residence: '',
-      location: '',
-      registrationDate: '',
-      areaCode: '',
+      surname: null,
+      name: null,
+      patronymic: null,
+      birthDate: null,
+      sex: null,
+      residence: null,
+      location: null,
+      registrationDate: null,
+      areaCode: null,
       identityDoc: null,
-      snils: '',
-      inn: '',
-      ogrnip: '',
-      phoneNumber: '',
-      email: '',
+      snils: null,
+      inn: null,
+      ogrnip: null,
+      phoneNumber: null,
+      email: null,
       status: { id: 1, name: 'Черновик', active: true },
       works: [],
     },
     updatePersonNeedy: null,
     newIdentityDoc: {
-      seriesNum: '',
-      issueDate: '',
+      seriesNumber: null,
+      issueDate: null,
       authority: '',
       type: null,
       active: true,
     },
     newEmployer: {
-      name: '',
-      type: '',
-      pfrRegNum: '',
+      name: null,
+      shortName: null,
+      type: null,
+      inn: null,
+      pfrRegistrationNumber: null,
       active: true,
     },
     newWorkerAction: {
-      workFunction: '',
-      employmentDate: '',
-      dismissalDate: '',
-      dismissalReason: '',
+      workFunction: null,
+      employmentDate: null,
+      dismissalDate: null,
+      dismissalReason: null,
       employer: null,
       pfr: true,
-      baseDoc: '',
+      baseDoc: null,
     },
+    flagTabWorker: 0, // Кастыль для переключения на таб трудовой деятельности при создании трудовой деятельности новой
+    flagUpdateItem: false, // Ставится в истину при редактировании сущности
+    flagViewing: false, // В истину при просмотре
   }
 
   // Обновляем свойства вложенного объекта
@@ -81,23 +85,33 @@ export default class PeopleInNeetyModule {
   // Добавляем граждан в массив для вывода в табличном виде
   @Mutation()
   updatelistPeopleInNeety(array: PersonNeedy[] | []) {
+    console.log(array);
     this.state.listPeopleInNeety = array;
   }
 
-  // Добавляем гражданина для просмотра в карточном виде
+  // Добавляем и удаляем гражданина для просмотра в карточном виде
   @Mutation()
   viewing(item) {
     this.state.updatePersonNeedy = item;
+    this.state.flagViewing = true;
   }
 
-  // Добавляем какие либо объекты в массивы, например трудовая деятельность
+  @Mutation()
+  exitViewing() {
+    this.state.updatePersonNeedy = null;
+    this.state.flagViewing = false;
+  }
+
+  // Добавляем какие либо объекты в массивы или в свойства, например трудовая деятельность
   @Mutation()
   saveObj({ objDoc, nameList } : SaveObj) {
     console.log(nameList);
+    console.log(this.state);
+    const targetObject = this.state.flagUpdateItem ? this.state.updatePersonNeedy : this.state.newPersonNeedy;
     if (nameList === 'identityDocs') {
-      this.state.newPersonNeedy.identityDoc = objDoc;
+      targetObject.identityDoc = objDoc;
     } else if (nameList === 'work') {
-      this.state.newPersonNeedy.works?.push(objDoc);
+      targetObject.works.push(objDoc);
     } else {
       this.state[nameList].push(objDoc);
     }
@@ -106,5 +120,27 @@ export default class PeopleInNeetyModule {
   @Mutation()
   clearObj({ verifyObj, nameObjState }: any) {
     this.state[nameObjState] = verifyObj;
+  }
+
+  @Mutation()
+  activTabWorker() {
+    this.state.flagTabWorker = 1;
+  }
+
+  @Mutation()
+  noActivTabWorker() {
+    this.state.flagTabWorker = 0;
+  }
+
+  // активируем и деактивируем режим редактирования
+  @Mutation()
+  activeUpdateItem(item) {
+    this.state.flagUpdateItem = true;
+    this.state.updatePersonNeedy = item;
+  }
+
+  offUpdateItem() {
+    this.state.flagUpdateItem = false;
+    this.state.updatePersonNeedy = null;
   }
 }

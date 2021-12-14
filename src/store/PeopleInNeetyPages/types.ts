@@ -9,17 +9,17 @@ export interface TypeDoc {
   active: string | boolean,
 }
 export interface IdentityDoc {
-  id?: string | number,
-  individualPersonId?: string | number,
-  seriesNum?: string | number,
-  issueDate: string,
-  authority: string,
+  id?: string | number | null,
+  individualPersonId?: string | number | null,
+  seriesNumber?: string | number | null,
+  issueDate: string | null,
+  authority: string | null,
   type: TypeDoc | null,
   createUser?: null | string,
-  createDate?: string,
+  createDate?: string | null,
   changeUser?: null | string,
   changeDate?: null | string,
-  active: string | boolean,
+  active: string | boolean | null,
 }
 
 interface StatusPerson {
@@ -30,32 +30,34 @@ interface StatusPerson {
 
 export interface Employer {
   id?: string | number,
-  name: string,
-  type: string,
-  pfrRegNum: string,
-  subjectId?: string | number,
+  name: string | null,
+  shortName: string | null,
+  type: any | null,
+  pfrRegistrationNumber: string | null,
+  subjectId?: string | number | null,
+  inn: string | null,
   createUser?: string | number | null,
   createDate?: string,
   changeUser?: string | number | null,
   changeDate?: string | number | null,
-  active: string | boolean,
+  active: string | boolean | null,
 }
 
 interface WorkerAction {
-  id?: string | number,
-  individualPersonId?: string | number,
-  workFunction: string,
-  employmentDate: string,
-  dismissalDate: string,
-  dismissalReason: string,
-  baseDoc?: string,
+  id?: string | number | null,
+  individualPersonId?: string | number | null,
+  workFunction: string | null,
+  employmentDate: string | null,
+  dismissalDate: string | null,
+  dismissalReason: string | null,
+  baseDoc: string | null,
   createUser?: string | boolean | null,
-  createDate?: string,
+  createDate?: string | null,
   changeUser?: string | boolean | null,
   changeDate?: string | boolean | null,
   checkDate?: string
   checkUser?: string | null,
-  pfr: string | boolean,
+  pfr: string | boolean | null,
   employer: { id?: string | number, shortName: string } | null
 }
 
@@ -65,17 +67,17 @@ export interface PersonNeedy {
   name: string | null,
   patronymic: string | null,
   birthDate: string | null,
-  sex?: string | null, // временно необязательный
+  sex: string | null,
   residence: string | null,
-  location?: string | null, // временно необязательный
-  registrationDate?: string | null, // временно необязательный
-  areaCode?: string | null, // временно необязательный + его нет в структуре от Александра
-  snils?: string | null, // временно необязательный
-  inn?: string | null, // временно необязательный
-  ogrnip?: string, // временно необязательный
-  phoneNumber?: string, // временно необязательный
-  email?: string | null, // временно необязательный
-  status?: StatusPerson | null, // временно необязательный
+  location: string | null,
+  registrationDate: string | null,
+  areaCode: string | null,
+  snils: string | null,
+  inn: string | null,
+  ogrnip: string | null,
+  phoneNumber: string | null,
+  email: string | null,
+  status: StatusPerson | null,
   lkFlId?: string | number | null,
   areacode?: string | number | null,
   createUser?: string | number | null,
@@ -83,7 +85,7 @@ export interface PersonNeedy {
   changeUser?: string | number | null,
   changeDate?: string | null,
   identityDoc?: IdentityDoc | null, // временно необязательный
-  works?: WorkerAction[] | [] // временно необязательный
+  works: WorkerAction[] | [] // временно необязательный
 }
 export interface UpdatePropsObject {
   name: string | number,
@@ -98,10 +100,12 @@ export interface SaveObj {
 export interface DataPeopleInNeety {
   headerTablePeopleInNeety: HeaderTablePeopleInNeety[] | [],
   listPeopleInNeety: PersonNeedy[] | [],
-  listEmployers: Employer[] | [],
   newPersonNeedy: PersonNeedy,
   updatePersonNeedy: any,
   newIdentityDoc: IdentityDoc,
   newEmployer: Employer,
   newWorkerAction?: WorkerAction,
+  flagTabWorker: number,
+  flagUpdateItem: boolean,
+  flagViewing: boolean,
 }

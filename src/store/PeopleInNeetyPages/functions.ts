@@ -1,3 +1,6 @@
+import httpClient from '@/data/http';
+import { query } from '@/utils';
+
 export const methods = {
   updateProps(name: string | number, object: string) :void {
     const value: string = event.target.value;
@@ -13,34 +16,27 @@ export const methods = {
     this.$router.push({ name: namePath });
   },
 
-  // Записываем созданный объект в массив для вывода,  проверяеи оббязательные поля
+  // Записываем созданный объект в массив для вывода
   saveObj(
-    requiredFields = [], // имена полей объекта которые должны быть заполнены
     verifyObj: any, // Объект который добавляем в массив
     nameList: string, // Имя массива в который добавляем
-    nameView = 'FormAddNewPeopleInNeety' // Имя страницы на которую необходимо перейти после добавления
+    nameView: string // Имя страницы на которую необходимо перейти после добавления
   ) {
-    const newDoc = verifyObj;
-    for (const a in newDoc) {
-      if (requiredFields.includes(a) && !newDoc[a]) {
-        alert('Заполните обязательные поля');
-        return;
-      }
-    }
-    console.log(nameList);
     this.store.peopleInNeety.saveObj({
-      objDoc: JSON.parse(JSON.stringify(newDoc)),
+      objDoc: JSON.parse(JSON.stringify(verifyObj)),
       nameList: nameList,
     });
-    this.push(nameView);
+
+    if (nameView) {
+      this.push(nameView);
+    }
   },
 
   clearObj(
     objType: any, // Объект свойства которого идентичны свойствам проеверяемого объекта а их значения типам которые должны иметь данные свойства
     verifyObj: any, // ссылка на очищаемый объект
-    nameObjState = 'newIdentityDoc', // строка с именем объекта которому надо присвоить в качестве значения очищенный объект
+    nameObjState: string, // строка с именем объекта которому надо присвоить в качестве значения очищенный объект
     nameView = 'FormAddNewPeopleInNeety' // Имя страницы на которую необходимо перейти после добавления объекта
-    // (Значения по умолчанию используется что бы не испортить старый код)
 
   ) {
     verifyObj = JSON.parse(JSON.stringify(verifyObj));
@@ -48,24 +44,53 @@ export const methods = {
       if (a in objType) {
         verifyObj[a] = objType[a];
       } else {
-        verifyObj[a] = '';
+        verifyObj[a] = null;
       }
     }
     console.log('очищенный объект', verifyObj);
     console.log('куда переходим', nameObjState);
     this.store.peopleInNeety.clearObj({ verifyObj, nameObjState });
-    this.push(nameView);
+    if (nameView) {
+      this.push(nameView);
+    }
   },
 
   // Уходим со страницы на нужную страницу при необходимости очищаем обьект первого уровня
   exitReview(nameViews = '', name = '', value = null) {
-    console.log(nameViews + ' ' + name);
-    console.log(this.$router);
+    // console.log(nameViews + ' ' + name);
+    // console.log(this.$router);
     if (name) {
       this.store.peopleInNeety.updateProp({ name, value });
     }
     if (nameViews) {
       this.push(nameViews);
     }
+  },
+
+  // Отправляет объект на добавление
+  dispatchObject: async (dataObj = {}, endPoint: string): any => {
+    const { data } = await httpClient.post<any>(endPoint, dataObj);
+    console.log(data);
+    return false;
+  },
+
+  // Отправляет объект на обновление
+  dispatchUpdateObject: async (dataObj = {}, endPoint: string) : any => {
+    const response = await httpClient.put<any>(endPoint + '' + dataObj.id, dataObj);
+    console.log(response);
+    return response;
+  },
+
+  // Проверка на заполненость обязательных полей
+  verificationObject(dataObj = {}, requiredFields = {}) {
+    let flagError = false;
+    for (const a in requiredFields) {
+      if (dataObj[a] === null) {
+        console.log(a);
+        requiredFields[a] = true;
+        flagError = true;
+      }
+    }
+    return flagError;
   },
 };

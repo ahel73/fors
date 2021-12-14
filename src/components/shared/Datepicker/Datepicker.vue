@@ -9,7 +9,7 @@
       offset-y
       ref="menu"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <div
           v-on="!readonly && on"
           v-bind="!readonly && attrs"
@@ -25,6 +25,7 @@
             color="#d19b3f"
             variant="micro"
             clearable
+            :is-error="error"
           >
             <template #append>
               <icon-component icon-color="transparent">
@@ -95,6 +96,8 @@ export default class Datepicker extends Vue {
   @Prop(Boolean) readonly isRequired!: boolean;
   @Prop(Number) readonly startingYear!: number;
   @Prop(Boolean) readonly hideDetails!: boolean;
+
+  @Prop({ type: Boolean, default: false }) readonly error!: boolean;
 
   isDialogOpened = false;
 
