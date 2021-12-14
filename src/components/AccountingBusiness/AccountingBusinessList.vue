@@ -436,7 +436,7 @@ export default class AccountingBusinessList extends Vue {
      statusId: null,
    };
    outputFilters.filter(item => {
-     const [itemValue] = item.value;
+     const [itemValue]: any = item.value;
      if (item.name === 'name') {
        this.filter.applicantId = itemValue?.value;
      } else if (item.name === 'improvingWayId') {

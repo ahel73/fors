@@ -40,7 +40,7 @@ export default class DeedControllerModule {
 
       this.setDeedController(data);
     } catch (error) {
-      this.setBudgetsError(error);
+      this.setBudgetsError(error as AxiosError);
     } finally {
       this.setDeedControllerIsLoading(false);
     }

@@ -60,7 +60,7 @@ export default class RecordAccountingModule {
 
       this.setRecordAccounting(data);
     } catch (error) {
-      this.setRecordAccountingError(error);
+      this.setRecordAccountingError(error as AxiosError);
     } finally {
       this.setRecordAccountingIsLoading(false);
     }

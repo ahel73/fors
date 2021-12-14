@@ -60,7 +60,7 @@ export default class UpdateDeedControllerModule {
 
       this.setUpdateDeedController(data);
     } catch (error) {
-      this.setUpdateBudgetsError(error);
+      this.setUpdateBudgetsError(error as AxiosError);
     } finally {
       this.setUpdateDeedControllerIsLoading(false);
     }

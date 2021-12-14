@@ -221,8 +221,9 @@ export default class AccountingBusinessDocumentCard extends Vue {
     } else {
       const dataFile = this.store.fileRepository.state.data;
       if (dataFile) {
-        this.documentEditOrCreate.fileName = dataFile?.fileName;
-        this.documentEditOrCreate.fileUid = dataFile?.id;
+        const file: any = dataFile;
+        this.documentEditOrCreate.fileName = file?.fileName;
+        this.documentEditOrCreate.fileUid = file?.id;
         this.store.fileRepository.clearStoreFile();
       }
       if (this.documentEditOrCreate.index || this.documentEditOrCreate.id) {

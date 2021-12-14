@@ -89,7 +89,7 @@ export default class DirectoryControllerModule {
 
       this.setDirectionController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -104,7 +104,7 @@ export default class DirectoryControllerModule {
 
       this.setPriorityController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -119,7 +119,7 @@ export default class DirectoryControllerModule {
 
       this.setOktmoController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -134,7 +134,7 @@ export default class DirectoryControllerModule {
 
       this.setPersonInfoController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -149,7 +149,7 @@ export default class DirectoryControllerModule {
 
       this.setImprovingWayController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -164,7 +164,7 @@ export default class DirectoryControllerModule {
 
       this.setStatusController(deedStatus);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -179,7 +179,7 @@ export default class DirectoryControllerModule {
 
       this.setDocGroupController(docGroup);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }
@@ -194,7 +194,7 @@ export default class DirectoryControllerModule {
 
       this.setEmploymentController(data);
     } catch (error) {
-      this.setDirectoryControllerError(error);
+      this.setDirectoryControllerError(error as AxiosError);
     } finally {
       this.setDirectoryControllerIsLoading(false);
     }

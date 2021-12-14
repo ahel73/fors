@@ -513,7 +513,6 @@ export default class AccountingBusinessListCard extends Vue {
   ];
 
   async created() {
-    this.fetchControllerData();
     if (this.$route.params.type === 'show') {
       this.isShow = true;
     }
@@ -530,6 +529,7 @@ export default class AccountingBusinessListCard extends Vue {
       }
       this.isAdd = true;
     }
+    this.fetchControllerData();
   }
 
   get card() {
@@ -543,7 +543,12 @@ export default class AccountingBusinessListCard extends Vue {
   @Watch('card')
   getDataForm(card: any) {
     this.form = cloneDeep(card);
-    this.individualPersonInfoController.push(this.form.applicant);
+    const params = {
+      deed: false,
+      listForUpdating: true,
+      id: +this.form.applicant?.id,
+    };
+    this.store.directory.fetchIndividualPersonInfoController(params);
   }
 
   async fetchById() {
@@ -587,11 +592,15 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   fetchControllerData() {
-    const params = { deed: false };
+    const params = {
+      deed: false,
+      listForUpdating: true,
+      id: +this.form.applicant?.id,
+    };
+    this.store.directory.fetchIndividualPersonInfoController(params);
     this.store.directory.fetchDeedStatusController();
     this.store.directory.fetchEmploymentController();
 
-    this.store.directory.fetchIndividualPersonInfoController(params);
     this.store.directory.fetchImprovingWayController();
     this.store.directory.fetchQueuePriorityController();
     this.store.directory.fetchSpendingDirectionController();

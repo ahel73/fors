@@ -60,7 +60,7 @@ export default class UndoRecordAccountingModule {
 
       this.setUndoRecordAccounting(data);
     } catch (error) {
-      this.setUndoRecordAccountingError(error);
+      this.setUndoRecordAccountingError(error as AxiosError);
     } finally {
       this.setUndoRecordAccountingIsLoading(false);
     }
