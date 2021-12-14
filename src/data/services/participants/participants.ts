@@ -1,9 +1,12 @@
 import httpClient from '@/data/http';
 import { WorkingRegion } from '@/types/WorkingRegion';
 import { FilterParams } from '@/types';
+import { query } from '@/utils';
 
 const fetchParticipantsList = async (params: FilterParams) : Promise<WorkingRegion[]> => {
-  const { data } = await httpClient.post('/payout-list-members/find', { ...params });
+  const { page = 0, sort = '-id', size, ...payload } = params;
+  const queryParams = query({ page, sort, size });
+  const { data } = await httpClient.post(`/payout-list-members/find?${queryParams}`, { ...payload });
   return data.data;
 };
 

@@ -176,7 +176,7 @@ export default class InputComponent extends Vue {
     }
 
     &.v-input--is-disabled .v-input__slot {
-      background-color: $secondary;
+      background-color: $secondary !important;
       //border: 1px solid $secondary;
     }
 

@@ -31,7 +31,7 @@
                       v-model="region"
                       variant="micro"
                       label="Субъект"
-                      :items="[1, 2, 3]"
+                      :items="regions"
                     />
                   </v-col>
                   <v-col cols="4">
@@ -39,7 +39,7 @@
                       v-model="year"
                       variant="micro"
                       label="Финансовый год"
-                      :items="[2021,2022,2023]"
+                      :items="years"
                     />
                   </v-col>
                 </v-row>
@@ -179,7 +179,7 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
 
-  year = moment().year();
+  year = null;
   region = null;
 
   headers: TableHeaders[] = [];
@@ -200,6 +200,7 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   }
 
   get processedYear() {
+    if (!this.year) return '';
     return this.year + ' год';
   }
 
@@ -207,13 +208,21 @@ export default class ParticipantsConsolidatedListPage extends Vue {
     return this.store.participants.state?.regions;
   }
 
+  get years() {
+    return this.store.participants.state?.financialYears;
+  }
+
   get participants() {
     return this.store.participantsConsolidated.state?.items;
   }
 
   mounted() {
-    // this.store.participants.fetchRegions();
-    this.store.participantsConsolidated.fetchItems({});
+    this.store.participants.fetchImprovingWays().then((improvingWay) => {
+      this.store.participantsConsolidated.fetchItems({});
+      this.store.participants.fetchRegions();
+      this.store.participants.fetchYears();
+      this.store.me.fetchMe();
+    });
   }
 }
 </script>

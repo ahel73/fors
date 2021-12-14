@@ -13,6 +13,8 @@ import {
 } from '@/types';
 import { ParticipantsState } from './types';
 import eventBus from '@/utils/bus/event-bus';
+import { AxiosError } from 'axios';
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 
 export default class ParticipantsModule {
   @State()
@@ -81,18 +83,20 @@ export default class ParticipantsModule {
 
   @Action()
   async fetchMembers({
-    name, page, size, sort,
+    name, page, size, sort, items
   } : {
     name?: string;
     page?: string;
     size?: string;
     sort?: string;
+    items?: OutputFilters;
   }) {
     const filterParams: FilterParams = {
       name: name,
       page: page,
       size: size,
       sort: sort,
+      items: items,
     };
     try {
       const result = await fetchParticipantsList(filterParams);
@@ -117,8 +121,26 @@ export default class ParticipantsModule {
     financialYear: number | null;
     areaCode: string | null;
   }) {
-    const result = await postConformParticipants({ improvingWay, financialYear, areaCode });
-    console.log(result);
+    try {
+      await postConformParticipants({ improvingWay, financialYear, areaCode });
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: '',
+          title: 'Список участников согласован',
+          type: 'success',
+        }
+      );
+    } catch (error) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: (error as AxiosError).message,
+          title: 'Ошибка при согласовании списка участников',
+          type: 'error',
+        }
+      );
+    }
   }
 
   @Action()
@@ -129,8 +151,26 @@ export default class ParticipantsModule {
     financialYear: number | null;
     regionCode: string | null;
   }) {
-    const result = await postCreateSummaryParticipants({ improvingWay, financialYear, regionCode });
-    console.log(result);
+    try {
+      await postCreateSummaryParticipants({ improvingWay, financialYear, regionCode });
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: '',
+          title: 'Сводный список сформирован',
+          type: 'success',
+        }
+      );
+    } catch (error) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: (error as AxiosError).message,
+          title: 'Ошибка при формировании свода',
+          type: 'error',
+        }
+      );
+    }
   }
 
   @Action()

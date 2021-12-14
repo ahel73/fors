@@ -159,7 +159,7 @@ import DownloadIcon from '@/components/shared/IconComponent/icons/DownloadIcon.v
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import { TableHeaders } from '@/components/shared/table/DataTable.types';
-import { FilterTypes } from '@/components/shared/Filter/types';
+import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import eventBus from '@/utils/bus/event-bus';
 import { WorkingRegion } from '@/types';
@@ -214,6 +214,39 @@ export default class ParticipantsListPage extends Vue {
 
   get filters(): FilterTypes {
     return {
+      multiFilters: [
+        {
+          name: 'search',
+          like: true,
+          label: 'Поиск',
+          names: this.fields,
+          isDefault: true,
+          defaultValue: '',
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.MULTI_FILTER,
+        },
+      ],
+      simpleFilters: [
+        {
+          defaultValue: '',
+          isDefault: true,
+          label: 'Фамилия Имя Отчество',
+          name: 'deedApplicantFullName',
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.SIMPLE_FILTER,
+        },
+      ],
+      selectFilters: [
+        // {
+        //   isDefault: false,
+        //   isCustom: true,
+        //   items: this.computedRegions,
+        //   label: 'Муниципальный район',
+        //   name: 'programId',
+        //   type: FilterTypeNames.SELECT_FILTER,
+        //   valueType: ValueTypes.NUMBER,
+        // },
+      ],
     };
   }
 
@@ -221,6 +254,12 @@ export default class ParticipantsListPage extends Vue {
 
   get mainLayoutText() {
     return `Список участников "${this.currentImprovingWay?.name}" ${this.processedYear}`;
+  }
+
+  get fields(): string[] {
+    return this.headers.reduce<string[]>((fields, { value }) => {
+      return value === 'actions' ? fields : [...fields, value];
+    }, []);
   }
 
   get currentImprovingWay() {
@@ -240,6 +279,13 @@ export default class ParticipantsListPage extends Vue {
   get processedYear() {
     if (!this.store.participants.state.financialYear) return '';
     return 'за ' + this.store.participants.state.financialYear + ' год';
+  }
+
+  get computedRegions() {
+    return this.store.participants.state?.regions.map(item => ({
+      text: `${item.code} ${item.name}`,
+      value: item.id,
+    }));
   }
 
   get regions() {
@@ -278,7 +324,7 @@ export default class ParticipantsListPage extends Vue {
 
   handleSearch(outputFilters: OutputFilters): void {
     this.items = outputFilters;
-    console.log(outputFilters);
+    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
   }
 
   handleReset(): void {
