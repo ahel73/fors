@@ -6,22 +6,17 @@ module.exports = {
 
   devServer: {
     proxy: {
-      '^/configurator/api': {
-        target: 'https://mgp-dev.fors.ru/configurator/api',
+      '^/housing-subsidies/api': {
+        target: 'https://mgp-dev.fors.ru/housing-subsidies/api',
         changeOrigin: true,
-        pathRewrite: { '^/configurator/api': '' },
+        pathRewrite: { '^/housing-subsidies/api': '' },
       },
       '^/security/api': {
         target: 'https://mgp-dev.fors.ru',
       },
-    },
-  },
-
-  pages: {
-    index: {
-      entry: 'src/main.ts',
-      template: 'public/index.html',
-      filename: 'index.html',
+      '^/file-repository-service': {
+        target: 'https://mgp-dev.fors.ru',
+      },
     },
   },
 };
