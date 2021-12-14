@@ -10,8 +10,10 @@ const fetchParticipantsList = async (params: FilterParams) : Promise<WorkingRegi
   return data.data;
 };
 
-const fetchConsolidatedParticipantsList = async (params: object): Promise<WorkingRegion[]> => {
-  const { data } = await httpClient.post('/payout-list-members/find', { ...params });
+const fetchConsolidatedParticipantsList = async (params: any): Promise<WorkingRegion[]> => {
+  const { page = 0, sort = '-id', size, ...payload } = params;
+  const queryParams = query({ page, sort, size });
+  const { data } = await httpClient.post(`/payout-list-members/find?${queryParams}`, { ...payload });
   return data.data;
 };
 

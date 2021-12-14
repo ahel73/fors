@@ -93,8 +93,30 @@
               </v-col>
             </v-row>
           </template>
-          <template #[`header.budgets`]="{ item }">
+          <template #[`item.deedWorkEmployerShortNameWithFunc`]="{ item }">
+            {{ getDeedWorkString(item) }}
+          </template>
+          <template #[`item.registrationDate`]="{ item }">
+            {{ getRegistrationDate(item.deedRegistrationDate) }}
+          </template>
+          <template #[`item.budgets`]="{ item }">
             {{ item }}
+          </template>
+          <template #[`item.actions`]="{ item: { id } }">
+            <div class="d-flex justify-center flex-nowrap">
+              <span class="table-action__wrapper">
+                <base-action
+                  @click="onEditClick(id)"
+                  hint="Смотреть"
+                >
+                  <template #customIcon>
+                    <v-icon>
+                      mdi-eye
+                    </v-icon>
+                  </template>
+                </base-action>
+              </span>
+            </div>
           </template>
         </data-table>
       </v-col>
@@ -153,6 +175,8 @@ import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { TableHeaders } from '@/components/shared/table/DataTable.types';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import moment from 'moment';
+import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
+import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 
 @Component({
   name: 'ParticipantsList',
@@ -166,6 +190,7 @@ import moment from 'moment';
     IconComponent,
     DownloadIcon,
     ButtonComponent,
+    BaseAction,
   },
 })
 
@@ -182,17 +207,64 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   year = null;
   region = null;
 
+  get filters(): FilterTypes {
+    return {
+      multiFilters: [
+        {
+          name: 'search',
+          like: true,
+          label: 'Поиск',
+          names: this.fields,
+          isDefault: true,
+          defaultValue: '',
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.MULTI_FILTER,
+        },
+      ],
+      simpleFilters: [
+        {
+          defaultValue: '',
+          isDefault: true,
+          label: 'Фамилия Имя Отчество',
+          name: 'deedApplicantFullName',
+          valueType: ValueTypes.STRING,
+          type: FilterTypeNames.SIMPLE_FILTER,
+        },
+      ],
+      selectFilters: [
+        // {
+        //   isDefault: false,
+        //   isCustom: true,
+        //   items: this.computedRegions,
+        //   label: 'Муниципальный район',
+        //   name: 'programId',
+        //   type: FilterTypeNames.SELECT_FILTER,
+        //   valueType: ValueTypes.NUMBER,
+        // },
+      ],
+    };
+  }
+
   headers: TableHeaders[] = [];
 
   columns: Columns[] = [
     { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: false },
-    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'fio', sortable: false },
-    { isDefault: true, text: 'Место работы, должность', value: 'position', sortable: false },
-    { isDefault: true, text: 'Сфера занятости', value: 'workPlace', sortable: false },
-    { isDefault: true, text: 'Направление расходования средств', value: 'spendingDirectionId', sortable: false },
-    { isDefault: true, text: 'Приоритет', value: 'queuePriorityId', sortable: false },
-    { isDefault: true, text: 'Дата постановки на учёт', value: 'resigtrationDate', sortable: false },
+    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'deedApplicantFullName', sortable: false },
+    { isDefault: true, text: 'Место работы, должность', value: 'deedWorkEmployerShortNameWithFunc', sortable: false },
+    { isDefault: true, text: 'Сфера занятости', value: 'deedEmploymentName', sortable: false },
+    { isDefault: true, text: 'Направление расходования средств', value: 'deedSpendingDirectionName', sortable: false },
+    { isDefault: true, text: 'Приоритет', value: 'deedQueuePriorityName', sortable: false },
+    { isDefault: true, text: 'Дата постановки на учёт', value: 'registrationDate', sortable: false },
     { isDefault: true, text: 'Тестовое значение', value: 'budgets', sortable: false },
+    {
+      isDefault: true,
+      value: 'actions',
+      text: 'Действия',
+      sortable: false,
+      isVisible: false,
+      isEditable: false,
+      align: 'center',
+    },
   ]
 
   get mainLayoutText() {
@@ -216,6 +288,21 @@ export default class ParticipantsConsolidatedListPage extends Vue {
     return this.store.participantsConsolidated.state?.items;
   }
 
+  get fields(): string[] {
+    return this.headers.reduce<string[]>((fields, { value }) => {
+      return value === 'actions' ? fields : [...fields, value];
+    }, []);
+  }
+
+  getDeedWorkString(item: any) {
+    if (!item.deedWorkEmployerShortName || !item.deedWorkFunc) return '';
+    return item.deedWorkEmployerShortName + ', ' + item.deedWorkFunc;
+  }
+
+  getRegistrationDate(item: string) {
+    return moment(item).format('DD.MM.YYYY HH:mm');
+  }
+
   mounted() {
     this.store.participants.fetchImprovingWays().then((improvingWay) => {
       this.store.participantsConsolidated.fetchItems({});
@@ -223,6 +310,19 @@ export default class ParticipantsConsolidatedListPage extends Vue {
       this.store.participants.fetchYears();
       this.store.me.fetchMe();
     });
+  }
+
+  handleSearch(outputFilters: OutputFilters): void {
+    this.items = outputFilters;
+    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+  }
+
+  handleReset(): void {
+    this.items = [];
+  }
+
+  onEditClick(id: number) {
+    this.$router.push({ name: 'PayoutParticipantFormPage', params: { id: id.toString() } });
   }
 }
 </script>

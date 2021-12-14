@@ -4,6 +4,7 @@ import {
   fetchRegions,
 } from '@/data';
 import {
+  FilterParams,
   WorkingRegion,
 } from '@/types';
 import { ParticipantsConsolidatedState } from './types';
@@ -39,18 +40,18 @@ export default class ParticipantsConsolidatedModule {
 
   @Action()
   async fetchItems({
-    name, page, size, sort,
+    page, size, sort,
   } : {
-    name?: string;
     page?: string;
     size?: string;
     sort?: string;
   }) {
-    const filterParams: object = {
-      name: name,
+    const filterParams: any = {
       page: page,
       size: size,
       sort: sort,
+      summaryListMembersFinancialYear: this.state.financialYear,
+      summaryListMembersRegionCode: 'CODE',
     };
     const result = await fetchConsolidatedParticipantsList(filterParams);
     this.setItems(result);

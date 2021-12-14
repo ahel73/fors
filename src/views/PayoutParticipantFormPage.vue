@@ -112,115 +112,90 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <v-row>
-          <v-col cols="3">
-            <input-component
-              :value="participantCard.personsCount"
-              :disabled="true"
-              label="Кол-во человек"
-            />
-          </v-col>
-        </v-row>
+      <v-col cols="3">
+        <input-component
+          :value="participantCard.personsCount"
+          :disabled="true"
+          label="Кол-во человек"
+        />
       </v-col>
-      <v-col>
-        <v-row>
-          <v-col cols="3">
-            <input-component
-              :value="participantCard.price"
-              :disabled="true"
-              label="Стоимость, 1 кв.м."
-            />
-          </v-col>
-        </v-row>
+      <v-col cols="3">
+        <input-component
+          :value="participantCard.price"
+          :disabled="true"
+          label="Стоимость, 1 кв.м."
+        />
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <v-row>
-          <v-col cols="3">
-            <input-component
-              :value="participantCard.deed.area"
-              :disabled="true"
-              label="Площадь, кв.м."
-            />
-          </v-col>
-        </v-row>
+      <v-col cols="3">
+        <input-component
+          :value="participantCard.deed.area"
+          :disabled="true"
+          label="Площадь, кв.м."
+        />
       </v-col>
-      <v-col>
-        <v-row>
-          <v-col cols="3">
-            <checkbox-component
-              :value="participantCard.isPartAgreed"
-              label="Согласована часть средств"
-            />
-          </v-col>
-        </v-row>
+      <v-col
+        cols="3"
+        class="d-flex align-center"
+      >
+        <checkbox-component
+          :value="participantCard.isPartAgreed"
+          :disabled="true"
+          label="Согласована часть средств"
+        />
       </v-col>
     </v-row>
-    <div class="bordered">
+    <v-col
+      cols="6"
+      class="bordered"
+    >
       <v-row>
         <v-col style="height: 60px;">
           Объем средств, предусмотренных на строительство (приобретение) жилья, тысяч рублей
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="3">
-          <v-row>
-            <v-col cols="6">
-              <input-component
-                @change="(value) => changeValue('federalSum', value)"
-                :value="participantCard.federalSum"
-                type="number"
-                :hide-spin-buttons="true"
-                label="Федеральный бюджет"
-              />
-            </v-col>
-          </v-row>
+      <v-row cols="6">
+        <v-col cols="6">
+          <input-component
+            @change="(value) => changeValue('federalSum', value)"
+            :value="participantCard.federalSum"
+            type="number"
+            :hide-spin-buttons="true"
+            label="Федеральный бюджет"
+          />
         </v-col>
-        <v-col cols="3">
-          <v-row>
-            <v-col cols="6">
-              <input-component
-                @change="(value) => changeValue('regionalSum', value)"
-                :value="participantCard.regionalSum"
-                type="number"
-                :hide-spin-buttons="true"
-                label="Региональный бюджет"
-              />
-            </v-col>
-          </v-row>
+        <v-col cols="6">
+          <input-component
+            @change="(value) => changeValue('regionalSum', value)"
+            :value="participantCard.regionalSum"
+            type="number"
+            :hide-spin-buttons="true"
+            label="Региональный бюджет"
+          />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="3">
-          <v-row>
-            <v-col cols="6">
-              <input-component
-                @change="(value) => changeValue('localSum', value)"
-                :value="participantCard.localSum"
-                type="number"
-                :hide-spin-buttons="true"
-                label="Местный бюджет"
-              />
-            </v-col>
-          </v-row>
+      <v-row cols="6">
+        <v-col cols="6">
+          <input-component
+            @change="(value) => changeValue('localSum', value)"
+            :value="participantCard.localSum"
+            type="number"
+            :hide-spin-buttons="true"
+            label="Местный бюджет"
+          />
         </v-col>
-        <v-col cols="3">
-          <v-row>
-            <v-col cols="6">
-              <input-component
-                @change="(value) => changeValue('extrabudgetarySum', value)"
-                :value="participantCard.extrabudgetarySum"
-                type="number"
-                :hide-spin-buttons="true"
-                label="Внебюджетные источники"
-              />
-            </v-col>
-          </v-row>
+        <v-col cols="6">
+          <input-component
+            @change="(value) => changeValue('extrabudgetarySum', value)"
+            :value="participantCard.extrabudgetarySum"
+            type="number"
+            :hide-spin-buttons="true"
+            label="Внебюджетные источники"
+          />
         </v-col>
       </v-row>
-    </div>
+    </v-col>
     <v-row>
       <v-col
         cols="6"
@@ -336,7 +311,6 @@ export default class PayoutParticipantFormPage extends Vue {
   }
 
   async changeValue(field: string, value: any) {
-    console.log(value);
     await this.store.participantCard.changeCardValue({ field: field, value: value });
   }
 
@@ -375,5 +349,9 @@ export default class PayoutParticipantFormPage extends Vue {
     padding: 24px 16px;
     border-radius: 16px;
     border: 1px solid #c1c1c1;
+  }
+
+  .v-input--selection-controls.v-input--checkbox.checkbox {
+    padding-left: 0;
   }
 </style>
