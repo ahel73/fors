@@ -5,8 +5,12 @@
     <v-row>
       <v-col>
         <data-table
+          @onOptionsChange="handleOptionsChange"
+          @onSortChange="saveColumns"
           :headers="headers"
+          :per-page="size"
           :items="participants"
+          :sort-by="initialSort"
         >
           <template #[`tabs.after`]>
             <v-row>
@@ -177,6 +181,7 @@ import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import moment from 'moment';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
 import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
+import { Pagination } from '@/types/Pagination';
 
 @Component({
   name: 'ParticipantsList',
@@ -323,6 +328,16 @@ export default class ParticipantsConsolidatedListPage extends Vue {
 
   onEditClick(id: number) {
     this.$router.push({ name: 'PayoutParticipantFormPage', params: { id: id.toString() } });
+  }
+
+  handleOptionsChange(options: Pagination): void {
+    const { page, size, sort } = options;
+
+    this.sort = sort;
+    this.size = size;
+    this.page = page;
+
+    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
   }
 }
 </script>

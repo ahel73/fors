@@ -5,8 +5,12 @@
     <v-row>
       <v-col>
         <data-table
+          @onOptionsChange="handleOptionsChange"
+          @onSortChange="saveColumns"
           :headers="headers"
+          :per-page="size"
           :items="participants"
+          :sort-by="initialSort"
         >
           <template #[`tabs.after`]>
             <v-row>
@@ -163,6 +167,7 @@ import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Fi
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import eventBus from '@/utils/bus/event-bus';
 import { WorkingRegion } from '@/types';
+import { Pagination } from '@/types/Pagination';
 
 @Component({
   name: 'ParticipantsList',
@@ -193,13 +198,13 @@ export default class ParticipantsListPage extends Vue {
   region = null;
 
   columns: Columns<unknown>[] = [
-    { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: false },
-    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'deedApplicantFullName', sortable: false },
+    { isDefault: true, text: '№ очереди', value: 'queueNum', sortable: true },
+    { isDefault: true, text: 'Фамилия Имя Отчество', value: 'deedApplicantFullName', sortable: true },
     { isDefault: true, text: 'Место работы, должность', value: 'deedWorkEmployerShortNameWithFunc', sortable: false },
-    { isDefault: true, text: 'Сфера занятости', value: 'deedEmploymentName', sortable: false },
-    { isDefault: true, text: 'Направление расходования средств', value: 'deedSpendingDirectionName', sortable: false },
-    { isDefault: true, text: 'Приоритет', value: 'deedQueuePriorityName', sortable: false },
-    { isDefault: true, text: 'Дата постановки на учёт', value: 'registrationDate', sortable: false },
+    { isDefault: true, text: 'Сфера занятости', value: 'deedEmploymentName', sortable: true },
+    { isDefault: true, text: 'Направление расходования средств', value: 'deedSpendingDirectionName', sortable: true },
+    { isDefault: true, text: 'Приоритет', value: 'deedQueuePriorityName', sortable: true },
+    { isDefault: true, text: 'Дата постановки на учёт', value: 'registrationDate', sortable: true },
     { isDefault: true, text: 'Тестовое значение', value: 'budgets', sortable: false },
     {
       isDefault: true,
@@ -359,6 +364,16 @@ export default class ParticipantsListPage extends Vue {
 
   onEditClick(id: number) {
     this.$router.push({ name: 'PayoutParticipantFormPage', params: { id: id.toString() } });
+  }
+
+  handleOptionsChange(options: Pagination): void {
+    const { page, size, sort } = options;
+
+    this.sort = sort;
+    this.size = size;
+    this.page = page;
+
+    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
   }
 }
 </script>
