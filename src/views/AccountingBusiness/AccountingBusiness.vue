@@ -1,6 +1,6 @@
 <template>
   <div class="accountingBusiness">
-    <accountingBusiness-list v-if="$route.path === '/accountingBusiness'" />
+    <accountingBusiness-list v-if="$route.path === '/accounting-business'" />
     <router-view />
   </div>
 </template>

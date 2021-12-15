@@ -58,6 +58,13 @@
             </v-col>
           </v-row>
         </template>
+        <!--  <template #[`item.registrationDate`]="{ item }">
+          <div class="d-flex justify-center flex-nowrap">
+            <span class="table-action__wrapper">
+              {{ item.registrationDate }}
+            </span>
+          </div>
+        </template> -->
         <template #[`item.actions`]="{ item }">
           <div class="d-flex justify-center flex-nowrap">
             <span class="table-action__wrapper">
@@ -145,6 +152,7 @@ import { OutputFilters } from '../shared/Filter/FilterTypes/types';
 import { Pagination } from '@/types/Pagination';
 import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
+import moment from 'moment';
 
 @Component({
   name: 'accountingBusinessList',
