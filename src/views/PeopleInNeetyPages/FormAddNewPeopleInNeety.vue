@@ -80,7 +80,8 @@
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'birthDate', nameJbject)"
               @click:clear="updatePropsSpech( '', 'birthDate', nameJbject)"
-              :starting-year="yearInterval"
+              :limit-to="startYear"
+              :limit-from="'1930'"
               :value="newPerson.birthDate || ''"
               :label="'Дата рождения'"
               :is-required="true"
@@ -159,7 +160,7 @@
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'registrationDate', nameJbject)"
               @click:clear="updatePropsSpech( '', 'registrationDate', nameJbject)"
-              :starting-year="yearInterval"
+              :limit-from="startYear"
               :value="newPerson.registrationDate || ''"
               :disabled="flagDisabled"
               :label="'Дата регистрации'"
@@ -470,7 +471,7 @@ export default class FormAddNewPeopleInNeety extends Vue {
   // ложь общие сведение, истина трудовая деятельность
   tab = this.myStore.state.flagTabWorker;
   // Количество лет в выподашке по датапикеру
-  yearInterval = (new Date()).getFullYear() - 100;
+  startYear = '' + (new Date()).getFullYear();
   // Заголовки столбцов таблицы
   headersWorks = [
     { text: 'Место работы', value: 'employer.shortName' },
