@@ -6,7 +6,7 @@
       <v-col>
         <data-table
           :headers="headers"
-          :items="$store.__vxs_modules__.get('peopleInNeety').module.state.listPeopleInNeety"
+          :items="listPeople"
         >
           <!-- Фильтр и кнопки -->
           <template #[`tabs.after`]>
@@ -109,10 +109,17 @@ export default class ListPeopleInNeetyPage extends Vue {
   store: Store = useStore(this.$store);
   myStore = this.store.peopleInNeety;
   headers = this.store.peopleInNeety.state.headerTablePeopleInNeety
-  listPeople = this.store.peopleInNeety.state.listPeopleInNeety
-  // headers = this.$store.__vxs_modules__.get('peopleInNeety').module.state.headerTablePeopleInNeety
-  // listPeople = this.$store.__vxs_modules__.get('peopleInNeety').module.state.listPeopleInNeety
-  columns = []
+  get listPeople() {
+    return this.store.peopleInNeety.state.listPeopleInNeety;
+  }
+
+  pagAndSort = {
+    page: 1,
+    size: 10,
+    sort: '-id',
+  }
+
+  columns = [] // В этот массив добавляются колонки для отображенияи скрытия
   push = methods.push;
 
   getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
@@ -178,7 +185,7 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.myStore.flagUpdateItem = false;
     this.myStore.flagViewing = false;
 
-    this.getGroop('/individual-persons/find/')
+    this.getGroop('/individual-persons/find/', this.pagAndSort)
       .then(user => {
         console.log(user);
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
