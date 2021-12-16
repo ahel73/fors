@@ -162,11 +162,19 @@ export default class AccountingBusinessFamilyCard extends Vue {
   }
 
   get familyIds() {
-    return this.peoplesInFamily.map((item: any) => item.personInfo.id);
+    if (this.peoplesInFamily) {
+      return this.peoplesInFamily.map((item: any) => item.personInfo.id);
+    } else {
+      return [];
+    }
   }
 
   get peoplesNotInFamily() {
-    return this.store.directory.state.personInfo.filter((item: any) => !this.familyIds.includes(item.id));
+    if (this.familyIds) {
+      return this.store.directory.state.personInfo.filter((item: any) => !this.familyIds.includes(item.id));
+    } else {
+      return this.store.directory.state.personInfo;
+    }
   }
 
   getControllerData(params: any) {

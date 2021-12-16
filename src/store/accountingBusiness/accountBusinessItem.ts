@@ -5,7 +5,6 @@ import { getDeedControllerByID } from '@/data/services/accountingBusiness/accoun
 import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
-import moment from 'moment';
 
 export default class DeedControllerItemModule {
   @State()
