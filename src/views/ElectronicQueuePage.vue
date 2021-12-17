@@ -65,7 +65,6 @@
                   <icon-button
                     class="ml-3"
                     type="text"
-                    icon="mdi-plus-circle"
                     text="Сформировать список участников"
                   />
                 </router-link>
