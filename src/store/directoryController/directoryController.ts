@@ -1,4 +1,5 @@
-import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
+import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getQueueStatusController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
+import { Status, StatusResponseData } from '@/types/Status';
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
@@ -16,6 +17,7 @@ export default class DirectoryControllerModule {
     priority: [],
     spendingDirection: [],
     familyPeopleInFamily: [],
+    queueStatus: [],
     error: null,
     isLoading: false,
   }
@@ -78,6 +80,26 @@ export default class DirectoryControllerModule {
     const { data } = response;
 
     this.state.spendingDirection = data;
+  }
+
+  @Mutation()
+  setQueueStatusController(data: Status[]): void {
+    this.state.queueStatus = data;
+  }
+
+  @Action()
+  async fetchQueueStatusController(): Promise<void> {
+    this.setDirectoryControllerIsLoading(true);
+    this.setDirectoryControllerError(null);
+    try {
+      const { data, meta: { total } }: StatusResponseData = await getQueueStatusController();
+
+      this.setQueueStatusController(data);
+    } catch (error) {
+      this.setDirectoryControllerError(error as AxiosError);
+    } finally {
+      this.setDirectoryControllerIsLoading(false);
+    }
   }
 
   @Action()

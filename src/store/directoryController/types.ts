@@ -1,3 +1,4 @@
+import { Status } from '@/types/Status';
 import { AxiosError } from 'axios';
 
 export interface DirectoryControllerStore {
@@ -10,6 +11,7 @@ export interface DirectoryControllerStore {
   priority: [],
   spendingDirection: [],
   familyPeopleInFamily: [],
+  queueStatus: Status[],
   error: AxiosError | null;
   isLoading: boolean;
 }
