@@ -12,12 +12,12 @@
           :per-page="size"
           :sort-by="initialSort"
         >
-          <template #[`item.check`]="{item: stateElectronicQueueState }">
-            <base-action hint="Выбрать все">
+          <template #[`item.check`]="{item: stateElectronicQueueData}">
+            <base-action hint="Выбрать">
               <template #customIcon>
                 <checkbox-component
-                  v-model="checkedProjectMeasureProperties"
-                  :initial-value="stateElectronicQueueState.data"
+                  v-model="checkedProperties"
+                  :initial-value="stateElectronicQueueData"
                   hide-details
                   multiple
                 />
@@ -143,6 +143,8 @@ export default class ElectronicQueuePageList extends Vue {
     statusId: null,
   };
 
+  checkedProperties: any = [];
+
   headers = [
     {
       sortable: false,
@@ -178,7 +180,7 @@ export default class ElectronicQueuePageList extends Vue {
     },
     {
       text: 'Дата изменения',
-      value: 'changeDate',
+      value: 'numChangeDate',
     },
     {
       text: 'Статус',
@@ -187,6 +189,12 @@ export default class ElectronicQueuePageList extends Vue {
   ];
 
  columns = [
+   {
+     // text:'',
+     isVisible: false,
+     isDefault: true,
+     value: 'check',
+   },
    {
      isDefault: true,
      isEditable: false,
@@ -233,7 +241,7 @@ export default class ElectronicQueuePageList extends Vue {
      isDefault: false,
      isEditable: true,
      text: 'Дата изменения',
-     value: 'changeDate',
+     value: 'numChangeDate',
      align: 'center',
    },
    {
@@ -264,7 +272,7 @@ export default class ElectronicQueuePageList extends Vue {
        },
        {
          name: 'improvingWayId',
-         label: 'Способ улучшения ЖУ',
+         label: 'Способ улучшения жилья',
          items: this.improvingWayController,
          isDefault: true,
          showCode: true,
@@ -273,7 +281,7 @@ export default class ElectronicQueuePageList extends Vue {
        },
        {
          name: 'employmentId',
-         label: 'Сфера деятельности',
+         label: 'Сфера занятости',
          items: this.employmentController,
          isDefault: true,
          showCode: true,
@@ -343,6 +351,10 @@ export default class ElectronicQueuePageList extends Vue {
 
  get stateElectronicQueueState() {
    return this.store.electronicQueue.state;
+ }
+
+ get stateElectronicQueueData() {
+   return this.store.electronicQueue.state.data;
  }
 
  get queueQueueStatusController() {
@@ -448,7 +460,9 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  onConformClick() {
-   // ToDo
+   this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
+   this.store.electronicQueue.fetchElectronicQueueArchive(this.checkedProperties);
+   this.fetchStateElectronicQueue();
  }
 
  handleExporInXlsx() {
