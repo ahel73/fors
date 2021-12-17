@@ -1,5 +1,5 @@
 <template>
-  <main-layout title="Учетное дело">
+  <main-layout :title="title">
     <v-tabs
       v-model="tab"
       background-color="white"
@@ -399,7 +399,7 @@ import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
+import { DeedItemCard, FamilyMembers } from '@/store/accountingBusiness/typesDeedItem';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
@@ -437,6 +437,7 @@ export default class AccountingBusinessListCard extends Vue {
   indexPeople: number | string = '';
   isDisabled = true;
   recordDate = '';
+  title = 'Учетное дело';
 
   isEditable = true;
 
@@ -457,7 +458,7 @@ export default class AccountingBusinessListCard extends Vue {
   headersFamily = [
     {
       text: '№ п/п',
-      value: 'improving_zu',
+      value: 'number',
     },
     {
       text: 'Фамилия Имя Отчество',
@@ -521,6 +522,7 @@ export default class AccountingBusinessListCard extends Vue {
         this.fetchById();
       } else {
         this.form = this.store.deedItem.state.data;
+        this.title = 'Учетное дело ' + this.form.id;
       }
     } else {
       this.form = {} as DeedItemCard;
@@ -541,7 +543,7 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   @Watch('card')
-  getDataForm(card: any) {
+  getDataForm(card: DeedItemCard) {
     this.form = cloneDeep(card);
     const params = {
       deed: false,
@@ -553,6 +555,7 @@ export default class AccountingBusinessListCard extends Vue {
 
   async fetchById() {
     await this.store.deedItem.fetchDeedControllerItem(this.$route.params.id);
+    this.title = 'Учетное дело ' + this.form.id;
   }
 
   get formDoc() {
@@ -612,7 +615,7 @@ export default class AccountingBusinessListCard extends Vue {
     this.store.deedItem.changeFamilyPeople(item);
   }
 
-  handleOpenDocument(item: any) {
+  handleOpenDocument(item: Document) {
     this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeDocument(item);
   }
@@ -657,7 +660,6 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   async saveAllInfo() {
-    // eslint-disable-next-line no-undef
     this.form.registrationDate = moment(this.form.registrationDate).format('YYYY-MM-DDTHH:mm:ss.SSS').toString();
     if (this.form.applicant === undefined) {
       eventBus.$emit(
@@ -701,16 +703,18 @@ export default class AccountingBusinessListCard extends Vue {
         };
         await this.store.createItem.fetchCreateDeedController(data);
         this.$router.replace({
-          path: '/accountingBusiness',
+          path: '/accounting-business',
         });
       } else {
         const data = {
           ...this.form,
+          documents: this.formDoc,
+          familyMembers: this.familyMembers,
           id: this.$route.params.id,
         };
         await this.store.updateItem.fetchUpdateDeedController(data);
         this.$router.replace({
-          path: '/accountingBusiness',
+          path: '/accounting-business',
         });
       }
       this.store.deedItem.clearItem();
@@ -729,7 +733,6 @@ export default class AccountingBusinessListCard extends Vue {
 
   handleDeleteDocumentSuccess() {
     this.store.deedItem.deleteDocument(this.docForDelete);
-    // this.store.fileRepository.deleteFileAction(this.docForDelete.fileUid);
     this.docForDelete = {};
   }
 

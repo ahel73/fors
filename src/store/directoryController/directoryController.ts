@@ -1,4 +1,12 @@
-import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getQueueStatusController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
+import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
+import { DocGroup, DocGroupResponseData } from '@/types/DocGroup';
+import { Employment, EmploymentResponseData } from '@/types/Employment';
+import { Priority, PriorityResponseData } from '@/types/Employment copy';
+import { ImprovingWay, ImprovingWayResponseData } from '@/types/ImprovingWay';
+import { IndividualPersonInfo, IndividualPersonResponseData } from '@/types/IndividualPersonInfo';
+import { Oktmo } from '@/types/Oktmo';
+import { OktmoResponseData } from '@/types/OktmoResponseData';
+import { SpendingDirection, SpendingDirectionResponseData } from '@/types/SpendingDirection';
 import { Status, StatusResponseData } from '@/types/Status';
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
@@ -33,52 +41,42 @@ export default class DirectoryControllerModule {
   }
 
   @Mutation()
-  setStatusController(response: any): void {
-    const { data } = response;
+  setStatusController(data: Status[]): void {
     this.state.deedStatus = data;
   }
 
   @Mutation()
-  setDocGroupController(response: any): void {
-    const { data } = response;
+  setDocGroupController(data: DocGroup[]): void {
     this.state.deedDocGroup = data;
   }
 
   @Mutation()
-  setEmploymentController(response: any): void {
-    const { data } = response;
+  setEmploymentController(data: Employment[]): void {
     this.state.employment = data;
   }
 
   @Mutation()
-  setImprovingWayController(response: any): void {
-    const { data } = response;
-
+  setImprovingWayController(data: ImprovingWay[]): void {
     this.state.improvingWay = data;
   }
 
   @Mutation()
-  setPersonInfoController(response: any): void {
-    const { data } = response;
+  setPersonInfoController(data: any): void {
     this.state.personInfo = data;
   }
 
   @Mutation()
-  setOktmoController(response: any): void {
-    const { data } = response;
+  setOktmoController(data: Oktmo[]): void {
     this.state.oktmo = data;
   }
 
   @Mutation()
-  setPriorityController(response: any): void {
-    const { data } = response;
+  setPriorityController(data: Priority[]): void {
     this.state.priority = data;
   }
 
   @Mutation()
-  setDirectionController(response: any): void {
-    const { data } = response;
-
+  setDirectionController(data: SpendingDirection[]): void {
     this.state.spendingDirection = data;
   }
 
@@ -107,7 +105,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getSpendingDirectionController();
+      const { data, meta: { total } }: SpendingDirectionResponseData = await getSpendingDirectionController();
 
       this.setDirectionController(data);
     } catch (error) {
@@ -122,7 +120,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getQueuePriorityController();
+      const { data, meta: { total } }: PriorityResponseData = await getQueuePriorityController();
 
       this.setPriorityController(data);
     } catch (error) {
@@ -137,7 +135,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getOktmoController(params);
+      const { data, meta: { total } }: OktmoResponseData = await getOktmoController(params);
 
       this.setOktmoController(data);
     } catch (error) {
@@ -152,7 +150,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getIndividualPersonInfoController(params);
+      const { data, meta: { total } }: IndividualPersonResponseData = await getIndividualPersonInfoController(params);
 
       this.setPersonInfoController(data);
     } catch (error) {
@@ -167,7 +165,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getImprovingWayController();
+      const { data, meta: { total } }: ImprovingWayResponseData = await getImprovingWayController();
 
       this.setImprovingWayController(data);
     } catch (error) {
@@ -182,9 +180,9 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const deedStatus: any = await getDeedStatusController();
+      const { data, meta: { total } }: StatusResponseData = await getDeedStatusController();
 
-      this.setStatusController(deedStatus);
+      this.setStatusController(data);
     } catch (error) {
       this.setDirectoryControllerError(error as AxiosError);
     } finally {
@@ -197,9 +195,9 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const docGroup: any = await getDocGroupController();
+      const { data, meta: { total } }: DocGroupResponseData = await getDocGroupController();
 
-      this.setDocGroupController(docGroup);
+      this.setDocGroupController(data);
     } catch (error) {
       this.setDirectoryControllerError(error as AxiosError);
     } finally {
@@ -212,7 +210,7 @@ export default class DirectoryControllerModule {
     this.setDirectoryControllerIsLoading(true);
     this.setDirectoryControllerError(null);
     try {
-      const data: any = await getEmploymentController();
+      const { data, meta: { total } }: EmploymentResponseData = await getEmploymentController();
 
       this.setEmploymentController(data);
     } catch (error) {

@@ -37,13 +37,13 @@ export default class CreateDeedControllerModule {
   }
 
   @Mutation()
-  setDeedController(response?: any): void {
+  setDeedController(response: DeedItemCard): void {
     const data = response;
     this.state.data = data;
   }
 
   @Action()
-  async fetchCreateDeedController(form: any): Promise<void> {
+  async fetchCreateDeedController(form: DeedItemCard): Promise<void> {
     this.setDeedControllerIsLoading(true);
     this.setBudgetsError(null);
 
