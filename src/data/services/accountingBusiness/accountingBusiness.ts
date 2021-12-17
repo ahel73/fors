@@ -14,7 +14,7 @@ export const updateDeedController = async (params: any) => {
   return data;
 };
 
-export const deleteDeedController = async (id: number) => {
+export const deleteDeedController = async (id: string | number) => {
   const { data } = await httpClient.delete<any>(`/deeds/${id}`);
   return data;
 };

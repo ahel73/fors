@@ -37,7 +37,7 @@ export default class DeleteDeedControllerModule {
   }
 
   @Action()
-  async fetchDeleteDeedController(params: number): Promise<void> {
+  async fetchDeleteDeedController(params: string | number): Promise<void> {
     this.setDeedControllerIsLoading(true);
     this.setBudgetsError(null);
     try {

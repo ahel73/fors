@@ -135,6 +135,12 @@ export default class ElectronicQueuePageList extends Vue {
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
   filter = {
+    applicantId: null,
+    groupNum: null,
+    improvingWayId: null,
+    employmentId: null,
+    queuePriorityId: null,
+    statusId: null,
   };
 
   headers = [
@@ -247,7 +253,7 @@ export default class ElectronicQueuePageList extends Vue {
    return {
      selectFilters: [
        {
-         name: 'name',
+         name: 'applicantId',
          label: 'Фамилия Имя Отчество',
          items: this.individualPersonInfoController,
          isDefault: true,
@@ -275,7 +281,7 @@ export default class ElectronicQueuePageList extends Vue {
          type: FilterTypeNames.SELECT_FILTER,
        },
        {
-         name: 'queuePriority',
+         name: 'queuePriorityId',
          label: 'Приоритет',
          items: this.queuePriorityController,
          isDefault: true,
@@ -295,7 +301,7 @@ export default class ElectronicQueuePageList extends Vue {
      ],
      simpleFilters: [
        {
-         name: 'searchString',
+         name: 'groupNum',
          label: 'Группа',
          defaultValue: '',
          isDefault: true,
@@ -364,7 +370,6 @@ export default class ElectronicQueuePageList extends Vue {
  fetchStateElectronicQueue() {
    const {
      store,
-     items,
      page,
      size,
      sort,
@@ -377,7 +382,6 @@ export default class ElectronicQueuePageList extends Vue {
 
    store.electronicQueue.fetchElectronicQueueData(
      {
-       items,
        page,
        size,
        sort: getFieldsToSort(fieldsToReplace, sort),
@@ -397,8 +401,32 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  handleSearch(outputFilters: OutputFilters): void {
+   console.log(outputFilters, 'outputFilters');
    this.filter = {
+     applicantId: null,
+     groupNum: null,
+     improvingWayId: null,
+     employmentId: null,
+     queuePriorityId: null,
+     statusId: null,
    };
+
+   outputFilters.filter(item => {
+     const [itemValue]: any = item.value;
+     if (item.name === 'applicantId') {
+       this.filter.applicantId = itemValue?.value;
+     } else if (item.name === 'improvingWayId') {
+       this.filter.improvingWayId = itemValue?.value;
+     } else if (item.name === 'employmentId') {
+       this.filter.employmentId = itemValue?.value;
+     } else if (item.name === 'queuePriorityId') {
+       this.filter.queuePriorityId = itemValue?.value;
+     } else if (item.name === 'statusId') {
+       this.filter.statusId = itemValue?.value;
+     } else if (item.name === 'groupNum') {
+       this.filter.groupNum = itemValue;
+     }
+   });
 
    this.fetchStateElectronicQueue();
  }
@@ -406,6 +434,12 @@ export default class ElectronicQueuePageList extends Vue {
  handleReset(): void {
    this.items = [];
    this.filter = {
+     applicantId: null,
+     groupNum: null,
+     improvingWayId: null,
+     employmentId: null,
+     queuePriorityId: null,
+     statusId: null,
    };
  }
 
