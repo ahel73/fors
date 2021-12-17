@@ -1,8 +1,8 @@
 import httpClient from '@/data/http';
-import { query } from '@/utils';
+import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
 
 export const getDeedController = async (params: any = {} as any): Promise<any> => {
-  const { page, sort, size, filter, ...payload } = params;
+  const { page, sort, size, filter } = params;
   const queryParams = ({ page, sort, size });
   const filterData = ({ filter });
   const { data } = await httpClient.post<any>(`/deeds/find?page=${queryParams.page}&size=${queryParams.size}&sort=${queryParams.sort}`, filterData.filter);
@@ -14,17 +14,17 @@ export const updateDeedController = async (params: any) => {
   return data;
 };
 
-export const deleteDeedController = async (id: any) => {
+export const deleteDeedController = async (id: number) => {
   const { data } = await httpClient.delete<any>(`/deeds/${id}`);
   return data;
 };
 
-export const createDeedController = async (form: any) => {
+export const createDeedController = async (form: DeedItemCard) => {
   const { data } = await httpClient.post<any>('/deeds', form);
   return data;
 };
 
-export const getDeedControllerByID = async (id: any) => {
+export const getDeedControllerByID = async (id: number) => {
   const { data } = await httpClient.get<any>(`/deeds/${id}`);
   return data;
 };

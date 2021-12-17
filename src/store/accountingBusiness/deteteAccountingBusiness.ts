@@ -36,20 +36,21 @@ export default class DeleteDeedControllerModule {
     }
   }
 
-  /*  @Mutation()
-  setDeedController(response?: any): void {
-    const data = response;
-    this.state.data = data;
-  } */
-
   @Action()
-  async fetchDeleteDeedController(params?: any): Promise<void> {
+  async fetchDeleteDeedController(params: number): Promise<void> {
     this.setDeedControllerIsLoading(true);
     this.setBudgetsError(null);
     try {
-      const data: any = await deleteDeedController(params);
-
-      // this.setDeedController(data);
+      await deleteDeedController(params).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Успешно удалено',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
     } catch (error) {
       this.setBudgetsError(error as AxiosError);
     } finally {

@@ -6,7 +6,7 @@ export interface Oktmo {
   createDate: string;
   updateDate: string;
   regioncode: string;
-  areacode: string;
+  areaCode: string;
   citycode: string;
   localcode: string;
   controlnum: string;

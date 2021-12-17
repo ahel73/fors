@@ -4,7 +4,7 @@
       <v-col cols="12">
         <autocomplete-component
           v-model="itemPeople.individualPerson"
-          :items="individualPersonInfoController"
+          :items="peoplesNotInFamily"
           label="Фамилия Имя Отчество"
           item-text="fullName"
           return-object
@@ -119,14 +119,6 @@ const mapInnerForm = (data: any) => (
 })
 export default class AccountingBusinessFamilyCard extends Vue {
   store: Store = useStore(this.$store);
-  familyPeople = {
-    birthDate: null,
-    identityDoc: null,
-    index: null,
-    id: null,
-  };
-
-  peopleNotFamily = [];
 
   isEditable = true;
   itemPeople: any | object = {
@@ -136,11 +128,14 @@ export default class AccountingBusinessFamilyCard extends Vue {
     required: (value: any) => !!value || 'Обязательное поле',
   };
 
-  mounted() {
-    this.getControllerData();
-    this.getPeopleNotFamily();
+  created() {
     if (this.$route.name === 'editFamilyCard') {
       this.getPeopleData();
+    } else {
+      const params = {
+        familyMember: false,
+      };
+      this.getControllerData(params);
     }
   }
 
@@ -150,23 +145,39 @@ export default class AccountingBusinessFamilyCard extends Vue {
 
   getPeopleData() {
     this.itemPeople = mapInnerForm(this.familyPeopleItem);
+    const params = {
+      familyMember: false,
+      listForUpdating: true,
+      id: this.itemPeople.individualPerson?.id,
+    };
+    this.getControllerData(params);
   }
 
   get individualPersonInfoController() {
     return this.store.directory.state.personInfo;
   }
 
-  get peopleInFamily() {
+  get peoplesInFamily() {
     return this.store.directory.state.familyPeopleInFamily;
   }
 
-  getPeopleNotFamily() {
-    this.peopleNotFamily = [];
-    this.peopleNotFamily = this.individualPersonInfoController;
+  get familyIds() {
+    if (this.peoplesInFamily) {
+      return this.peoplesInFamily.map((item: any) => item.personInfo.id);
+    } else {
+      return [];
+    }
   }
 
-  getControllerData() {
-    const params = { familyMember: false };
+  get peoplesNotInFamily() {
+    if (this.familyIds) {
+      return this.store.directory.state.personInfo.filter((item: any) => !this.familyIds.includes(item.id));
+    } else {
+      return this.store.directory.state.personInfo;
+    }
+  }
+
+  getControllerData(params: any) {
     this.store.directory.fetchIndividualPersonInfoController(params);
   }
 

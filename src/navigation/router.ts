@@ -34,15 +34,15 @@ const router = new Router({
       props: true,
     },
     {
-      path: '/accountingBusiness',
+      path: '/accounting-business',
       children: [
         {
-          path: '/accountingBusiness/:id/:type',
+          path: '/accounting-business/:id/:type',
           name: 'accountingBusiness-card',
           component: AccountingBusinessCard,
         },
         {
-          path: '/accountingBusiness/:type',
+          path: '/accounting-business/:type',
           name: 'accountingBusinessCardCreate',
           component: AccountingBusinessCard,
           meta: {
@@ -52,22 +52,22 @@ const router = new Router({
           },
         },
         {
-          path: '/accountingBusiness/createFamily',
+          path: '/accounting-business/create-family',
           name: 'accountingBusinessFamilyCard',
           component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
         },
         {
-          path: '/accountingBusiness/editFamily',
+          path: '/accounting-business/edit-family',
           name: 'editFamilyCard',
           component: () => import('@/components/AccountingBusiness/AccountingBusinessFamilyCard.vue'),
         },
         {
-          path: '/accountingBusiness/:id/:type/createDocument',
+          path: '/accounting-business/create-document',
           name: 'accountingBusinessDocumentCard',
           component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
         },
         {
-          path: '/accountingBusiness/:id/:type/editDocument',
+          path: '/accounting-business/:id/:type/edit-document',
           name: 'editDocument',
           component: () => import('@/components/AccountingBusiness/AccountingBusinessDocumentCard.vue'),
         },

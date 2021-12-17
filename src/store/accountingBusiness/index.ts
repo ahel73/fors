@@ -3,6 +3,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 
 import { getDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerStore } from './types';
+import moment from 'moment';
 
 export default class DeedControllerModule {
   @State()
