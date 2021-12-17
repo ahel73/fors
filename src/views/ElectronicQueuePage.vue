@@ -56,18 +56,12 @@
                   class="ml-4"
                   icon="mdi-arrow-collapse-down"
                 />
-                <router-link
-                  :to="{
-                    name: '',
-                    params: { type: 'create' },
-                  }"
-                >
-                  <icon-button
-                    class="ml-3"
-                    type="text"
-                    text="Сформировать список участников"
-                  />
-                </router-link>
+                <icon-button
+                  @click="generateList"
+                  class="ml-3"
+                  type="text"
+                  text="Сформировать список участников"
+                />
               </v-col>
             </v-row>
           </template>
@@ -462,6 +456,10 @@ export default class ElectronicQueuePageList extends Vue {
    this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
    this.store.electronicQueue.fetchElectronicQueueArchive(this.checkedProperties);
    this.fetchStateElectronicQueue();
+ }
+
+ generateList() {
+   // ToDo generateList
  }
 
  handleExporInXlsx() {
