@@ -1,5 +1,5 @@
 <template>
-  <main-layout title="Очередь участников на улучшение УЖУ">
+  <main-layout title="Очередь участников на улучшение ЖУ">
     <v-row>
       <v-col>
         <data-table
