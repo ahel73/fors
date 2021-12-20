@@ -12,7 +12,6 @@ export const methods = {
   },
 
   push(namePath: string) {
-    console.log(namePath);
     this.$router.push({ name: namePath });
   },
 
@@ -37,7 +36,6 @@ export const methods = {
     verifyObj: any, // ссылка на очищаемый объект
     nameObjState: string, // строка с именем объекта которому надо присвоить в качестве значения очищенный объект
     nameView = 'FormAddNewPeopleInNeety' // Имя страницы на которую необходимо перейти после добавления объекта
-
   ) {
     verifyObj = JSON.parse(JSON.stringify(verifyObj));
     for (const a in verifyObj) {
@@ -47,8 +45,6 @@ export const methods = {
         verifyObj[a] = null;
       }
     }
-    console.log('очищенный объект', verifyObj);
-    console.log('куда переходим', nameObjState);
     this.store.peopleInNeety.clearObj({ verifyObj, nameObjState });
     if (nameView) {
       this.push(nameView);
@@ -70,7 +66,6 @@ export const methods = {
   // Отправляет объект на добавление
   dispatchObject: async (dataObj = {}, endPoint: string): any => {
     const { data } = await httpClient.post<any>(endPoint, dataObj);
-    console.log(data);
     return false;
   },
 
@@ -83,10 +78,10 @@ export const methods = {
 
   // Проверка на заполненость обязательных полей
   verificationObject(dataObj = {}, requiredFields = {}) {
+    console.log(this);
     let flagError = false;
     for (const a in requiredFields) {
       if (dataObj[a] === null) {
-        console.log(a);
         requiredFields[a] = true;
         flagError = true;
       }

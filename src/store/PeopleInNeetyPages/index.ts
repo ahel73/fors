@@ -70,22 +70,18 @@ export default class PeopleInNeetyModule {
   // Обновляем свойства вложенного объекта
   @Mutation()
   update({ name, value, object }: UpdatePropsObject) {
-  // .console.log('name: ' + name + ' | value: ' + value);
     this.state[object][name] = value;
-    // console.log(this.state.newPersonNeedy);
   }
 
   // Обновляем свойства первого уровня стейта
   @Mutation()
   updateProp({ name, value } : UpdatePropsObject) {
-    console.log('name: ' + name + ' | value: ' + value);
     this.state[name] = value;
   }
 
   // Добавляем граждан в массив для вывода в табличном виде
   @Mutation()
   updatelistPeopleInNeety(array: PersonNeedy[] | []) {
-    console.log(array);
     this.state.listPeopleInNeety = array;
   }
 
@@ -105,8 +101,6 @@ export default class PeopleInNeetyModule {
   // Добавляем какие либо объекты в массивы или в свойства, например трудовая деятельность
   @Mutation()
   saveObj({ objDoc, nameList } : SaveObj) {
-    console.log(nameList);
-    console.log(this.state);
     const targetObject = this.state.flagUpdateItem ? this.state.updatePersonNeedy : this.state.newPersonNeedy;
     if (nameList === 'identityDocs') {
       targetObject.identityDoc = objDoc;
@@ -123,12 +117,12 @@ export default class PeopleInNeetyModule {
   }
 
   @Mutation()
-  activTabWorker() {
+  activeTabWorker() {
     this.state.flagTabWorker = 1;
   }
 
   @Mutation()
-  noActivTabWorker() {
+  noActiveTabWorker() {
     this.state.flagTabWorker = 0;
   }
 

@@ -1,3 +1,4 @@
+<!-- Страница добавления нового работодателя -->
 <template>
   <main-layout title="Новый работодатель">
     <div class="form-add-new-work-action">
@@ -15,8 +16,8 @@
             :required="true"
             :error="requiredField.type"
           >
-            <template #selection="data">
-              {{ data.item.name }}
+            <template #selection="{item}">
+              {{ item.name }}
             </template>
             <template #item="{item}">
               <v-list-item-content

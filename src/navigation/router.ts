@@ -51,7 +51,7 @@ const router = new Router({
       meta: {
         breadcrumbs: [
           {
-            label: 'Создание нуждающегося лица.',
+            label: 'Создание нуждающегося лица',
           },
         ],
       },

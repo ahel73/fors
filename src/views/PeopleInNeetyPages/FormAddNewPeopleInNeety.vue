@@ -14,7 +14,7 @@
         </router-link>
       </v-col>
     </v-row>
-    <!-- Табы ререключатели -->
+    <!-- Табы переключатели -->
     <v-tabs
       v-model="tab"
       background-color="white"
@@ -37,8 +37,8 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('surname', nameJbject)"
-              :value="newPerson.surname || ''"
+              @input="updateProps('surname', nameObject)"
+              :value="getSurname"
               :disabled="flagDisabled"
               :label="'Фамилия'"
               :is-error="requiredField.surname"
@@ -51,10 +51,10 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('name', nameJbject)"
-              :value="newPerson.name || ''"
+              @input="updateProps('name', nameObject)"
+              :value="getName"
               :disabled="flagDisabled"
-              :label="'Имя'"
+              label="'Имя'"
               :is-error="requiredField.name"
               :required="true"
             />
@@ -65,8 +65,8 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('patronymic', nameJbject)"
-              :value="newPerson.patronymic || ''"
+              @input="updateProps('patronymic', nameObject)"
+              :value="getPatronymic"
               :disabled="flagDisabled"
               :label="'Имя'"
             />
@@ -78,18 +78,18 @@
           <v-col cols="12">
             <datepicker
               v-if="!flagDisabled"
-              @change="updatePropsSpech($event, 'birthDate', nameJbject)"
-              @click:clear="updatePropsSpech( '', 'birthDate', nameJbject)"
+              @change="updatePropsSpech($event, 'birthDate', nameObject)"
+              @click:clear="updatePropsSpech( '', 'birthDate', nameObject)"
               limit-to="2021-12-31"
               limit-from="1930-01-01"
-              :value="newPerson.birthDate || ''"
+              :value="getBirthDate"
               :label="'Дата рождения'"
               :is-required="true"
               :error="requiredField.birthDate"
             />
             <input-component
               v-else
-              :value="newPerson.birthDate || ''"
+              :value="getBirthDate"
               :disabled="true"
             />
           </v-col>
@@ -110,19 +110,19 @@
                 </div>
               </template>
               <v-radio
-                label="Мужской"
+                :label="'Мужской'"
                 :value="'M'"
-                :key="'M'"
+                :key="1"
               />
               <v-radio
-                label="Женский"
+                :label="'Женский'"
                 :value="'W'"
-                :key="'W'"
+                :key="2"
               />
             </v-radio-group>
             <input-component
               v-else
-              :value="(newPerson.sex === 'M') ? 'Мужчина' : (newPerson.sex === 'W') ? 'Женщина' : 'Не указан' "
+              :value="getSex"
               :disabled="true"
               label="Пол"
             />
@@ -133,22 +133,22 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('residence', nameJbject)"
-              :value="newPerson.residence || ''"
+              @input="updateProps('residence', nameObject)"
+              :value="getResidence"
               :disabled="flagDisabled"
-              :label="'Место жительства'"
+              label="'Место жительства'"
             />
           </v-col>
         </v-row>
 
-        <!-- Мнсто регистрации -->
+        <!-- Место регистрации -->
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('location', nameJbject)"
-              :value="newPerson.location || ''"
+              @input="updateProps('location', nameObject)"
+              :value="getLocation"
               :disabled="flagDisabled"
-              :label="'Место прибывания'"
+              label="'Место прибывания'"
             />
           </v-col>
         </v-row>
@@ -158,18 +158,18 @@
           <v-col cols="12">
             <datepicker
               v-if="!flagDisabled"
-              @change="updatePropsSpech($event, 'registrationDate', nameJbject)"
-              @click:clear="updatePropsSpech( '', 'registrationDate', nameJbject)"
+              @change="updatePropsSpech($event, 'registrationDate', nameObject)"
+              @click:clear="updatePropsSpech( '', 'registrationDate', nameObject)"
               :limit-from="startYear"
-              :value="newPerson.registrationDate || ''"
+              :value="getRegistrationDate"
               :disabled="flagDisabled"
-              :label="'Дата регистрации'"
+              label="'Дата регистрации'"
             />
             <input-component
               v-else
-              :value="newPerson.registrationDate || ''"
+              :value="getRegistrationDate"
               :disabled="true"
-              :label="'Дата регистрации'"
+              label="'Дата регистрации'"
             />
           </v-col>
         </v-row>
@@ -178,10 +178,10 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('areaCode', nameJbject)"
-              :value="newPerson.areaCode || ''"
+              @input="updateProps('areaCode', nameObject)"
+              :value="getAreaCode"
               :disabled="flagDisabled"
-              :label="'Код МО'"
+              label="Код МО"
               :is-error="requiredField.areaCode"
               :required="true"
             />
@@ -193,9 +193,9 @@
           <v-col cols="12">
             <router-link :to="flagNew ? {name: 'FormAddDocument'} : ''">
               <input-component
-                :value="newPerson.identityDoc ? newPerson.identityDoc.type.name : ''"
+                :value="getIdentityDoc"
                 :disabled="flagDisabled"
-                :label="'Документ удостоверяющиё'"
+                label="Документ удостоверяющий личность"
                 :is-error="requiredField.identityDoc"
                 :required="true"
               />
@@ -208,19 +208,19 @@
           <v-col cols="6">
             <input-component
               v-mask="'###-###-### ##'"
-              @input="updateProps('snils', nameJbject)"
-              :value="newPerson.snils || ''"
+              @input="updateProps('snils', nameObject)"
+              :value="getSnils"
               :disabled="flagDisabled"
-              :label="'СНИЛС'"
+              label="'СНИЛС'"
             />
           </v-col>
           <!-- ИНН -->
           <v-col cols="6">
             <input-component
-              @input="updateProps('inn', nameJbject)"
-              :value="newPerson.inn || ''"
+              @input="updateProps('inn', nameObject)"
+              :value="getInn"
               :disabled="flagDisabled"
-              :label="'ИНН'"
+              label="ИНН"
             />
           </v-col>
         </v-row>
@@ -230,31 +230,31 @@
           <v-col cols="6">
             <input-component
               v-mask="'+7(###) ###-##-##'"
-              @input="updateProps('phoneNumber', nameJbject)"
-              :value="newPerson.phoneNumber || ''"
+              @input="updateProps('phoneNumber', nameObject)"
+              :value="getPhoneNumber"
               :disabled="flagDisabled"
-              :label="'Телефон'"
+              label="'Телефон'"
             />
           </v-col>
           <!-- ОГРНИП -->
           <v-col cols="6">
             <input-component
-              @input="updateProps('ogrnip', nameJbject)"
-              :value="newPerson.ogrnip || ''"
+              @input="updateProps('ogrnip', nameObject)"
+              :value="getOgrnip"
               :disabled="flagDisabled"
-              :label="'ОГРНИП'"
+              label="'ОГРНИП'"
             />
           </v-col>
         </v-row>
 
-        <!-- Эоектронная почта -->
+        <!-- Электронная почта -->
         <v-row>
           <v-col cols="12">
             <input-component
-              @input="updateProps('email', nameJbject)"
-              :value="newPerson.email || ''"
+              @input="updateProps('email', nameObject)"
+              :value="getEmail"
               :disabled="flagDisabled"
-              :label="'Эл. почта'"
+              label="'Эл. почта'"
             />
           </v-col>
         </v-row>
@@ -263,9 +263,9 @@
         <v-row>
           <v-col cols="12">
             <input-component
-              :value="(flagNew && !flagUpdatePerson) ? 'Черновик' : newPerson.status.name"
+              :value="getStatus"
               :disabled="true"
-              :label="'Сатаус'"
+              label="'Статус'"
             />
           </v-col>
         </v-row>
@@ -296,7 +296,7 @@
           :items="newPerson.works"
           :hide-footer="true"
         >
-          <template #[`item.actions`]="{}">
+          <template #[`item.actions`]>
             <v-icon
               v-if="flagNew"
               small
@@ -329,19 +329,7 @@
         <template v-if="flagUpdatePerson">
           <v-col cols="auto">
             <button-component
-              @click="
-                flagError=verificationObject(newPerson, requiredField);
-                if (!flagError) {
-                  dispatchUpdateObject(newPerson, '/individual-persons/')
-                    .then((response => {
-                      myStore.offUpdateItem();
-                      push('ListPeoplePage');
-                    }))
-                    .catch((error)=>{
-                      errorDispatch(error)
-                    })
-                }
-              "
+              @click="updatePerson"
               size="micro"
               title="Обновить данные"
               variant="primary"
@@ -365,26 +353,7 @@
         <template v-else>
           <v-col cols="auto">
             <button-component
-              @click="
-                flagError=verificationObject(newPerson, requiredField);
-                if (!flagError) {
-                  dispatchObject(newPerson, '/individual-persons/', requiredField)
-                    .then(response => {
-                      clearObj(
-                        {
-                          status: { active: true, id: 1, name: 'Черновик' },
-                          works: [],
-                        },
-                        newPerson,
-                        'newPersonNeedy',
-                        'ListPeoplePage',
-                      )
-                    })
-                    .catch((error)=>{
-                      errorDispatch(error)
-                    })
-                }
-              "
+              @click="createPerson"
               size="micro"
               title="Сохранить"
               variant="primary"
@@ -431,7 +400,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
-// import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 import MainLayout from '@/layouts/MainLayout.vue';
 import InputComponent from '@/components/shared/inputs/InputComponent.vue';
 import Datepicker from '@/components/shared/Datepicker/Datepicker.vue';
@@ -439,6 +408,7 @@ import RadioGroupComponent from '@/components/shared/inputs/RadioGroupComponent.
 import SelectComponent from '@/components/shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import IconButton from '@/components/shared/buttons/IconButton.vue';
+import eventBus from '@/utils/bus/event-bus';
 import DataTable from '@/components/shared/table/DataTable.vue';
 import httpClient from '@/data/http';
 import { query } from '@/utils';
@@ -467,7 +437,79 @@ export default class FormAddNewPeopleInNeety extends Vue {
   // Содержит ссылку на объект нового гражданина или обновляемого (обновляемый может быть ка кдля просмотра так и для редактирования)
   newPerson = this.myStore.state.updatePersonNeedy ? this.myStore.state.updatePersonNeedy : this.myStore.state.newPersonNeedy;
   // Имя объекта с которым работаем в форме
-  nameJbject = this.myStore.state.updatePersonNeedy ? 'updatePersonNeedy' : 'newPersonNeedy';
+  nameObject = this.myStore.state.updatePersonNeedy ? 'updatePersonNeedy' : 'newPersonNeedy';
+  get getStatus() {
+    return (this.flagNew && !this.flagUpdatePerson) ? 'Черновик' : this.newPerson.status.name;
+  }
+
+  get getEmail() {
+    return this.newPerson.email || '';
+  }
+
+  get getOgrnip() {
+    return this.newPerson.ogrnip || '';
+  }
+
+  get getPhoneNumber() {
+    return this.newPerson.phoneNumber || '';
+  }
+
+  get getInn() {
+    return this.newPerson.inn || '';
+  }
+
+  get getSnils() {
+    return this.newPerson.snils || '';
+  }
+
+  get getIdentityDoc() {
+    return this.newPerson.identityDoc ? this.newPerson.identityDoc.type.name : '';
+  }
+
+  get getAreaCode() {
+    return this.newPerson.areaCode || '';
+  }
+
+  get getRegistrationDate() {
+    return this.newPerson.registrationDate || '';
+  }
+
+  get getLocation() {
+    return this.newPerson.location || '';
+  }
+
+  get getResidence() {
+    return this.newPerson.residence || '';
+  }
+
+  get getSex() {
+    return (this.newPerson.sex === 'M') ? 'Мужской' : (this.newPerson.sex === 'W') ? 'Женский' : 'Не указан';
+  }
+
+  get getBirthDate() {
+    return this.newPerson.birthDate || '';
+  }
+
+  get getPatronymic() {
+    return this.newPerson.patronymic || '';
+  }
+
+  get getName() {
+    return this.newPerson.name || '';
+  }
+
+  get getSurname() {
+    return this.newPerson.surname || '';
+  }
+
+  get getSexM() {
+    return !!(this.newPerson.sex === 'M');
+  }
+
+  get getSexW() {
+    return !!(this.newPerson.sex === 'W');
+  }
+
   // ложь общие сведение, истина трудовая деятельность
   tab = this.myStore.state.flagTabWorker;
   // Количество лет в выподашке по датапикеру
@@ -509,12 +551,53 @@ export default class FormAddNewPeopleInNeety extends Vue {
   }
 
   errorDispatch(error) {
-    alert(error);
+    eventBus.$emit(
+      'notification:message',
+      {
+        text: error,
+        type: 'error',
+      }
+    );
+  }
+
+  createPerson() {
+    const flagError = this.verificationObject(this.newPerson, this.requiredField);
+    if (!flagError) {
+      this.dispatchObject(this.newPerson, '/individual-persons/')
+        .then(() => {
+          this.clearObj(
+            {
+              status: { active: true, id: 1, name: 'Черновик' },
+              works: [],
+            },
+            this.newPerson,
+            'newPersonNeedy',
+            'ListPeoplePage'
+          );
+        })
+        .catch((error) => {
+          this.errorDispatch(error);
+        });
+    }
+  }
+
+  updatePerson() {
+    const flagError = this.verificationObject(this.newPerson, this.requiredField);
+    if (!flagError) {
+      this.dispatchUpdateObject(this.newPerson, '/individual-persons/')
+        .then(() => {
+          this.myStore.offUpdateItem();
+          this.push('ListPeoplePage');
+        })
+        .catch((error) => {
+          this.errorDispatch(error);
+        });
+    }
   }
 
   mounted() {
     if (this.myStore.state.flagTabWorker) {
-      this.myStore.noActivTabWorker();
+      this.myStore.noActiveTabWorker();
     }
   }
 

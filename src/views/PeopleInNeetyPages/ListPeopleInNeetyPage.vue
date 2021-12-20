@@ -5,8 +5,12 @@
     <v-row>
       <v-col>
         <data-table
+          @onOptionsChange="changePagAndSort"
           :headers="headers"
           :items="listPeople"
+          :items-length="pagAndSort.total"
+          :per-page="pagAndSort.size"
+          :sort-by="pagAndSort.sort"
         >
           <!-- Фильтр и кнопки -->
           <template #[`tabs.after`]>
@@ -15,7 +19,7 @@
                 cols="12"
                 class="d-flex align-start"
               >
-                <filter-component />
+                <!-- <filter-component /> -->
               </v-col>
             </v-row>
             <v-row class="mb-8">
@@ -49,19 +53,19 @@
           <!-- Таблица -->
           <template #[`item.actions`]="{ item }">
             <base-action
-              @click="viewing(item, '/individual-persons/')"
+              @click="onOpenClick(item, '/individual-persons/')"
               hint="Просмотр"
             >
               <eye-icon />
             </base-action>
             <base-action
-              @click="updateObject(item, '/individual-persons/')"
+              @click="onEditClick(item, '/individual-persons/')"
               hint="Редактировать"
             >
               <edit-icon />
             </base-action>
             <base-action
-              @click="deleteItem(item)"
+              @click=" onDeleteClick(item)"
               hint="Удалить"
             >
               <delete-icon />
@@ -114,19 +118,37 @@ export default class ListPeopleInNeetyPage extends Vue {
   }
 
   pagAndSort = {
-    page: 1,
+    page: 0,
     size: 10,
     sort: '-id',
+    total: null,
+  }
+
+  changePagAndSort(options) {
+    let { page, size, sort } = options;
+
+    if (sort[1] === '-') {
+      sort = sort.slice(1);
+    }
+    this.pagAndSort.sort = sort || this.pagAndSort.sort;
+    this.pagAndSort.size = size;
+    this.pagAndSort.page = page;
+
+    this.getGroup('/individual-persons/find/', this.pagAndSort)
+      .then(user => {
+        this.pagAndSort.total = user.meta.total;
+        this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
+      });
   }
 
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
   push = methods.push;
 
-  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
+  getGroup = async (queryString: string, params: any = {} as any): Promise<any> => {
     const { page = 0, sort = '-id', size } = params;
     const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.post<any>(queryString);
-    return data;
+    const response = await httpClient.post(queryString + '?' + queryParams, params);
+    return response.data;
   }
 
   getOne = async (queryString: string, id: any) => {
@@ -134,31 +156,26 @@ export default class ListPeopleInNeetyPage extends Vue {
     return data;
   };
 
-  async deleteItem(item) {
-    // console.log(item.id);
-    const data = await httpClient.delete<any>(`/individual-persons/${item.id}`);
-    console.log(data);
-    this.getGroop('/individual-persons/find/')
+  async onDeleteClick(item) {
+    const data = await httpClient.delete(`/individual-persons/${item.id}`);
+    this.getGroup('/individual-persons/find/')
       .then(user => {
-        console.log(user);
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
       });
   }
 
-  updateObject(item, string) {
+  onEditClick(item, string) {
     console.log(item.id);
     this.getOne(string, item.id)
       .then(item => {
-        console.log(item);
         this.store.peopleInNeety.activeUpdateItem(item);
         this.push('FormAddNewPeopleInNeety');
       });
   }
 
-  viewing(item, string) {
+  onOpenClick(item, string) {
     this.getOne(string, item.id)
       .then(item => {
-        console.log(item);
         this.store.peopleInNeety.viewing(item);
         this.push('FormAddNewPeopleInNeety');
       });
@@ -185,9 +202,9 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.myStore.flagUpdateItem = false;
     this.myStore.flagViewing = false;
 
-    this.getGroop('/individual-persons/find/', this.pagAndSort)
+    this.getGroup('/individual-persons/find/', this.pagAndSort)
       .then(user => {
-        console.log(user);
+        this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
       });
   }

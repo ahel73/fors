@@ -117,9 +117,9 @@ export default class Calendar extends Vue {
   date: Moment = moment(this.value || moment(), this.format);
   formattedValue = this.value;
 
-  yearLimitFrom = moment(this.limitFrom).year();
+  yearLimitFrom = this.limitFrom && moment(this.limitFrom).year();
   monthLimitFrom = this.limitFrom && moment(this.limitFrom).month();
-  yearLimitTo = moment(this.limitTo).year();
+  yearLimitTo = this.limitTo && moment(this.limitTo).year();
   monthLimitTo = this.limitTo && moment(this.limitTo).month();
 
   yearValue: number = moment().year();
@@ -127,8 +127,6 @@ export default class Calendar extends Vue {
 
   get numberOfYears(): number[] {
     const yearFrom = this.yearLimitFrom ?? this.startingYear;
-    console.log('yearLimitFrom:' + this.yearLimitFrom);
-    console.log('yearLimitTo:' + this.yearLimitTo);
 
     if (isNumber(this.yearLimitFrom) && isNumber(this.yearLimitTo)) {
       const years = new Array(this.yearLimitTo - this.yearLimitFrom + 1)

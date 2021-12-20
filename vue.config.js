@@ -5,16 +5,6 @@ module.exports = {
   transpileDependencies: ['vuetify'],
 
   devServer: {
-    // proxy: {
-    //   '^/configurator/api': {
-    //     target: 'https://mgp-dev.fors.ru/configurator/api',
-    //     changeOrigin: true,
-    //     pathRewrite: { '^/configurator/api': '' },
-    //   },
-    //   '^/security/api': {
-    //     target: 'https://mgp-dev.fors.ru',
-    //   },
-    // },
     proxy: {
       '^/housing-subsidies/api': {
         target: 'https://mgp-dev.fors.ru/housing-subsidies/api',

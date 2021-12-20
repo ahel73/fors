@@ -28,16 +28,26 @@
                   <!-- То что отображается -->
                   <template #selection="data">
                     <div>
-                      <span>{{ data.item.type.name }}</span> <span>"{{ data.item.shortName }}"</span>
+                      <span>
+                        {{ data.item.type.name }}
+                      </span>
+                      <span>
+                        "{{ data.item.shortName }}"
+                      </span>
                     </div>
                   </template>
                   <!-- Список -->
                   <template #item="{item}">
                     <v-list-item-content
-                      @click="selectEmployer = item"
+                      @click="setSelectEmployer(item)"
                     >
                       <div>
-                        <span>{{ item.type.name }}</span> <span>"{{ item.shortName }}"</span>
+                        <span>
+                          {{ item.type.name }}
+                        </span>
+                        <span>
+                          "{{ item.shortName }}"
+                        </span>
                       </div>
                     </v-list-item-content>
                   </template>
@@ -60,7 +70,7 @@
                     </router-link>
                   </v-col>
                   <v-col
-                    class="left-auto  ml-auto"
+                    class="left-auto ml-auto"
                     cols="auto"
                   >
                     <button-component
@@ -73,7 +83,7 @@
                   </v-col>
                   <v-col cols="auto">
                     <button-component
-                      @click="dialog = false"
+                      @click="exitSelectEmployer"
                       size="micro"
                       title="Отмена"
                       class="button-save"
@@ -87,11 +97,11 @@
       </v-row>
       <!-- Трудовая функция-->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <input-component
             @input="updateProps('workFunction', 'newWorkerAction')"
-            :value="newWorkerAction.workFunction || ''"
-            :label="'Трудовая функция'"
+            :value="getWorkFunction"
+            label="'Трудовая функция'"
             :is-error="requiredField.workFunction"
             :required="true"
           />
@@ -105,7 +115,7 @@
             @click:clear="updatePropsSpech( '', 'employmentDate', 'newWorkerAction')"
             :starting-year="yearInterval"
             :value="newWorkerAction.employmentDate || ''"
-            :label="'Дата приёма'"
+            label="Дата приёма"
             :is-required="true"
           />
         </v-col>
@@ -114,8 +124,8 @@
             @change="updatePropsSpech($event, 'dismissalDate', 'newWorkerAction')"
             @click:clear="updatePropsSpech( '', 'dismissalDate', 'newWorkerAction')"
             :starting-year="yearInterval"
-            :value="newWorkerAction.dismissalDate || ''"
-            :label="'Дата увольнения'"
+            :value="getDismissalDate"
+            label="Дата увольнения"
           />
         </v-col>
       </v-row>
@@ -124,7 +134,7 @@
           <input-component
             @input="updateProps('dismissalReason', 'newWorkerAction')"
             :value="newWorkerAction.dismissalReason || ''"
-            :label="'Причина увольнения'"
+            label="Причина увольнения"
           />
         </v-col>
       </v-row>
@@ -132,8 +142,8 @@
         <v-col cols="12">
           <input-component
             @input="updateProps('baseDoc', 'newWorkerAction')"
-            :value="newWorkerAction.baseDoc || ''"
-            :label="'Документ основание'"
+            :value="getBaseDoc"
+            label="'Документ основание'"
           />
         </v-col>
       </v-row>
@@ -142,7 +152,7 @@
           <checkbox-component
             @change="updatePropsSpech( !newWorkerAction.pfr, 'pfr', 'newWorkerAction')"
             :value="newWorkerAction.pfr"
-            :label="'Признак ПФР'"
+            label="'Признак ПФР'"
           />
         </v-col>
       </v-row>
@@ -153,22 +163,7 @@
           cols="auto"
         >
           <button-component
-            @click="
-              flagError=verificationObject(newWorkerAction, requiredField);
-              if (!flagError) {
-                saveObj(
-                  newWorkerAction,
-                  'work',
-                );
-                clearObj(
-                  { pfr: true },
-                  newWorkerAction,
-                  'newWorkerAction',
-                  'FormAddNewPeopleInNeety',
-                );
-                myStore.activTabWorker()
-              }
-            "
+            @click="createWorkerActivity"
             size="micro"
             title="Сохранить"
             variant="primary"
@@ -177,15 +172,7 @@
         </v-col>
         <v-col cols="auto">
           <button-component
-            @click="
-              clearObj(
-                { pfr: true },
-                newWorkerAction,
-                'newWorkerAction',
-                'FormAddNewPeopleInNeety',
-              )
-              myStore.activTabWorker()
-            "
+            @click="cancel"
             size="micro"
             title="Отмена"
             class="button-save"
@@ -209,6 +196,7 @@ import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue'
 import AutocompleteComponent from '@/components/shared/inputs/AutocompleteComponent.vue';
 import httpClient from '@/data/http';
 import { query } from '@/utils';
+import eventBus from '@/utils/bus/event-bus';
 
 @Component({
   name: 'FormAddNewWorkerActivity',
@@ -238,17 +226,74 @@ export default class FormAddNewWorkerActivity extends Vue {
 
   flagError = false;
 
+  get getBaseDoc() {
+    return this.newWorkerAction.baseDoc || '';
+  }
+
+  get getDismissalReason() {
+    return this.newWorkerAction.dismissalReason || '';
+  }
+
+  get getDismissalDate() {
+    return this.newWorkerAction.dismissalDate || '';
+  }
+
+  get getWorkFunction() {
+    return this.newWorkerAction.workFunction || '';
+  }
+
+  cancel() {
+    this.clearObj(
+      { pfr: true },
+      this.newWorkerAction,
+      'newWorkerAction',
+      'FormAddNewPeopleInNeety'
+    );
+    this.myStore.activeTabWorker();
+  }
+
+  exitSelectEmployer() {
+    this.dialog = false;
+  }
+
+  setSelectEmployer(item) {
+    this.selectEmployer = item;
+  }
+
+  createWorkerActivity() {
+    const flagError = this.verificationObject(this.newWorkerAction, this.requiredField);
+    if (!flagError) {
+      this.saveObj(
+        this.newWorkerAction,
+        'work'
+      );
+      this.clearObj(
+        { pfr: true },
+        this.newWorkerAction,
+        'newWorkerAction',
+        'FormAddNewPeopleInNeety'
+      );
+      this.myStore.activeTabWorker();
+    }
+  }
+
   updateProps = methods.updateProps.bind(this);
   updatePropsSpech = methods.updatePropsSpech.bind(this);
   push = methods.push;
-  saveObj = methods.saveObj.bind(this)
-  clearObj = methods.clearObj
+  saveObj = methods.saveObj.bind(this);
+  clearObj = methods.clearObj;
   exitReview = methods.exitReview;
   verificationObject = methods.verificationObject.bind(this);
 
   setEmployer() {
     if (!this.selectEmployer) {
-      alert('Работодатель не выбран');
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: 'Работодатель не выбран',
+          type: 'error',
+        }
+      );
       return false;
     }
     const id = this.selectEmployer.id;
@@ -261,14 +306,13 @@ export default class FormAddNewWorkerActivity extends Vue {
   getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
     const { page = 0, sort = '-id', size } = params;
     const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.post<any>(queryString);
+    const { data } = await httpClient.post(queryString);
     return data;
   }
 
   created() {
     this.getGroop('/employers/find/')
       .then(user => {
-        console.log(user.data);
         this.listEmployers = user.data;
       });
   }
