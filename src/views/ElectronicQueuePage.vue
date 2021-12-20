@@ -24,6 +24,16 @@
               </template>
             </base-action>
           </template>
+          <template #[`item.registrationDate`]="{value}">
+            <span v-if="value">
+              {{ formatDate(value) }}
+            </span>
+          </template>
+          <template #[`item.numChangeDate`]="{value}">
+            <span v-if="value">
+              {{ formatDate(value) }}
+            </span>
+          </template>
           <template #[`tabs.after`]>
             <v-row>
               <v-col
@@ -104,6 +114,7 @@ import { useStore } from 'vuex-simple';
 import { Pagination } from '@/types/Pagination';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
 import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue';
+import { dateIsValid, getFormattedDate } from '@/utils';
 
 @Component({
   name: 'ElectronicQueueList',
@@ -362,7 +373,11 @@ export default class ElectronicQueuePageList extends Vue {
    return error ? error.message : 'Данные отсутствуют';
  }
 
- fetchControllerData() {
+ formatDate(date: string): string | null {
+   return dateIsValid(date) ? getFormattedDate(date) : null;
+ }
+
+ fetchControllerData(): void {
    const params = {};
    this.store.directory.fetchDeedStatusController();
    this.store.directory.fetchEmploymentController();
