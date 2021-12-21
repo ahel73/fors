@@ -19,7 +19,12 @@
                 cols="12"
                 class="d-flex align-start"
               >
-                <!-- <filter-component /> -->
+                <filter-component
+                  @onSearch="sendFilter"
+                  @onReset="resetFilter"
+                  :initial-items="itemsFilter"
+                  :filters="filters"
+                />
               </v-col>
             </v-row>
             <v-row class="mb-8">
@@ -94,6 +99,9 @@ import httpClient from '@/data/http';
 import { query } from '@/utils';
 import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
 
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
+import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
+
 @Component({
   name: 'ListPeopleInNeetyPage',
   components: {
@@ -117,6 +125,127 @@ export default class ListPeopleInNeetyPage extends Vue {
     return this.store.peopleInNeety.state.listPeopleInNeety;
   }
 
+  itemsFilter: OutputFilters = [];
+  filters: FilterTypes = {
+    simpleFilters: [
+      {
+        name: 'surname',
+        label: 'Фамилия',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'name',
+        label: 'Имя',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'patronymic',
+        label: 'Отчество',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'inn',
+        label: 'ИНН',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'snils',
+        label: 'СНИЛС ',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'residence',
+        label: 'Место жительства',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+      {
+        name: 'location',
+        label: 'Место прибывания',
+        type: FilterTypeNames.SIMPLE_FILTER,
+        valueType: ValueTypes.STRING,
+        isDefault: true,
+      },
+    ],
+    rangeDateFilters: [
+      {
+        from: {
+          type: FilterTypeNames.SIMPLE_FILTER,
+          name: 'from',
+          value: null,
+          label: 'от:',
+        },
+        to: {
+          type: FilterTypeNames.SIMPLE_FILTER,
+          name: 'to',
+          value: null,
+          label: 'до:',
+        },
+        name: 'birthDate',
+        type: FilterTypeNames.RANGE_DATE_FILTER,
+        label: 'Дата рождения',
+        isDefault: true,
+      },
+    ],
+  }
+
+  filter = {
+    surname: null,
+    name: null,
+    patronymic: null,
+    fromBirthDate: null,
+    toBirthDate: null,
+    inn: null,
+    snils: null,
+    residence: null,
+    location: null,
+  };
+
+  sendFilter(outputFilters: OutputFilters): void {
+    outputFilters.forEach(el => {
+      if (el.name === 'surname') {
+        this.filter.surname = el.value[0] || null;
+      } else if (el.name === 'name') {
+        this.filter.name = el.value[0] || null;
+      } else if (el.name === 'patronymic') {
+        this.filter.patronymic = el.value[0] || null;
+      } else if (el.name === 'birthDate') {
+        this.filter.fromBirthDate = el.valueFrom ? el.valueFrom[0] : null;
+        this.filter.toBirthDate = el.valueTo ? el.valueTo[0] : null;
+      } else if (el.name === 'inn') {
+        this.filter.inn = el.value[0] || null;
+      } else if (el.name === 'snils') {
+        this.filter.snils = el.value[0] || null;
+      } else if (el.name === 'residence') {
+        this.filter.residence = el.value[0] || null;
+      } else if (el.name === 'location') {
+        this.filter.location = el.value[0] || null;
+      }
+    });
+    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
+      .then(user => {
+        this.pagAndSort.total = user.meta.total;
+        this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
+      });
+  }
+
+  resetFilter(): void {
+    for (const prop in this.filter) {
+      this.filter[prop] = null;
+    }
+  }
+
   pagAndSort = {
     page: 0,
     size: 10,
@@ -134,7 +263,7 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.pagAndSort.size = size;
     this.pagAndSort.page = page;
 
-    this.getGroup('/individual-persons/find/', this.pagAndSort)
+    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
       .then(user => {
         this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
@@ -144,10 +273,10 @@ export default class ListPeopleInNeetyPage extends Vue {
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
   push = methods.push;
 
-  getGroup = async (queryString: string, params: any = {} as any): Promise<any> => {
+  getGroup = async (queryString: string, params: any = {} as any, filter: any = {}): Promise<any> => {
     const { page = 0, sort = '-id', size } = params;
     const queryParams = query({ ...params, page, sort, size });
-    const response = await httpClient.post(queryString + '?' + queryParams, params);
+    const response = await httpClient.post(queryString + '?' + queryParams, filter);
     return response.data;
   }
 
@@ -202,7 +331,7 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.myStore.flagUpdateItem = false;
     this.myStore.flagViewing = false;
 
-    this.getGroup('/individual-persons/find/', this.pagAndSort)
+    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
       .then(user => {
         this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);

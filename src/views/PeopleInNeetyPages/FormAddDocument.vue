@@ -41,7 +41,7 @@
           <datepicker
             @change="updatePropsSpech($event, 'issueDate', 'newIdentityDoc')"
             @click:clear="updatePropsSpech( '', 'issueDate', 'newIdentityDoc')"
-            :starting-year="yearInterval"
+            :starting-year="yearInterval + 2"
             :value="newIdentityDoc.issueDate"
             :label="'Дата выдачи'"
             :is-required="true"

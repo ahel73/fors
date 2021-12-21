@@ -113,7 +113,7 @@
           <datepicker
             @change="updatePropsSpech($event, 'employmentDate', 'newWorkerAction')"
             @click:clear="updatePropsSpech( '', 'employmentDate', 'newWorkerAction')"
-            :starting-year="yearInterval"
+            :starting-year="yearInterval + 2"
             :value="newWorkerAction.employmentDate || ''"
             label="Дата приёма"
             :is-required="true"
@@ -123,7 +123,7 @@
           <datepicker
             @change="updatePropsSpech($event, 'dismissalDate', 'newWorkerAction')"
             @click:clear="updatePropsSpech( '', 'dismissalDate', 'newWorkerAction')"
-            :starting-year="yearInterval"
+            :starting-year="yearInterval + 2"
             :value="getDismissalDate"
             label="Дата увольнения"
           />

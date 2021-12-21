@@ -40,7 +40,7 @@
               @input="updateProps('surname', nameObject)"
               :value="getSurname"
               :disabled="flagDisabled"
-              :label="'Фамилия'"
+              label="Фамилия"
               :is-error="requiredField.surname"
               :required="true"
             />
@@ -54,7 +54,7 @@
               @input="updateProps('name', nameObject)"
               :value="getName"
               :disabled="flagDisabled"
-              label="'Имя'"
+              label="Имя"
               :is-error="requiredField.name"
               :required="true"
             />
@@ -68,7 +68,7 @@
               @input="updateProps('patronymic', nameObject)"
               :value="getPatronymic"
               :disabled="flagDisabled"
-              :label="'Имя'"
+              label="Имя"
             />
           </v-col>
         </v-row>
@@ -80,8 +80,7 @@
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'birthDate', nameObject)"
               @click:clear="updatePropsSpech( '', 'birthDate', nameObject)"
-              limit-to="2021-12-31"
-              limit-from="1930-01-01"
+              :starting-year="1923"
               :value="getBirthDate"
               :label="'Дата рождения'"
               :is-required="true"
@@ -136,7 +135,7 @@
               @input="updateProps('residence', nameObject)"
               :value="getResidence"
               :disabled="flagDisabled"
-              label="'Место жительства'"
+              label="Место жительства"
             />
           </v-col>
         </v-row>
@@ -148,7 +147,7 @@
               @input="updateProps('location', nameObject)"
               :value="getLocation"
               :disabled="flagDisabled"
-              label="'Место прибывания'"
+              label="Место прибывания"
             />
           </v-col>
         </v-row>
@@ -163,13 +162,13 @@
               :limit-from="startYear"
               :value="getRegistrationDate"
               :disabled="flagDisabled"
-              label="'Дата регистрации'"
+              label="Дата регистрации"
             />
             <input-component
               v-else
               :value="getRegistrationDate"
               :disabled="true"
-              label="'Дата регистрации'"
+              label="Дата регистрации"
             />
           </v-col>
         </v-row>
@@ -211,13 +210,14 @@
               @input="updateProps('snils', nameObject)"
               :value="getSnils"
               :disabled="flagDisabled"
-              label="'СНИЛС'"
+              label="СНИЛС"
             />
           </v-col>
           <!-- ИНН -->
           <v-col cols="6">
             <input-component
               @input="updateProps('inn', nameObject)"
+              @blur="inputValidation"
               :value="getInn"
               :disabled="flagDisabled"
               label="ИНН"
@@ -233,7 +233,7 @@
               @input="updateProps('phoneNumber', nameObject)"
               :value="getPhoneNumber"
               :disabled="flagDisabled"
-              label="'Телефон'"
+              label="Телефон"
             />
           </v-col>
           <!-- ОГРНИП -->
@@ -242,7 +242,7 @@
               @input="updateProps('ogrnip', nameObject)"
               :value="getOgrnip"
               :disabled="flagDisabled"
-              label="'ОГРНИП'"
+              label="ОГРНИП"
             />
           </v-col>
         </v-row>
@@ -254,7 +254,7 @@
               @input="updateProps('email', nameObject)"
               :value="getEmail"
               :disabled="flagDisabled"
-              label="'Эл. почта'"
+              label="Эл. почта"
             />
           </v-col>
         </v-row>
@@ -265,7 +265,7 @@
             <input-component
               :value="getStatus"
               :disabled="true"
-              label="'Статус'"
+              label="Статус"
             />
           </v-col>
         </v-row>
@@ -593,6 +593,11 @@ export default class FormAddNewPeopleInNeety extends Vue {
           this.errorDispatch(error);
         });
     }
+  }
+
+  inputValidation() {
+    console.log(event.target.value.length);
+    console.log(isNaN(parseInt(event.target.value)));
   }
 
   mounted() {
