@@ -19,7 +19,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
   },
 })
 
-export default class ProgramsRegistryPage extends Vue {
+export default class MainPage extends Vue {
   store: Store = useStore(this.$store);
 
   itemIdToDelete: number | null = null;

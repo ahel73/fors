@@ -1,3 +1,5 @@
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
+
 export interface HeaderColumns {
     text: string;
     value?: string;
@@ -52,4 +54,12 @@ export interface ErrorData {
 export interface ReplaceConditions {
   from: string;
   to: string;
+}
+
+export interface FilterParams {
+    name?: string;
+    size?: string;
+    page?: string;
+    sort?: string;
+    items?: OutputFilters;
 }

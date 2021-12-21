@@ -19,6 +19,7 @@
             :error-messages="errorMessages"
             :label="label"
             :readonly="readonly"
+            :disabled="disabled"
             :required="isRequired"
             :hide-details="hideDetails"
             class="input"
@@ -90,6 +91,7 @@ export default class Datepicker extends Vue {
   @Prop({ type: Boolean, default: true }) readonly monthSelect!: boolean;
   @Prop({ type: Boolean, default: true }) readonly clearable!: boolean;
   @Prop({ type: Boolean, default: false }) readonly readonly!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean;
   @Prop({ type: String, default: '' }) readonly limitFrom!: string;
   @Prop({ type: String, default: '' }) readonly limitTo!: string;
   @Prop(String) readonly label!: string;

@@ -26,7 +26,7 @@ variables:
 # build snapshot version and push to docker registry
 build:
   image:
-    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.3.0-debug
     entrypoint: [ "" ]
   stage: build
   rules:
@@ -111,7 +111,7 @@ set-version-tag:
 # build snapshot version and push to docker registry
 release-tag:
   image:
-    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.3.0-debug
     entrypoint: [ "" ]
   stage: build
   rules:
@@ -131,7 +131,7 @@ release-tag:
 # build snapshot version and push to docker registry
 release-docker:
   image:
-    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.6.0-debug
+    name: ${GCR_IO_REGISTRY}/kaniko-project/executor:v1.3.0-debug
     entrypoint: [ "" ]
   stage: build
   rules:

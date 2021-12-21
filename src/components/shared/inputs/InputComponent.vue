@@ -27,6 +27,7 @@
       :error="isError"
       :height="sizeVariants[variant]"
       :hide-details="hideDetails"
+      :hide-spin-buttons="hideSpinButtons"
       :loading="loading"
       :maxlength="maxlength"
       :min="min"
@@ -100,6 +101,7 @@ export default class InputComponent extends Vue {
   @Prop(Boolean) clearable!: boolean;
   @Prop(Boolean) disabled!: boolean;
   @Prop(Boolean) hideDetails!: boolean;
+  @Prop(Boolean) hideSpinButtons!: boolean;
   @Prop(Boolean) required!: boolean;
   @Prop(Boolean) readonly!: boolean;
   @Prop(Boolean) loading!: boolean;
@@ -174,7 +176,7 @@ export default class InputComponent extends Vue {
     }
 
     &.v-input--is-disabled .v-input__slot {
-      background-color: $secondary;
+      background-color: $secondary !important;
       //border: 1px solid $secondary;
     }
 
