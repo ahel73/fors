@@ -204,11 +204,13 @@ export default class AccountingBusinessFamilyCard extends Vue {
       } else {
         this.store.deedItem.addFamilyPeople(mapForm(this.itemPeople));
       }
+      this.store.deedItem.changeTabValue(1);
       this.$router.go(-1);
     }
   }
 
   onCancelClick() {
+    this.store.deedItem.changeTabValue(1);
     this.$router.go(-1);
   }
 

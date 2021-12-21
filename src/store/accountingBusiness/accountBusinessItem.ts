@@ -14,6 +14,7 @@ export default class DeedControllerItemModule {
     isLoading: false,
     documentEdit: {},
     peopleEdit: {},
+    tab: 0,
   }
 
   @Mutation()
@@ -214,6 +215,11 @@ export default class DeedControllerItemModule {
     this.state.data = item;
   }
 
+  @Mutation()
+  changeStateValue(item: number) {
+    this.state.tab = item;
+  }
+
   @Action()
   async fetchDeedControllerItem(params?: any): Promise<void> {
     this.setDeedItemControllerIsLoading(true);
@@ -276,5 +282,10 @@ export default class DeedControllerItemModule {
   @Action()
   saveStateItem(item: any) {
     this.saveState(item);
+  }
+
+  @Action()
+  changeTabValue(item: number) {
+    this.changeStateValue(item);
   }
 }

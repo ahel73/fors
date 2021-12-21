@@ -7,4 +7,5 @@ export interface DeedControllerItemStore {
   isLoading: boolean;
   documentEdit?: any;
   peopleEdit?: any;
+  tab?: number;
 }

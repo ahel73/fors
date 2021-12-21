@@ -58,15 +58,29 @@
             </v-col>
           </v-row>
         </template>
-        <!--  <template #[`item.registrationDate`]="{ item }">
-          <div class="d-flex justify-center flex-nowrap">
-            <span class="table-action__wrapper">
-              {{ item.registrationDate }}
-            </span>
-          </div>
-        </template> -->
+        <template #[`item.registrationDate`]="{ value }">
+          <span v-if="value">
+            {{ formatDate(value) }}
+          </span>
+        </template>
         <template #[`item.actions`]="{ item }">
           <div class="d-flex justify-center flex-nowrap">
+            <span class="table-action__wrapper">
+              <router-link
+                :to="{
+                  name: 'accountingBusiness-card',
+                  params: { id: item.id, type: 'show' },
+                }"
+              >
+                <base-action
+                  @click="handleOpenView(item.id)"
+                  hint="Просмотр"
+                >
+                  <eye-icon />
+                </base-action>
+              </router-link>
+            </span>
+
             <span class="table-action__wrapper">
               <router-link
                 :to="{
@@ -92,21 +106,6 @@
               >
                 <delete-icon />
               </base-action>
-            </span>
-            <span class="table-action__wrapper">
-              <router-link
-                :to="{
-                  name: 'accountingBusiness-card',
-                  params: { id: item.id, type: 'show' },
-                }"
-              >
-                <base-action
-                  @click="handleOpenView(item.id)"
-                  hint="Просмотр"
-                >
-                  <eye-icon />
-                </base-action>
-              </router-link>
             </span>
           </div>
         </template>
@@ -147,12 +146,18 @@ import TextComponent from '@/components/shared/Text/Text.vue';
 import { useStore } from 'vuex-simple';
 
 import Store from '@/store/store';
-import { FilterTypeNames, FilterTypes, ValueTypes } from '../shared/Filter/types';
+import {
+  FilterTypeNames,
+  FilterTypes,
+  ValueTypes,
+} from '../shared/Filter/types';
 import { OutputFilters } from '../shared/Filter/FilterTypes/types';
 import { Pagination } from '@/types/Pagination';
 import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
 import moment from 'moment';
+import { dateIsValid, getFormattedDate } from '@/utils';
+import { Columns } from '../shared/table/ColumnsView/ColumnsView';
 
 @Component({
   name: 'accountingBusinessList',
@@ -248,258 +253,264 @@ export default class AccountingBusinessList extends Vue {
     {
       text: 'Фамилия Имя Отчество',
       value: 'applicantFullName',
+      width: '200px',
     },
     {
       text: 'Способ улучшения ЖУ',
       value: 'improvingWayName',
+      width: '200px',
     },
     {
       text: 'Сфера деятельности',
       value: 'employmentName',
+      width: '200px',
     },
     {
       text: 'Приоритет',
       value: 'queuePriorityName',
+      width: '200px',
     },
     {
-      text: 'Размер общей площади',
-      value: 'area',
+      text: 'Нормативная площадь',
+      value: 'normativeArea',
+      width: '200px',
     },
     {
       text: 'Направление расходования средств',
       value: 'spendingDirectionName',
+      width: '200px',
     },
     {
       text: 'Дата постановки на учет',
       value: 'registrationDate',
+      width: '200px',
     },
     {
       text: 'Статус',
       value: 'statusName',
+      width: '200px',
     },
     {
       text: 'Действия',
       value: 'actions',
+      width: '200px',
     },
   ];
 
- columns = [
-   {
-     isDefault: true,
-     isEditable: false,
-     text: 'Фамилия Имя Отчество',
-     value: 'applicantFullName',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Способ улучшения ЖУ',
-     value: 'improvingWayName',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Сфера деятельности',
-     value: 'employmentName',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Направление расходования средств',
-     value: 'spendingDirectionName',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Приоритет',
-     value: 'queuePriorityName',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Размер общей площади',
-     value: 'area',
-     align: 'center',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Дата постановки на учет',
-     value: 'registrationDate',
-   },
-   {
-     isDefault: true,
-     isEditable: true,
-     text: 'Статус',
-     value: 'statusName',
-   },
-   {
-     value: 'actions',
-     text: 'Действия',
-     isEditable: false,
-     isDefault: true,
-   },
- ];
+  columns: Columns[] = [
+    {
+      isDefault: true,
+      isEditable: false,
+      text: 'Фамилия Имя Отчество',
+      value: 'applicantFullName',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Способ улучшения ЖУ',
+      value: 'improvingWayName',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Сфера деятельности',
+      value: 'employmentName',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Направление расходования средств',
+      value: 'spendingDirectionName',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Приоритет',
+      value: 'queuePriorityName',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Нормативная площать',
+      value: 'normativeArea',
+      align: 'center',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Дата постановки на учет',
+      value: 'registrationDate',
+    },
+    {
+      isDefault: true,
+      isEditable: true,
+      text: 'Статус',
+      value: 'statusName',
+    },
+    {
+      value: 'actions',
+      text: 'Действия',
+      isEditable: false,
+      isDefault: true,
+      sortable: false,
+      align: 'center',
+    },
+  ];
 
- mounted() {
-   this.fetchStateDeed();
-   this.fetchControllerData();
- }
+  mounted() {
+    this.fetchStateDeed();
+    this.fetchControllerData();
+  }
 
- get stateDeedState() {
-   return this.store.deed.state;
- }
+  get stateDeedState() {
+    return this.store.deed.state;
+  }
 
- get deedStatus() {
-   return this.store.directory.state.deedStatus.map((item: any) => ({
-     text: item.name,
-     value: item.id,
-   }));
- }
+  get deedStatus() {
+    return this.store.directory.state.deedStatus.map((item: any) => ({
+      text: item.name,
+      value: item.id,
+    }));
+  }
 
- get individualPersonInfoController() {
-   return this.store.directory.state.personInfo.map((item: any) => ({
-     text: item.fullName,
-     value: item.id,
-   }));
- }
+  get individualPersonInfoController() {
+    return this.store.directory.state.personInfo.map((item: any) => ({
+      text: item.fullName,
+      value: item.id,
+    }));
+  }
 
- get improvingWayController() {
-   return this.store.directory.state.improvingWay.map((item: any) => ({
-     text: item.name,
-     value: item.id,
-   }));
- }
+  get improvingWayController() {
+    return this.store.directory.state.improvingWay.map((item: any) => ({
+      text: item.name,
+      value: item.id,
+    }));
+  }
 
- get employmentController() {
-   return this.store.directory.state.employment.map((item: any) => ({
-     text: item.name,
-     value: item.id,
-   }));
- }
+  get employmentController() {
+    return this.store.directory.state.employment.map((item: any) => ({
+      text: item.name,
+      value: item.id,
+    }));
+  }
 
- get queuePriorityController() {
-   return this.store.directory.state.priority.map((item: any) => ({
-     text: item.name,
-     value: item.id,
-   }));
- }
+  get queuePriorityController() {
+    return this.store.directory.state.priority.map((item: any) => ({
+      text: item.name,
+      value: item.id,
+    }));
+  }
 
- get noDataText(): string {
-   const { error } = this.stateDeedState;
-   return error ? error.message : 'Данные отсутствуют';
- }
+  get noDataText(): string {
+    const { error } = this.stateDeedState;
+    return error ? error.message : 'Данные отсутствуют';
+  }
 
- fetchStateDeed() {
-   const {
-     store,
-     items,
-     page,
-     size,
-     sort,
-     filter,
-   } = this;
+  formatDate(date: string): string | null {
+    return dateIsValid(date) ? getFormattedDate(date) : null;
+  }
 
-   const fieldsToReplace: ReplaceConditions[] = [
-     { from: 'periodFrom', to: 'periodFromCode, periodToCode' },
-   ];
+  fetchStateDeed() {
+    const { store, items, page, size, sort, filter } = this;
 
-   store.deed.fetchDeedControllerData(
-     {
-       items,
-       page,
-       size,
-       sort: getFieldsToSort(fieldsToReplace, sort),
-       filter,
-     }
-   );
- }
+    const fieldsToReplace: ReplaceConditions[] = [
+      { from: 'periodFrom', to: 'periodFromCode, periodToCode' },
+    ];
 
- handleOptionsChange(options: Pagination): void {
-   const { page, size, sort } = options;
+    store.deed.fetchDeedControllerData({
+      items,
+      page,
+      size,
+      sort: getFieldsToSort(fieldsToReplace, sort),
+      filter,
+    });
+  }
 
-   this.sort = sort || this.sort;
-   this.size = +size;
-   this.page = +page;
+  handleOptionsChange(options: Pagination): void {
+    const { page, size, sort } = options;
 
-   this.fetchStateDeed();
- }
+    this.sort = sort || this.sort;
+    this.size = +size;
+    this.page = +page;
 
- fetchControllerData() {
-   const params = {};
-   this.store.directory.fetchDeedStatusController();
-   this.store.directory.fetchEmploymentController();
+    this.fetchStateDeed();
+  }
 
-   this.store.directory.fetchIndividualPersonInfoController(params);
-   this.store.directory.fetchImprovingWayController();
-   this.store.directory.fetchQueuePriorityController();
- }
+  fetchControllerData() {
+    const params = {};
+    this.store.directory.fetchDeedStatusController();
+    this.store.directory.fetchEmploymentController();
 
- handleSearch(outputFilters: OutputFilters): void {
-   this.filter = {
-     applicantId: null,
-     improvingWayId: null,
-     employmentId: null,
-     queuePriorityId: null,
-     statusId: null,
-   };
-   outputFilters.filter(item => {
-     const [itemValue]: any = item.value;
-     if (item.name === 'name') {
-       this.filter.applicantId = itemValue?.value;
-     } else if (item.name === 'improvingWayId') {
-       this.filter.improvingWayId = itemValue?.value;
-     } else if (item.name === 'employmentId') {
-       this.filter.employmentId = itemValue?.value;
-     } else if (item.name === 'queuePriority') {
-       this.filter.queuePriorityId = itemValue?.value;
-     } else if (item.name === 'statusId') {
-       this.filter.statusId = itemValue?.value;
-     }
-   });
+    this.store.directory.fetchIndividualPersonInfoController(params);
+    this.store.directory.fetchImprovingWayController();
+    this.store.directory.fetchQueuePriorityController();
+  }
 
-   this.fetchStateDeed();
- }
+  handleSearch(outputFilters: OutputFilters): void {
+    this.filter = {
+      applicantId: null,
+      improvingWayId: null,
+      employmentId: null,
+      queuePriorityId: null,
+      statusId: null,
+    };
+    outputFilters.filter((item) => {
+      const [itemValue]: any = item.value;
+      if (item.name === 'name') {
+        this.filter.applicantId = itemValue?.value;
+      } else if (item.name === 'improvingWayId') {
+        this.filter.improvingWayId = itemValue?.value;
+      } else if (item.name === 'employmentId') {
+        this.filter.employmentId = itemValue?.value;
+      } else if (item.name === 'queuePriority') {
+        this.filter.queuePriorityId = itemValue?.value;
+      } else if (item.name === 'statusId') {
+        this.filter.statusId = itemValue?.value;
+      }
+    });
 
- saveColumns(): void {
-   const data = { columns: this.columns, sort: this.sort, items: this.items };
- }
+    this.fetchStateDeed();
+  }
 
- handleReset(): void {
-   this.items = [];
-   this.filter = {
-     applicantId: null,
-     improvingWayId: null,
-     employmentId: null,
-     queuePriorityId: null,
-     statusId: null,
-   };
- }
+  saveColumns(): void {
+    const data = { columns: this.columns, sort: this.sort, items: this.items };
+  }
 
- async handleOpenView(id: any) {
-   await this.store.deedItem.fetchDeedControllerItem(id);
- }
+  handleReset(): void {
+    this.items = [];
+    this.filter = {
+      applicantId: null,
+      improvingWayId: null,
+      employmentId: null,
+      queuePriorityId: null,
+      statusId: null,
+    };
+  }
 
- handleDeleteDeed(deedDeleteId: number) {
-   this.deedDeleteId = deedDeleteId;
-   this.isDeleteMeasureDialogShow = true;
- }
+  async handleOpenView(id: any) {
+    await this.store.deedItem.fetchDeedControllerItem(id);
+  }
 
- async handleDeleteMeasureSuccess() {
-   if (this.deedDeleteId) {
-     await this.store.deleteItem.fetchDeleteDeedController(this.deedDeleteId);
-     this.fetchStateDeed();
-     this.deedDeleteId = '';
-   }
- }
+  handleDeleteDeed(deedDeleteId: number) {
+    this.deedDeleteId = deedDeleteId;
+    this.isDeleteMeasureDialogShow = true;
+  }
 
- async handleOpenDeedItem(id: string) {
-   await this.store.deedItem.fetchDeedControllerItem(id);
- }
+  async handleDeleteMeasureSuccess() {
+    if (this.deedDeleteId) {
+      await this.store.deleteItem.fetchDeleteDeedController(this.deedDeleteId);
+      this.fetchStateDeed();
+      this.deedDeleteId = '';
+    }
+  }
 
- handleExportDeedInXlsx() {
-   // ToDo handleExportDeedInXlsx
- }
+  async handleOpenDeedItem(id: string) {
+    await this.store.deedItem.fetchDeedControllerItem(id);
+  }
+
+  handleExportDeedInXlsx() {
+    // ToDo handleExportDeedInXlsx
+  }
 }
 </script>
 

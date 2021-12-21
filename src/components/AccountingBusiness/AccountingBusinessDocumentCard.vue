@@ -59,6 +59,7 @@
           item-text="name"
           item-value="id"
           return-object
+          clearable
           label="Группа"
         />
       </v-col>
@@ -234,12 +235,14 @@ export default class AccountingBusinessDocumentCard extends Vue {
         ).toString();
         this.store.deedItem.addDocument(this.documentEditOrCreate);
       }
+      this.store.deedItem.changeTabValue(2);
       this.$router.go(-1);
       this.documentEditOrCreate = {} as Document;
     }
   }
 
   onCancelClick() {
+    this.store.deedItem.changeTabValue(2);
     this.$router.go(-1);
   }
 }
