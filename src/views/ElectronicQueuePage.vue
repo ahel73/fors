@@ -75,13 +75,6 @@
               </v-col>
             </v-row>
           </template>
-          <template #[`item.actions`]="{ }">
-            <div class="d-flex justify-center flex-nowrap">
-              <span class="table-action__wrapper">
-                <checkbox-component />
-              </span>
-            </div>
-          </template>
         </data-table>
       </v-col>
     </v-row>
