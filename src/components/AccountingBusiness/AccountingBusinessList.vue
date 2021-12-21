@@ -437,7 +437,9 @@ export default class AccountingBusinessList extends Vue {
   }
 
   fetchControllerData() {
-    const params = {};
+    const params = {
+      deed: true,
+    };
     this.store.directory.fetchDeedStatusController();
     this.store.directory.fetchEmploymentController();
 
