@@ -64,7 +64,7 @@
           </span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <div class="d-flex justify-center flex-nowrap">
+          <div class="d-flex justify-start flex-nowrap">
             <span class="table-action__wrapper">
               <router-link
                 :to="{
@@ -155,7 +155,6 @@ import { OutputFilters } from '../shared/Filter/FilterTypes/types';
 import { Pagination } from '@/types/Pagination';
 import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
-import moment from 'moment';
 import { dateIsValid, getFormattedDate } from '@/utils';
 import { Columns } from '../shared/table/ColumnsView/ColumnsView';
 
@@ -293,6 +292,7 @@ export default class AccountingBusinessList extends Vue {
     {
       text: 'Действия',
       value: 'actions',
+      align: 'start',
       width: '200px',
     },
   ];
@@ -353,7 +353,7 @@ export default class AccountingBusinessList extends Vue {
       isEditable: false,
       isDefault: true,
       sortable: false,
-      align: 'center',
+      align: 'start',
     },
   ];
 

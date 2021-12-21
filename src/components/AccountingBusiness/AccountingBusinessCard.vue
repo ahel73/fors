@@ -101,6 +101,7 @@
             <input-component
               v-model="form.refinedArea"
               label="Уточненная площадь"
+              :disabled="isShow"
             />
           </v-col>
           <v-col>
@@ -126,6 +127,7 @@
               v-model="form.registrationDate "
               label="Дата постановки на учет"
               :readonly="isShow"
+              :disabled="isShow"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
             />
@@ -135,6 +137,7 @@
               v-model="form.changeDate "
               label="Дата изменения"
               :readonly="isShow"
+              :disabled="isShow"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
             />
@@ -726,11 +729,14 @@ export default class AccountingBusinessListCard extends Vue {
           documents: this.formDoc,
           familyMembers: this.familyMembers,
         };
-        await this.store.createItem.fetchCreateDeedController(data);
-        this.$router.replace({
-          path: '/accounting-business',
+        await this.store.createItem.fetchCreateDeedController(data).then(() => {
+          if (!this.store.updateItem.state.error) {
+            this.$router.replace({
+              path: '/accounting-business',
+            });
+            this.store.deedItem.clearItem();
+          }
         });
-        this.store.deedItem.clearItem();
       } else {
         const data = {
           ...this.form,
@@ -738,11 +744,14 @@ export default class AccountingBusinessListCard extends Vue {
           familyMembers: this.familyMembers,
           id: this.$route.params.id,
         };
-        await this.store.updateItem.fetchUpdateDeedController(data);
-        this.$router.replace({
-          path: '/accounting-business',
+        await this.store.updateItem.fetchUpdateDeedController(data).then(() => {
+          if (!this.store.updateItem.state.error) {
+            this.$router.replace({
+              path: '/accounting-business',
+            });
+            this.store.deedItem.clearItem();
+          }
         });
-        this.store.deedItem.clearItem();
       }
     }
     this.store.deedItem.changeTabValue(0);

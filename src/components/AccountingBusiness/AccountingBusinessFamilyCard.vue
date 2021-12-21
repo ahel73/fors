@@ -23,6 +23,7 @@
           v-model="itemPeople.birthDate"
           label="Дата рождения"
           :readonly="isEditable"
+          :disabled="isEditable"
         />
       </v-col>
       <v-col cols="6">
