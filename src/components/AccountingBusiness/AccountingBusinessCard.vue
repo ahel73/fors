@@ -31,6 +31,7 @@
               variant="micro"
               :select-menu-props="{ offsetY: true }"
               required
+              clearable
               :rules="[
                 rules.required
               ]"
@@ -46,6 +47,7 @@
               item-value="id"
               return-object
               is-required
+              clearable
               :rules="[
                 rules.required
               ]"
@@ -60,6 +62,7 @@
               item-text="name"
               item-value="id"
               return-object
+              clearable
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
           </v-col>
@@ -70,6 +73,7 @@
               item-text="name"
               item-value="id"
               return-object
+              clearable
               label=" Сфера занятости"
               :disabled="(isShow || statusCard !== 1) && !isAdd"
             />
@@ -82,29 +86,37 @@
               item-text="name"
               item-value="id"
               return-object
+              clearable
               :disabled="isShow"
             />
           </v-col>
           <v-col cols="6">
+            <input-component
+              v-model="form.normativeArea"
+              label="Нормативная площадь"
+              :disabled="isDisabled"
+            />
+          </v-col>
+          <v-col cols="6">
+            <input-component
+              v-model="form.refinedArea"
+              label="Уточненная площадь"
+            />
+          </v-col>
+          <v-col>
             <autocomplete-component
               v-model="form.oktmo"
-              label="Код ОКТМО"
+              label="ОКТМО населенного пункта для строительства/приобретения"
               :items="oktmoController"
               item-text="code"
               variant="micro"
               return-object
               required
+              clearable
               :rules="[
                 rules.required
               ]"
               :disabled="(isShow || statusCard !== 1) && !isAdd"
-            />
-          </v-col>
-          <v-col cols="6">
-            <input-component
-              v-model="form.area"
-              label="Размер общей площади"
-              :disabled="isDisabled"
             />
           </v-col>
         </v-row>
@@ -113,6 +125,15 @@
             <Datepicker
               v-model="form.registrationDate "
               label="Дата постановки на учет"
+              :readonly="isShow"
+              view-format="DD.MM.YYYY"
+              output-format="YYYY-MM-DD"
+            />
+          </v-col>
+          <v-col cols="6">
+            <Datepicker
+              v-model="form.changeDate "
+              label="Дата изменения"
               :readonly="isShow"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
@@ -399,10 +420,11 @@ import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard, FamilyMembers } from '@/store/accountingBusiness/typesDeedItem';
+import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
+import { timeout } from '@/utils';
 
 @Component({
   components: {
@@ -443,7 +465,7 @@ export default class AccountingBusinessListCard extends Vue {
 
   cancelDialog = false;
 
-  tab = '';
+  tab = 0;
   docForDelete = {};
   peopleForDelete = {};
   form = {} as DeedItemCard;
@@ -516,6 +538,9 @@ export default class AccountingBusinessListCard extends Vue {
   async created() {
     if (this.$route.params.type === 'show') {
       this.isShow = true;
+    }
+    if (this.store.deedItem.state.tab) {
+      this.tab = this.store.deedItem.state.tab;
     }
     if (this.$route.params.type !== 'create') {
       if (Object.keys(this.store.deedItem.state.data).length === 0) {
@@ -705,6 +730,7 @@ export default class AccountingBusinessListCard extends Vue {
         this.$router.replace({
           path: '/accounting-business',
         });
+        this.store.deedItem.clearItem();
       } else {
         const data = {
           ...this.form,
@@ -716,9 +742,10 @@ export default class AccountingBusinessListCard extends Vue {
         this.$router.replace({
           path: '/accounting-business',
         });
+        this.store.deedItem.clearItem();
       }
-      this.store.deedItem.clearItem();
     }
+    this.store.deedItem.changeTabValue(0);
   }
 
   handleDeleteFamilyPeople(item: string) {
@@ -744,6 +771,7 @@ export default class AccountingBusinessListCard extends Vue {
   onCancelClick() {
     this.cancelDialog = false;
     this.store.deedItem.clearItem();
+    this.store.deedItem.changeTabValue(0);
     this.$router.push({ name: 'AccountingBusiness' });
   }
 }
