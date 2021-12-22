@@ -208,6 +208,7 @@
             <input-component
               v-mask="'###-###-### ##'"
               @input="updateProps('snils', nameObject)"
+              placeholder="###-###-### ##"
               :value="getSnils"
               :disabled="flagDisabled"
               label="СНИЛС"
@@ -229,11 +230,13 @@
         <v-row>
           <v-col cols="6">
             <input-component
-              v-mask="'+7(###) ###-##-##'"
+              v-mask="maskPhone"
               @input="updateProps('phoneNumber', nameObject)"
+              placeholder="+7 (###) ###-##-##"
               :value="getPhoneNumber"
               :disabled="flagDisabled"
               label="Телефон"
+              :clearable="true"
             />
           </v-col>
           <!-- ОГРНИП -->
@@ -413,6 +416,7 @@ import DataTable from '@/components/shared/table/DataTable.vue';
 import httpClient from '@/data/http';
 import { query } from '@/utils';
 import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
+import { mask } from 'vue-the-mask';
 
 @Component({
   name: 'FormAddNewPeopleInNeety',
@@ -593,6 +597,17 @@ export default class FormAddNewPeopleInNeety extends Vue {
           this.errorDispatch(error);
         });
     }
+  }
+
+  maskPhone = {
+    mask: 'qwrerrtrtrr',
+    tokens: {
+      q: { pattern: /[0-9]/, transform: () => '+7 ' },
+      w: { pattern: /[0-9]/, transform: v => '(' + v },
+      e: { pattern: /[0-9]/, transform: v => v + ') ' },
+      r: { pattern: /[0-9]/ },
+      t: { pattern: /[0-9]/, transform: v => v + '-' },
+    },
   }
 
   inputValidation() {
