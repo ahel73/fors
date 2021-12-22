@@ -86,6 +86,37 @@
         style="margin-right: 15px"
       />
     </v-row>
+    <dialog-component
+      v-model="isOnRecordDialogShow"
+      @onSuccess="handleRecordSuccess"
+      cancel-title="Отменить"
+      confirm-title="Продолжить"
+      width="400"
+      prompt
+    >
+      <template #title>
+        <text-component variant="h4">
+          Сформировать список участников
+        </text-component>
+        <v-row>
+          <v-col>
+            <select-component
+              v-model="improvingWay"
+              label="Выберите способ  улучшения ЖУ"
+              :items="improvingWayData"
+              item-text="name"
+              item-value="id"
+              return-object
+              clearable
+            />
+            <input-component
+              v-model="financialYear"
+              label="Введите финансовый год"
+            />
+          </v-col>
+        </v-row>
+      </template>
+    </dialog-component>
   </main-layout>
 </template>
 
@@ -108,6 +139,15 @@ import { Pagination } from '@/types/Pagination';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
 import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue';
 import { dateIsValid, getFormattedDate } from '@/utils';
+import DialogComponent from '@/components/shared/Dialog/Dialog.vue';
+import SelectComponent from '@/components/shared/inputs/SelectComponent.vue';
+import TextComponent from '@/components/shared/Text/Text.vue';
+import { ListMembersParams } from '@/types/ElectronicQueueDataItem';
+import { ImprovingWay } from '@/types/ImprovingWay';
+import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
+import { Employment } from '@/types/Employment';
+import { Priority } from '@/types/Employment copy';
+import { Status } from '@/types/Status';
 
 @Component({
   name: 'ElectronicQueueList',
@@ -119,8 +159,11 @@ import { dateIsValid, getFormattedDate } from '@/utils';
     IconButton,
     MainLayout,
     BaseAction,
+    DialogComponent,
     ButtonComponent,
     CheckboxComponent,
+    SelectComponent,
+    TextComponent,
   },
 })
 
@@ -131,6 +174,9 @@ export default class ElectronicQueuePageList extends Vue {
   page: number | string = 0;
   sort: string | undefined = '-id';
   initialSort: string | undefined = '-id';
+  isOnRecordDialogShow = false;
+  improvingWay: ImprovingWay = {} as ImprovingWay;
+  financialYear = '';
   filter = {
     applicantId: null,
     groupNum: null,
@@ -140,7 +186,7 @@ export default class ElectronicQueuePageList extends Vue {
     statusId: null,
   };
 
-  checkedProperties: any = [];
+  checkedProperties: number[] = [];
 
   headers = [
     {
@@ -319,28 +365,32 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  get individualPersonInfoController() {
-   return this.store.directory.state.personInfo.map((item: any) => ({
+   return this.store.directory.state.personInfo.map((item: IndividualPersonInfo) => ({
      text: item.fullName,
      value: item.id,
    }));
  }
 
  get improvingWayController() {
-   return this.store.directory.state.improvingWay.map((item: any) => ({
+   return this.store.directory.state.improvingWay.map((item: ImprovingWay) => ({
      text: item.name,
      value: item.id,
    }));
  }
 
+ get improvingWayData() {
+   return this.store.directory.state.improvingWay;
+ }
+
  get employmentController() {
-   return this.store.directory.state.employment.map((item: any) => ({
+   return this.store.directory.state.employment.map((item: Employment) => ({
      text: item.name,
      value: item.id,
    }));
  }
 
  get queuePriorityController() {
-   return this.store.directory.state.priority.map((item: any) => ({
+   return this.store.directory.state.priority.map((item: Priority) => ({
      text: item.name,
      value: item.id,
    }));
@@ -355,7 +405,7 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  get queueQueueStatusController() {
-   return this.store.directory.state.queueStatus.map((item: any) => ({
+   return this.store.directory.state.queueStatus.map((item: Status) => ({
      text: item.name,
      value: item.id,
    }));
@@ -414,7 +464,6 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  handleSearch(outputFilters: OutputFilters): void {
-   console.log(outputFilters, 'outputFilters');
    this.filter = {
      applicantId: null,
      groupNum: null,
@@ -462,12 +511,26 @@ export default class ElectronicQueuePageList extends Vue {
 
  onConformClick() {
    this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
-   this.store.electronicQueue.fetchElectronicQueueArchive(this.checkedProperties);
+   this.store.electronicQueue.postElectronicQueueArchive(this.checkedProperties).then(() => {
+     this.checkedProperties = [];
+   });
    this.fetchStateElectronicQueue();
  }
 
  generateList() {
-   // ToDo generateList
+   this.isOnRecordDialogShow = true;
+   this.improvingWay = {} as ImprovingWay;
+   this.financialYear = '';
+ }
+
+ handleRecordSuccess() {
+   this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
+   const data: ListMembersParams = {
+     improvingWay: this.improvingWay,
+     financialYear: this.financialYear,
+     listParticipantIds: this.checkedProperties,
+   };
+   this.store.electronicQueue.postListMembers(data);
  }
 
  handleExporInXlsx() {

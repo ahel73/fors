@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+import { ImprovingWay } from './ImprovingWay';
 import { Meta } from './Meta';
 import { Pagination } from './Pagination';
 
@@ -9,6 +10,12 @@ export interface Filter {
   improvingWayId: number | null,
   queuePriorityId: number | null,
   statusId: number | null,
+}
+
+export interface ListMembersParams {
+  improvingWay: ImprovingWay,
+  financialYear: string | number,
+  listParticipantIds: number[],
 }
 
 export interface ElectronicQueueDataItem {

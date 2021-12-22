@@ -1,9 +1,9 @@
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 import { ElectronicQueueStore } from './types';
-import { getElectronicQueue, postApplicantQueueArchive } from '@/data/services/electronicQueue/electronicQueue';
+import { getElectronicQueue, postApplicantQueueArchive, postListMembers } from '@/data/services/electronicQueue/electronicQueue';
 import eventBus from '@/utils/bus/event-bus';
-import { StateElectronicQueueData, StateElectronicQueueDataParams } from '@/types/ElectronicQueueDataItem';
+import { ListMembersParams, StateElectronicQueueData, StateElectronicQueueDataParams } from '@/types/ElectronicQueueDataItem';
 
 export default class ElectronicQueueModule {
   @State()
@@ -58,7 +58,7 @@ export default class ElectronicQueueModule {
   }
 
   @Action()
-  async fetchElectronicQueueArchive(params: number[]): Promise<void> {
+  async postElectronicQueueArchive(params: number[]): Promise<void> {
     this.setElectronicQueueIsLoading(true);
     this.setElectronicQueueError(null);
     try {
@@ -67,6 +67,28 @@ export default class ElectronicQueueModule {
           'notification:message',
           {
             text: 'Успешно добавлено в архив',
+            title: 'Выполнено',
+            type: 'success',
+          }
+        );
+      });
+    } catch (error) {
+      this.setElectronicQueueError(error as AxiosError);
+    } finally {
+      this.setElectronicQueueIsLoading(false);
+    }
+  }
+
+  @Action()
+  async postListMembers(params: ListMembersParams): Promise<void> {
+    this.setElectronicQueueIsLoading(true);
+    this.setElectronicQueueError(null);
+    try {
+      await postListMembers(params).then(() => {
+        eventBus.$emit(
+          'notification:message',
+          {
+            text: 'Список успешно сформирован',
             title: 'Выполнено',
             type: 'success',
           }
