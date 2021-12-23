@@ -9,7 +9,7 @@
       offset-y
       ref="menu"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <div
           v-on="!readonly && on"
           v-bind="!readonly && attrs"

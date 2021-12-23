@@ -49,12 +49,14 @@
                 </v-row>
                 <v-row class="d-flex justify-end">
                   <button-component
+                    @click="onAcceptSearchClick()"
                     title="Применить"
                     size="micro"
                     variant="primary"
                     style="margin-right: 15px"
                   />
                   <button-component
+                    @click="onCancelSearchClick()"
                     title="Отменить"
                     size="micro"
                     style="margin-right: 15px"
@@ -87,12 +89,14 @@
                     </icon-component>
                   </template>
                 </icon-button>
-                <icon-button
-                  @click.prevent.native="onAddClick()"
-                  class="ml-3"
-                  type="text"
-                  icon="mdi-plus-circle"
-                  text="Загрузить список"
+                <upload-file-component
+                  @onChange="(file) => uploadFile(file)"
+                  @downloadFile="downloadFile"
+                  @deleteFile="(id) => deleteFile(id)"
+                  label="Загрузить список"
+                  :files-list="fileList"
+                  clearable
+                  :disabled="isReadonly"
                 />
               </v-col>
             </v-row>
@@ -212,6 +216,8 @@ export default class ParticipantsConsolidatedListPage extends Vue {
   year = null;
   region = null;
 
+  fileList = [];
+
   get filters(): FilterTypes {
     return {
       multiFilters: [
@@ -319,7 +325,15 @@ export default class ParticipantsConsolidatedListPage extends Vue {
 
   handleSearch(outputFilters: OutputFilters): void {
     this.items = outputFilters;
-    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
   }
 
   handleReset(): void {
@@ -330,6 +344,24 @@ export default class ParticipantsConsolidatedListPage extends Vue {
     this.$router.push({ name: 'PayoutParticipantFormPage', params: { id: id.toString() } });
   }
 
+  onCancelSearchClick() {
+    this.region = null;
+    this.year = null;
+  }
+
+  onAcceptSearchClick() {
+    this.store.participants.setSearch(this.year, this.region);
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
+  }
+
   handleOptionsChange(options: Pagination): void {
     const { page, size, sort } = options;
 
@@ -337,7 +369,19 @@ export default class ParticipantsConsolidatedListPage extends Vue {
     this.size = size;
     this.page = page;
 
-    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
+  }
+
+  onAddClick() {
+    console.log('Добавляем файл');
   }
 }
 </script>

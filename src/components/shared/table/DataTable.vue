@@ -50,7 +50,7 @@
       </template>
       <template
         v-if="additionalHeaders.length"
-        v-slot:header
+        #header
       >
         <thead>
           <template v-for="(row, rowIndex) in additionalHeaders">
@@ -77,7 +77,7 @@
       </template>
       <template
         v-if="!hideFooter"
-        v-slot:footer="{ props: { pagination } }"
+        #footer="{ props: { pagination } }"
       >
         <div
           v-if="pagination.itemsLength > 0"
@@ -92,14 +92,14 @@
       </template>
       <template
         v-for="(_, name) in $scopedSlots"
-        v-slot:[name]="slotData"
+        #[name]="slotData"
       >
         <slot
           :name="name"
           v-bind="slotData"
         />
       </template>
-      <template v-slot:[`expanded-item`]="{ item }">
+      <template #[`expanded-item`]="{ item }">
         <td :colspan="headers.length">
           <slot
             name="expanded-item"

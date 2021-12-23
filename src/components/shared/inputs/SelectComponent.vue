@@ -45,7 +45,7 @@
     >
       <template
         v-for="(_, name) in $scopedSlots"
-        v-slot:[name]="slotData"
+        #[name]="slotData"
       >
         <slot
           :name="name"
