@@ -2,9 +2,9 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { undoRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/AccountBissiness';
 
 export default class UndoRecordAccountingModule {
   @State()

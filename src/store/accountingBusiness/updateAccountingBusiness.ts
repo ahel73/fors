@@ -2,9 +2,9 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/AccountBissiness';
 
 export default class UpdateDeedControllerModule {
   @State()
@@ -36,18 +36,12 @@ export default class UpdateDeedControllerModule {
     }
   }
 
-  @Mutation()
-  setUpdateDeedController(response?: any): void {
-    const data = response;
-    this.state.data = data;
-  }
-
   @Action()
-  async fetchUpdateDeedController(params: any): Promise<void> {
+  async fetchUpdateDeedController(params: DeedItemCard): Promise<void> {
     this.setUpdateDeedControllerIsLoading(true);
     this.setUpdateBudgetsError(null);
     try {
-      const data = await updateDeedController(params).then(() => {
+      await updateDeedController(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
@@ -57,8 +51,6 @@ export default class UpdateDeedControllerModule {
           }
         );
       });
-
-      this.setUpdateDeedController(data);
     } catch (error) {
       this.setUpdateBudgetsError(error as AxiosError);
     } finally {

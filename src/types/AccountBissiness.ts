@@ -1,3 +1,7 @@
+import { AxiosResponse } from 'axios';
+import { Meta } from './Meta';
+import { Pagination } from './Pagination';
+
 interface DocGroup {
   id: number,
   name: string,
@@ -64,7 +68,7 @@ export interface DeedItemCard {
   createDate: string,
   createUser: string
   employment: Item,
-  id: number
+  id: number | string,
   improvingWay: Item,
   oktmo: Item,
   queuePriority: Item,
@@ -73,3 +77,22 @@ export interface DeedItemCard {
   status: Item,
   subjectId: number
 }
+
+export interface Filter {
+  applicantId: number | null,
+  employmentId: number | null,
+  groupNum: number | null,
+  improvingWayId: number | null,
+  queuePriorityId: number | null,
+  statusId: number | null,
+}
+
+export interface StateDeedData extends Meta {
+  data: DeedItemCard[];
+}
+
+export interface StateDeedDataParams extends Partial<Pagination> {
+  filter?: Filter;
+}
+
+export type StateDeed = AxiosResponse<StateDeedData>;

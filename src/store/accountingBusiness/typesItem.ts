@@ -1,5 +1,5 @@
+import { DeedItemCard } from '@/types/AccountBissiness';
 import { AxiosError } from 'axios';
-import { DeedItemCard } from './typesDeedItem';
 
 export interface DeedControllerItemStore {
   data: DeedItemCard;

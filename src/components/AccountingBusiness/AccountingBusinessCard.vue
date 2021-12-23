@@ -201,7 +201,7 @@
             <template #[`item.actions`]="{ item }">
               <div
                 v-if="!isShow"
-                class="d-flex justify-center flex-nowrap"
+                class="d-flex justify-start flex-nowrap"
               >
                 <span class="table-action__wrapper">
                   <router-link
@@ -255,7 +255,7 @@
           >
             <template #[`item.actions`]="{ item }">
               <div
-                class="d-flex justify-center flex-nowrap"
+                class="d-flex justify-start flex-nowrap"
               >
                 <span
                   v-if="!isShow"
@@ -423,11 +423,11 @@ import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { timeout } from '@/utils';
+import { DeedItemCard } from '@/types/AccountBissiness';
 
 @Component({
   components: {
@@ -724,7 +724,7 @@ export default class AccountingBusinessListCard extends Vue {
       );
     } else {
       if (!this.$route.params.id) {
-        const data = {
+        const data: DeedItemCard = {
           ...this.form,
           documents: this.formDoc,
           familyMembers: this.familyMembers,
@@ -738,7 +738,7 @@ export default class AccountingBusinessListCard extends Vue {
           }
         });
       } else {
-        const data = {
+        const data: DeedItemCard = {
           ...this.form,
           documents: this.formDoc,
           familyMembers: this.familyMembers,

@@ -2,9 +2,9 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { getDeedControllerByID } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/AccountBissiness';
 
 export default class DeedControllerItemModule {
   @State()
@@ -246,16 +246,19 @@ export default class DeedControllerItemModule {
 
   @Action()
   updateDocument(item: any) {
+    console.log(item, 'updateDocument');
     this.updateDoc(item);
   }
 
   @Action()
   deleteDocument(item: any) {
+    console.log(item, 'deleteDocument');
     this.delDocument(item);
   }
 
   @Action()
   addFamilyPeople(item: any) {
+    console.log(item, 'addFamilyPeople');
     this.setNewFamilyPeople(item);
   }
 
