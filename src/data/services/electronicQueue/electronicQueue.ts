@@ -9,12 +9,10 @@ export const getElectronicQueue = async (params: StateElectronicQueueDataParams 
   return data;
 };
 
-export const postApplicantQueueArchive = async (params: number[]): Promise<number[]> => {
-  const { data } = await httpClient.post('/applicants-queue/actions/archive', params);
-  return data;
+export const postApplicantQueueArchive = async (params: number[]): Promise<never> => {
+  return await httpClient.post<never>('/applicants-queue/actions/archive', params);
 };
 
-export const postListMembers = async (params: ListMembersParams): Promise<ListMembersParams> => {
-  const { data } = await httpClient.post('/list-members', params);
-  return data;
+export const postListMembers = async (params: ListMembersParams): Promise<never> => {
+  return await httpClient.post<never>('/list-members', params);
 };
