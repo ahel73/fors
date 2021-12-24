@@ -9,13 +9,13 @@ export const getDeedController = async (params: StateDeedDataParams = {} as Stat
   return data;
 };
 
-export const updateDeedController = async (params: DeedItemCard) => {
-  const { data } = await httpClient.put(`/deeds/${params.id}`, params);
+export const updateDeedController = async (params: DeedItemCard): Promise<never> => {
+  const { data } = await httpClient.put<never>(`/deeds/${params.id}`, params);
   return data;
 };
 
-export const deleteDeedController = async (id: string | number) => {
-  const { data } = await httpClient.delete(`/deeds/${id}`);
+export const deleteDeedController = async (id: string | number): Promise<never> => {
+  const { data } = await httpClient.delete<never>(`/deeds/${id}`);
   return data;
 };
 
@@ -24,17 +24,17 @@ export const createDeedController = async (form: DeedItemCard) => {
   return data;
 };
 
-export const getDeedControllerByID = async (id: number) => {
+export const getDeedControllerByID = async (id: number | string) => {
   const { data } = await httpClient.get(`/deeds/${id}`);
   return data;
 };
 
-export const onRecordAccounting = async (data: any) => {
-  const { content } = await httpClient.post('deeds/actions/accounting', data);
+export const onRecordAccounting = async (data: any): Promise<never> => {
+  const { content } = await httpClient.post<never>('deeds/actions/accounting', data);
   return content;
 };
 
-export const undoRecordAccounting = async (data: any) => {
-  const { content } = await httpClient.post('/deeds/actions/undo-accounting', data);
+export const undoRecordAccounting = async (data: any): Promise<never> => {
+  const { content } = await httpClient.post<never>('/deeds/actions/undo-accounting', data);
   return content;
 };

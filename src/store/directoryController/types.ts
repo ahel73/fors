@@ -1,6 +1,6 @@
 import { DocGroup } from '@/types/DocGroup';
 import { Employment } from '@/types/Employment';
-import { Priority } from '@/types/Employment copy';
+import { Priority } from '@/types/Priority';
 import { ImprovingWay } from '@/types/ImprovingWay';
 import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
 import { Oktmo } from '@/types/Oktmo';

@@ -115,6 +115,7 @@ import eventBus from '@/utils/bus/event-bus';
 import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
 import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
 import { AxiosError } from 'axios';
+import { DocumentItem } from '@/types/AccountBissiness';
 
 interface Document {
     index: string,
@@ -150,7 +151,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
   store: Store = useStore(this.$store);
   documentEditOrCreate = {
     active: false,
-  } as Document;
+  } as DocumentItem;
 
   rules = {
     required: (value: any) => !!value || 'Обязательное поле',
@@ -237,7 +238,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
       }
       this.store.deedItem.changeTabValue(2);
       this.$router.go(-1);
-      this.documentEditOrCreate = {} as Document;
+      this.documentEditOrCreate = {} as DocumentItem;
     }
   }
 

@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { Meta } from './Meta';
 
 interface IdentityDoc {
@@ -16,3 +17,5 @@ export interface IndividualPersonInfo {
 export interface IndividualPersonResponseData extends Meta {
   data: IndividualPersonInfo[];
 }
+
+export type IndividualPersonInfoResponse = AxiosResponse<IndividualPersonResponseData>;

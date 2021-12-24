@@ -7,35 +7,15 @@ interface DocGroup {
   name: string,
 }
 
+interface IdentityDoc {
+  id: number,
+  seriesNum: string,
+  typeName: string
+}
+
 interface Item {
   id: number,
   name: string,
-}
-
-interface Person {
-  id: number,
-  fullName: string,
-  birthDate: string,
-  identityDoc: string
-}
-
-export interface Document {
-  acting: boolean,
-  docDate: Date,
-  docEndDate: Date,
-  docGroup: DocGroup,
-  docNum: string,
-  file: File
-  name: string,
-  note: string,
-  index: string,
-  id: string,
-}
-
-interface IdentityDoc {
-    id: number,
-    seriesNum: string,
-    typeName: string
 }
 
 interface PersonInfo {
@@ -45,22 +25,62 @@ interface PersonInfo {
   identityDoc: IdentityDoc
 }
 
-export interface FamilyMembers {
-  id: number,
-  deedId: number,
+export interface Person {
+  birthDate: string,
+  changeUser: string,
+  createUser: string,
+  id?: string | number,
+  identityDoc: {
+    identityDoc: string,
+  }
+  index?: number | string,
+  individualPerson: PersonInfo,
+  personInfo: PersonInfo,
   relationship: string,
+}
+
+export interface DocumentItem {
+  active: boolean,
+  docDate: Date,
+  docEndDate: Date,
+  docGroup: DocGroup,
+  docNum: string,
+  file: File
+  name: string,
+  note: string,
+  index?: string | number,
+  id?: string | number,
+  changeDate: string,
+  changeUser: string,
+  createDate: string,
+  createUser: null
+  deedId: number,
+  estateObjectId: string,
+  fileName: string | any[],
+  fileUid: string,
+}
+
+export interface FamilyMembers {
+  deedId: number,
   changeUser: string,
   createUser: string,
   changeDate: string,
   createDate: string,
-  index: string,
-  personInfo: PersonInfo
+  birthDate: string,
+  id?: string | number,
+  identityDoc: {
+    identityDoc: string,
+  }
+  index?: number | string,
+  individualPerson: PersonInfo,
+  personInfo: PersonInfo,
+  relationship: string,
 }
 
 export interface DeedItemCard {
-  documents: Document[],
+  documents: DocumentItem[],
   familyMembers: FamilyMembers[],
-  applicant: Person,
+  applicant: PersonInfo,
   area: number,
   changeDate: string,
   changeReason: string,

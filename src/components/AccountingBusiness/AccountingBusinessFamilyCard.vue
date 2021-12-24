@@ -79,6 +79,8 @@ import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import eventBus from '@/utils/bus/event-bus';
+import { FamilyMembers } from '@/types/AccountBissiness';
+import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
 
 const mapForm = (data: any) => ({
   ...data,
@@ -122,8 +124,7 @@ export default class AccountingBusinessFamilyCard extends Vue {
   store: Store = useStore(this.$store);
 
   isEditable = true;
-  itemPeople: any | object = {
-  };
+  itemPeople = {} as FamilyMembers;
 
   rules = {
     required: (value: any) => !!value || 'Обязательное поле',
@@ -164,7 +165,7 @@ export default class AccountingBusinessFamilyCard extends Vue {
 
   get familyIds() {
     if (this.peoplesInFamily) {
-      return this.peoplesInFamily.map((item: any) => item.personInfo.id);
+      return this.peoplesInFamily.map((item: FamilyMembers) => item.personInfo.id);
     } else {
       return [];
     }

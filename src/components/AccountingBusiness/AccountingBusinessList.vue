@@ -157,6 +157,11 @@ import { getFieldsToSort } from '@/utils/getFieldsToSort';
 import { ReplaceConditions } from '@/types';
 import { dateIsValid, getFormattedDate } from '@/utils';
 import { Columns } from '../shared/table/ColumnsView/ColumnsView';
+import { Status } from '@/types/Status';
+import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
+import { ImprovingWay } from '@/types/ImprovingWay';
+import { Employment } from '@/types/Employment';
+import { Priority } from '@/types/Priority';
 
 @Component({
   name: 'accountingBusinessList',
@@ -367,35 +372,35 @@ export default class AccountingBusinessList extends Vue {
   }
 
   get deedStatus() {
-    return this.store.directory.state.deedStatus.map((item: any) => ({
+    return this.store.directory.state.deedStatus.map((item: Status) => ({
       text: item.name,
       value: item.id,
     }));
   }
 
   get individualPersonInfoController() {
-    return this.store.directory.state.personInfo.map((item: any) => ({
+    return this.store.directory.state.personInfo.map((item: IndividualPersonInfo) => ({
       text: item.fullName,
       value: item.id,
     }));
   }
 
   get improvingWayController() {
-    return this.store.directory.state.improvingWay.map((item: any) => ({
+    return this.store.directory.state.improvingWay.map((item: ImprovingWay) => ({
       text: item.name,
       value: item.id,
     }));
   }
 
   get employmentController() {
-    return this.store.directory.state.employment.map((item: any) => ({
+    return this.store.directory.state.employment.map((item: Employment) => ({
       text: item.name,
       value: item.id,
     }));
   }
 
   get queuePriorityController() {
-    return this.store.directory.state.priority.map((item: any) => ({
+    return this.store.directory.state.priority.map((item: Priority) => ({
       text: item.name,
       value: item.id,
     }));
@@ -489,7 +494,7 @@ export default class AccountingBusinessList extends Vue {
     };
   }
 
-  async handleOpenView(id: any) {
+  async handleOpenView(id: number | string) {
     await this.store.deedItem.fetchDeedControllerItem(id);
   }
 

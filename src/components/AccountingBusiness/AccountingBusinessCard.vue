@@ -136,8 +136,8 @@
             <Datepicker
               v-model="form.changeDate "
               label="Дата изменения"
-              :readonly="isShow"
-              :disabled="isShow"
+              :readonly="true"
+              :disabled="true"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
             />
@@ -426,8 +426,7 @@ import eventBus from '@/utils/bus/event-bus';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
-import { timeout } from '@/utils';
-import { DeedItemCard } from '@/types/AccountBissiness';
+import { DeedItemCard, DocumentItem, FamilyMembers } from '@/types/AccountBissiness';
 
 @Component({
   components: {
@@ -469,8 +468,8 @@ export default class AccountingBusinessListCard extends Vue {
   cancelDialog = false;
 
   tab = 0;
-  docForDelete = {};
-  peopleForDelete = {};
+  docForDelete = {} as DocumentItem;
+  peopleForDelete = {} as FamilyMembers;
   form = {} as DeedItemCard;
 
   isShow = false;
@@ -628,6 +627,9 @@ export default class AccountingBusinessListCard extends Vue {
       listForUpdating: true,
       id: +this.form.applicant?.id,
     };
+    const code = {
+      regionCode: 20,
+    };
     this.store.directory.fetchIndividualPersonInfoController(params);
     this.store.directory.fetchDeedStatusController();
     this.store.directory.fetchEmploymentController();
@@ -635,15 +637,15 @@ export default class AccountingBusinessListCard extends Vue {
     this.store.directory.fetchImprovingWayController();
     this.store.directory.fetchQueuePriorityController();
     this.store.directory.fetchSpendingDirectionController();
-    this.store.directory.fetchOktmoControllerData();
+    this.store.directory.fetchOktmoControllerData(code);
   }
 
-  handleOpenfamilyMembers(item: any) {
+  handleOpenfamilyMembers(item: FamilyMembers) {
     this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeFamilyPeople(item);
   }
 
-  handleOpenDocument(item: Document) {
+  handleOpenDocument(item: DocumentItem) {
     this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeDocument(item);
   }
@@ -757,24 +759,24 @@ export default class AccountingBusinessListCard extends Vue {
     this.store.deedItem.changeTabValue(0);
   }
 
-  handleDeleteFamilyPeople(item: string) {
+  handleDeleteFamilyPeople(item: FamilyMembers) {
     this.peopleForDelete = item;
     this.isDeletePeopleDialogShow = true;
   }
 
-  handleDeleteDocument(document: string) {
+  handleDeleteDocument(document: DocumentItem) {
     this.docForDelete = document;
     this.isDeleteDocumentDialogShow = true;
   }
 
   handleDeleteDocumentSuccess() {
     this.store.deedItem.deleteDocument(this.docForDelete);
-    this.docForDelete = {};
+    this.docForDelete = {} as DocumentItem;
   }
 
   handleDeletePeopleSuccess() {
     this.store.deedItem.deleteFamilyPeople(this.peopleForDelete);
-    this.peopleForDelete = {};
+    this.peopleForDelete = {} as FamilyMembers;
   }
 
   onCancelClick() {
