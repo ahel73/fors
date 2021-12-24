@@ -148,6 +148,12 @@ import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
 import { Employment } from '@/types/Employment';
 import { Priority } from '@/types/Employment copy';
 import { Status } from '@/types/Status';
+import { numeric } from 'vuelidate/lib/validators';
+
+interface Applicants {
+deedId: string | number,
+statusName: string
+}
 
 @Component({
   name: 'ElectronicQueueList',
@@ -186,7 +192,7 @@ export default class ElectronicQueuePageList extends Vue {
     statusId: null,
   };
 
-  checkedProperties: number[] = [];
+  checkedProperties: any[] = [];
 
   headers = [
     {
@@ -524,11 +530,16 @@ export default class ElectronicQueuePageList extends Vue {
  }
 
  handleRecordSuccess() {
-   this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
+   this.checkedProperties = this.checkedProperties.map((item: any) => ({
+     deedId: item.deedId,
+     statusName: item.statusName,
+   }));
    const data: ListMembersParams = {
-     improvingWay: this.improvingWay,
-     financialYear: this.financialYear,
-     listParticipantIds: this.checkedProperties,
+     listMember: {
+       improvingWay: this.improvingWay,
+       financialYear: this.financialYear,
+     },
+     applicants: this.checkedProperties,
    };
    this.store.electronicQueue.postListMembers(data);
  }

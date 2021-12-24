@@ -12,10 +12,17 @@ export interface Filter {
   statusId: number | null,
 }
 
+interface Applicants {
+  deedId: string | number,
+  statusName: string
+  }
+
 export interface ListMembersParams {
-  improvingWay: ImprovingWay,
-  financialYear: string | number,
-  listParticipantIds: number[],
+  listMember: {
+    improvingWay: ImprovingWay,
+    financialYear: string | number,
+  },
+  applicants: Applicants[],
 }
 
 export interface ElectronicQueueDataItem {
