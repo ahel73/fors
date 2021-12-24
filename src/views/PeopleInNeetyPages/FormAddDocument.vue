@@ -3,15 +3,15 @@
     <form>
       <!-- Вид удостоверения -->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <autocomplete-component
             :items="typeDocs"
-            :label="'Вид удостоверения'"
+            label="Вид удостоверения"
             :error="requiredField.type"
             :required="true"
           >
-            <template #selection="data">
-              {{ data.item.name }}
+            <template #selection="{item}">
+              {{ item.name }}
             </template>
             <template #item="{item}">
               <v-list-item-content
@@ -25,46 +25,49 @@
       </v-row>
       <!--Серия и номер  -->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <input-component
             @input="updateProps('seriesNumber', 'newIdentityDoc')"
             :value="newIdentityDoc.seriesNumber"
-            :label="'Серия и номер'"
+            label="Серия и номер"
             :is-error="requiredField.seriesNumber"
             :required="true"
+            :clearable="true"
           />
         </v-col>
       </v-row>
       <!-- Дата выдачи -->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <datepicker
             @change="updatePropsSpech($event, 'issueDate', 'newIdentityDoc')"
             @click:clear="updatePropsSpech( '', 'issueDate', 'newIdentityDoc')"
-            :starting-year="yearInterval + 2"
+            :starting-year="yearStart"
             :value="newIdentityDoc.issueDate"
-            :label="'Дата выдачи'"
+            label="Дата выдачи"
             :is-required="true"
           />
         </v-col>
       </v-row>
       <!--  Кем выдан -->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <input-component
             @input="updateProps('authority', 'newIdentityDoc')"
             :value="newIdentityDoc.authority"
-            :label="'Кем выдан'"
+            label="Кем выдан"
+            :clearable="true"
           />
         </v-col>
       </v-row>
       <!-- Действующий -->
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <checkbox-component
             @change="updatePropsSpech( !newIdentityDoc.active, 'active', 'newIdentityDoc')"
             :value="newIdentityDoc.active"
-            :label="'Действующий'"
+            label="Действующий"
+            :clearable="true"
           />
         </v-col>
       </v-row>
@@ -74,21 +77,7 @@
           cols="auto"
         >
           <button-component
-            @click="
-              flagError=verificationObject(newIdentityDoc, requiredField);
-              if (!flagError) {
-                saveObj(
-                  newIdentityDoc,
-                  'identityDocs',
-                );
-                clearObj(
-                  {active: true},
-                  newIdentityDoc,
-                  'newIdentityDoc',
-                  'FormAddNewPeopleInNeety'
-                );
-              }
-            "
+            @click="addIdentityDoc"
             size="micro"
             title="Сохранить"
             variant="primary"
@@ -97,12 +86,7 @@
         </v-col>
         <v-col cols="auto">
           <button-component
-            @click="clearObj(
-              {active: true},
-              newIdentityDoc,
-              'newIdentityDoc',
-              'FormAddNewPeopleInNeety'
-            )"
+            @click="cancel"
             size="micro"
             title="Отмена"
             class="button-save"
@@ -143,7 +127,7 @@ export default class FormAddNewPeopleInNeety extends Vue {
   store: Store = useStore(this.$store);
   myStore = this.store.peopleInNeety;
   newIdentityDoc = this.myStore.state.newIdentityDoc;
-  yearInterval = (new Date()).getFullYear() - 100;
+  yearStart = this.myStore.state.yearStart
 
   // массив куда загружаются типы документов
   typeDocs = [];
@@ -163,18 +147,36 @@ export default class FormAddNewPeopleInNeety extends Vue {
   saveObj = methods.saveObj
   clearObj = methods.clearObj
   verificationObject = methods.verificationObject.bind(this);
+  getGroupList = methods.getGroupList.bind(this);
 
-  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
-    const { page = 0, sort = '-id', size } = params;
-    const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.get<any>(queryString);
-    return data;
+  cancel() {
+    this.clearObj(
+      { active: true },
+      this.newIdentityDoc,
+      'newIdentityDoc',
+      'FormAddNewPeopleInNeety'
+    );
+  }
+
+  addIdentityDoc() {
+    this.flagError = this.verificationObject(this.newIdentityDoc, this.requiredField);
+    if (!this.flagError) {
+      this.saveObj(
+        this.newIdentityDoc,
+        'identityDocs'
+      );
+      this.clearObj(
+        { active: true },
+        this.newIdentityDoc,
+        'newIdentityDoc',
+        'FormAddNewPeopleInNeety'
+      );
+    }
   }
 
   created() {
-    this.getGroop('/identity-doc-types/')
+    this.getGroupList('/identity-doc-types/')
       .then(user => {
-        console.log(user);
         this.typeDocs = user;
       });
   }

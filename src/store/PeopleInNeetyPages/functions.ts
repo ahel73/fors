@@ -1,4 +1,5 @@
 import httpClient from '@/data/http';
+import { cloneDeep } from 'lodash';
 import { query } from '@/utils';
 
 export const methods = {
@@ -22,7 +23,7 @@ export const methods = {
     nameView: string // Имя страницы на которую необходимо перейти после добавления
   ) {
     this.store.peopleInNeety.saveObj({
-      objDoc: JSON.parse(JSON.stringify(verifyObj)),
+      objDoc: cloneDeep(verifyObj),
       nameList: nameList,
     });
 
@@ -65,20 +66,18 @@ export const methods = {
 
   // Отправляет объект на добавление
   dispatchObject: async (dataObj = {}, endPoint: string): any => {
-    const { data } = await httpClient.post<any>(endPoint, dataObj);
+    const { data } = await httpClient.post(endPoint, dataObj);
     return false;
   },
 
   // Отправляет объект на обновление
   dispatchUpdateObject: async (dataObj = {}, endPoint: string) : any => {
-    const response = await httpClient.put<any>(endPoint + '' + dataObj.id, dataObj);
-    console.log(response);
+    const response = await httpClient.put(endPoint + '' + dataObj.id, dataObj);
     return response;
   },
 
   // Проверка на заполненость обязательных полей
   verificationObject(dataObj = {}, requiredFields = {}) {
-    console.log(this);
     let flagError = false;
     for (const a in requiredFields) {
       if (dataObj[a] === null) {
@@ -87,5 +86,32 @@ export const methods = {
       }
     }
     return flagError;
+  },
+
+  /**
+   * Запрашиваем с сервера какие либо сущности, без возможности сортировки фильтрации и пагинации
+   */
+  async getGroupList(queryString: string): Promise<any> {
+    const { data } = await httpClient.get(queryString);
+    return data;
+  },
+
+  /**
+   * Запрашиваем с сервера какие либо сущности, с возможностью сортировки фильтрации и пагинации
+   */
+  async getGroupFind(queryString: string, params: object | null = null, objBody?: object | undefined) {
+    if (params) {
+      queryString += '?' + query({ ...params });
+    }
+    const { data } = await httpClient.post(queryString, objBody);
+    return data;
+  },
+
+  /**
+   * Запрашиваем с сервера сущность по идентификатору
+   */
+  async getOne(queryString: string, id: string) {
+    const { data } = await httpClient.get(`${queryString}${id}`);
+    return data;
   },
 };

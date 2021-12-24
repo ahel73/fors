@@ -16,7 +16,6 @@
           <template #[`tabs.after`]>
             <v-row>
               <v-col
-                cols="12"
                 class="d-flex align-start"
               >
                 <filter-component
@@ -98,7 +97,7 @@ import DeleteIcon from '@/components/shared/IconComponent/icons/DeleteIcon.vue';
 import httpClient from '@/data/http';
 import { query } from '@/utils';
 import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
-
+import { cloneDeep } from 'lodash';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 import { FilterTypeNames, FilterTypes, ValueTypes } from '@/components/shared/Filter/types';
 
@@ -233,7 +232,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         this.filter.location = el.value[0] || null;
       }
     });
-    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
+    this.getGroupFind('/individual-persons/find/', this.pagAndSort, this.filter)
       .then(user => {
         this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
@@ -263,7 +262,7 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.pagAndSort.size = size;
     this.pagAndSort.page = page;
 
-    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
+    this.getGroupFind('/individual-persons/find/', this.pagAndSort, this.filter)
       .then(user => {
         this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
@@ -272,29 +271,25 @@ export default class ListPeopleInNeetyPage extends Vue {
 
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
   push = methods.push;
+  getOne = methods.getOne;
+  getGroupFind = methods.getGroupFind;
 
-  getGroup = async (queryString: string, params: any = {} as any, filter: any = {}): Promise<any> => {
-    const { page = 0, sort = '-id', size } = params;
-    const queryParams = query({ ...params, page, sort, size });
-    const response = await httpClient.post(queryString + '?' + queryParams, filter);
-    return response.data;
-  }
-
-  getOne = async (queryString: string, id: any) => {
-    const { data } = await httpClient.get<any>(`${queryString}${id}`);
-    return data;
-  };
+  // getGroup = async (queryString: string, params: any = {} as any, filter: any = {}): Promise<any> => {
+  //   const { page = 0, sort = '-id', size } = params;
+  //   const queryParams = query({ ...params, page, sort, size });
+  //   const response = await httpClient.post(queryString + '?' + queryParams, filter);
+  //   return response.data;
+  // }
 
   async onDeleteClick(item) {
     const data = await httpClient.delete(`/individual-persons/${item.id}`);
-    this.getGroup('/individual-persons/find/')
+    this.getGroupFind('/individual-persons/find/')
       .then(user => {
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
       });
   }
 
   onEditClick(item, string) {
-    console.log(item.id);
     this.getOne(string, item.id)
       .then(item => {
         this.store.peopleInNeety.activeUpdateItem(item);
@@ -317,7 +312,7 @@ export default class ListPeopleInNeetyPage extends Vue {
 
   setColumns() {
     return this.headers.map(obj => {
-      const newObj = JSON.parse(JSON.stringify(obj));
+      const newObj = cloneDeep(obj);
       const requiredFields = ['surname', 'actions'];
       newObj.isDefault = true;
       newObj.isEditable = !requiredFields.includes(newObj.value);
@@ -331,14 +326,12 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.myStore.flagUpdateItem = false;
     this.myStore.flagViewing = false;
 
-    this.getGroup('/individual-persons/find/', this.pagAndSort, this.filter)
+    this.getGroupFind('/individual-persons/find/', this.pagAndSort, this.filter)
       .then(user => {
         this.pagAndSort.total = user.meta.total;
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
       });
-  }
 
-  beforeMount() {
     this.columns = this.setColumns();
   }
 }

@@ -62,9 +62,10 @@ export default class PeopleInNeetyModule {
       pfr: true,
       baseDoc: null,
     },
-    flagTabWorker: 0, // Кастыль для переключения на таб трудовой деятельности при создании трудовой деятельности новой
+    flagTabWorker: 0, // для переключения на таб трудовой деятельности при создании трудовой новой деятельности
     flagUpdateItem: false, // Ставится в истину при редактировании сущности
     flagViewing: false, // В истину при просмотре
+    yearStart: (new Date()).getFullYear() - 98,
   }
 
   // Обновляем свойства вложенного объекта

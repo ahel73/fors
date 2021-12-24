@@ -4,12 +4,7 @@
     <div class="form-add-new-work-action">
       <!-- Тип -->
       <v-row>
-        <v-col cols="4">
-          <span class="required-field">
-            Тип:
-          </span>
-        </v-col>
-        <v-col cols="6">
+        <v-col>
           <autocomplete-component
             :items="typeEmployer"
             :label="'Тип'"
@@ -31,30 +26,23 @@
       </v-row>
       <!-- Наименование -->
       <v-row>
-        <v-col cols="4">
-          <span>
-            Наименование:
-          </span>
-        </v-col>
-        <v-col cols="8">
+        <v-col>
           <input-component
             @input="updateProps('name', 'newEmployer')"
+            :clearable="true"
             :value="newEmployer.name"
+            label="Наимнование"
           />
         </v-col>
       </v-row>
       <!-- Краткое наимнование -->
       <v-row>
-        <v-col cols="4">
-          <span class="required-field">
-            Краткое наимнование:
-          </span>
-        </v-col>
-        <v-col cols="8">
+        <v-col>
           <input-component
             @input="updateProps('shortName', 'newEmployer')"
+            :clearable="true"
             :value="newEmployer.shortName"
-            :label="'Краткое наимнование'"
+            label="Краткое наимнование"
             :is-error="requiredField.shortName"
             :required="true"
           />
@@ -62,16 +50,12 @@
       </v-row>
       <!-- ИНН -->
       <v-row>
-        <v-col cols="4">
-          <span class="required-field">
-            ИНН:
-          </span>
-        </v-col>
-        <v-col cols="8">
+        <v-col>
           <input-component
             @input="updateProps('inn', 'newEmployer')"
+            :clearable="true"
             :value="newEmployer.inn"
-            :label="'ИНН'"
+            label="ИНН"
             :is-error="requiredField.inn"
             :required="true"
           />
@@ -79,24 +63,22 @@
       </v-row>
       <!-- Регистрационный номер в ПФР -->
       <v-row>
-        <v-col cols="4">
-          Регистрационный номер в ПФР:
-        </v-col>
-        <v-col cols="6">
+        <v-col>
           <input-component
             @input="updateProps('pfrRegistrationNumber', 'newEmployer')"
+            :clearable="true"
             :value="newEmployer.pfrRegistrationNumber"
+            label=" Регистрационный номер в ПФР"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4">
-          Действующий:
-        </v-col>
-        <v-col cols="8">
+        <v-col>
           <checkbox-component
             @change="updatePropsSpech( !newEmployer.active, 'active', 'newEmployer')"
+            :clearable="true"
             :value="newEmployer.active"
+            label="Действующий"
           />
         </v-col>
       </v-row>
@@ -106,18 +88,7 @@
           cols="auto"
         >
           <button-component
-            @click="
-              flagError=verificationObject(newEmployer, requiredField);
-              if (!flagError) {
-                dispatchObject(newEmployer, '/employers/')
-                clearObj(
-                  { active: true },
-                  newEmployer,
-                  'newEmployer',
-                  'FormAddNewWorkerActivity',
-                )
-              }
-            "
+            @click="addNewEmployer"
             size="micro"
             title="Сохранить"
             variant="primary"
@@ -126,12 +97,7 @@
         </v-col>
         <v-col cols="auto">
           <button-component
-            @click="clearObj(
-              { active: true },
-              newEmployer,
-              'newEmployer',
-              'FormAddNewWorkerActivity',
-            )"
+            @click="cancel"
             size="micro"
             title="Отмена"
             class="button-save"
@@ -188,16 +154,32 @@ export default class FormAddNewEmployer extends Vue {
   clearObj = methods.clearObj
   dispatchObject = methods.dispatchObject.bind(this);
   verificationObject = methods.verificationObject.bind(this);
+  getGroupList = methods.getGroupList.bind(this);
 
-  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
-    const { page = 0, sort = '-id', size } = params;
-    const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.get<any>(queryString);
-    return data;
+  addNewEmployer() {
+    this.flagError = this.verificationObject(this.newEmployer, this.requiredField);
+    if (!this.flagError) {
+      this.dispatchObject(this.newEmployer, '/employers/');
+      this.clearObj(
+        { active: true },
+        this.newEmployer,
+        'newEmployer',
+        'FormAddNewWorkerActivity'
+      );
+    }
+  }
+
+  cancel() {
+    this.clearObj(
+      { active: true },
+      this.newEmployer,
+      'newEmployer',
+      'FormAddNewWorkerActivity'
+    );
   }
 
   created() {
-    this.getGroop('/employer-types/')
+    this.getGroupList('/employer-types/')
       .then(user => {
         console.log(user);
         this.typeEmployer = user;
