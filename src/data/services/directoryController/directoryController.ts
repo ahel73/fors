@@ -49,3 +49,8 @@ export const getSpendingDirectionController = async (): Promise<SpendingDirectio
   const { data } = await httpClient.post<SpendingDirectionResponse>('/spending-directions/find');
   return data;
 };
+
+export const getQueueStatusController = async () => {
+  const { data } = await httpClient.post('/queue-statuses/find');
+  return data;
+};

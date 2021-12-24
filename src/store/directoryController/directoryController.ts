@@ -1,10 +1,10 @@
-import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
+import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getQueueStatusController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
 import { DocGroup, DocGroupResponseData } from '@/types/DocGroup';
 import { Employment, EmploymentResponseData } from '@/types/Employment';
 import { Priority, PriorityResponseData } from '@/types/Priority';
 import { ImprovingWay, ImprovingWayResponseData } from '@/types/ImprovingWay';
-import { IndividualPersonInfo, IndividualPersonResponseData } from '@/types/IndividualPersonInfo';
-import { Oktmo, RegionOktmo } from '@/types/Oktmo';
+import { IndividualPersonResponseData } from '@/types/IndividualPersonInfo';
+import { Oktmo } from '@/types/Oktmo';
 import { OktmoResponseData } from '@/types/OktmoResponseData';
 import { SpendingDirection, SpendingDirectionResponseData } from '@/types/SpendingDirection';
 import { Status, StatusResponseData } from '@/types/Status';
@@ -25,6 +25,7 @@ export default class DirectoryControllerModule {
     priority: [],
     spendingDirection: [],
     familyPeopleInFamily: [],
+    queueStatus: [],
     error: null,
     isLoading: false,
   }
@@ -77,6 +78,26 @@ export default class DirectoryControllerModule {
   @Mutation()
   setDirectionController(data: SpendingDirection[]): void {
     this.state.spendingDirection = data;
+  }
+
+  @Mutation()
+  setQueueStatusController(data: Status[]): void {
+    this.state.queueStatus = data;
+  }
+
+  @Action()
+  async fetchQueueStatusController(): Promise<void> {
+    this.setDirectoryControllerIsLoading(true);
+    this.setDirectoryControllerError(null);
+    try {
+      const { data, meta: { total } }: StatusResponseData = await getQueueStatusController();
+
+      this.setQueueStatusController(data);
+    } catch (error) {
+      this.setDirectoryControllerError(error as AxiosError);
+    } finally {
+      this.setDirectoryControllerIsLoading(false);
+    }
   }
 
   @Action()

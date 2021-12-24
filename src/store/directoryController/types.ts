@@ -18,6 +18,7 @@ export interface DirectoryControllerStore {
   priority: Priority[],
   spendingDirection: SpendingDirection[],
   familyPeopleInFamily: [],
+  queueStatus: Status[],
   error: AxiosError | null;
   isLoading: boolean;
 }
