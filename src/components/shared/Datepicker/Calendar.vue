@@ -148,13 +148,13 @@ export default class Calendar extends Vue {
     }
 
     if (yearFrom) {
-      return new Array(100)
+      const years = new Array(100)
         .fill(null)
         .map((_, index) => yearFrom + index);
 
-      // return [
-      //   ...years,
-      // ];
+      return [
+        ...years,
+      ];
     }
 
     return [];

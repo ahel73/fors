@@ -39,7 +39,7 @@ const router = new Router({
       meta: {
         breadcrumbs: [
           {
-            label: 'Список нуждающихся лиц.',
+            label: 'Список нуждающихся лиц',
           },
         ],
       },
@@ -99,7 +99,6 @@ const router = new Router({
       component: () => import('@/views/PeopleInNeetyPages/FormAddNewEmployer.vue'),
       props: true,
     },
-    // Мои конец FormAddNewEmployer.vue
     {
       path: '/accounting-business',
       children: [

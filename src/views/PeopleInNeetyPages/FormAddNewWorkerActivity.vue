@@ -2,7 +2,7 @@
   <main-layout title="Добавление новой трудовой деятельности">
     <div class="form-add-new-work-action">
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <v-dialog
             v-model="dialog"
           >
@@ -100,6 +100,7 @@
         <v-col>
           <input-component
             @input="updateProps('workFunction', 'newWorkerAction')"
+            :clearable="true"
             :value="getWorkFunction"
             label="'Трудовая функция'"
             :is-error="requiredField.workFunction"
@@ -113,8 +114,8 @@
           <datepicker
             @change="updatePropsSpech($event, 'employmentDate', 'newWorkerAction')"
             @click:clear="updatePropsSpech( '', 'employmentDate', 'newWorkerAction')"
-            :starting-year="yearInterval + 2"
-            :value="newWorkerAction.employmentDate || ''"
+            :starting-year="yearStart"
+            :value="getEmploymentDate"
             label="Дата приёма"
             :is-required="true"
           />
@@ -123,34 +124,37 @@
           <datepicker
             @change="updatePropsSpech($event, 'dismissalDate', 'newWorkerAction')"
             @click:clear="updatePropsSpech( '', 'dismissalDate', 'newWorkerAction')"
-            :starting-year="yearInterval + 2"
+            :starting-year="yearStart"
             :value="getDismissalDate"
             label="Дата увольнения"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <input-component
             @input="updateProps('dismissalReason', 'newWorkerAction')"
-            :value="newWorkerAction.dismissalReason || ''"
+            :clearable="true"
+            :value="getDismissalReason"
             label="Причина увольнения"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <input-component
             @input="updateProps('baseDoc', 'newWorkerAction')"
+            :clearable="true"
             :value="getBaseDoc"
             label="'Документ основание'"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
+        <v-col>
           <checkbox-component
             @change="updatePropsSpech( !newWorkerAction.pfr, 'pfr', 'newWorkerAction')"
+            :clearable="true"
             :value="newWorkerAction.pfr"
             label="'Признак ПФР'"
           />
@@ -194,7 +198,6 @@ import InputComponent from '@/components/shared/inputs/InputComponent.vue';
 import Datepicker from '@/components/shared/Datepicker/Datepicker.vue';
 import CheckboxComponent from '@/components/shared/inputs/CheckboxComponent.vue';
 import AutocompleteComponent from '@/components/shared/inputs/AutocompleteComponent.vue';
-import httpClient from '@/data/http';
 import { query } from '@/utils';
 import eventBus from '@/utils/bus/event-bus';
 
@@ -217,7 +220,7 @@ export default class FormAddNewWorkerActivity extends Vue {
   newWorkerAction = this.myStore.state.newWorkerAction
   selectEmployer = null // Выбираемый работодатель
   dialog = false;
-  yearInterval = (new Date()).getFullYear() - 100;
+  yearStart = this.myStore.state.yearStart;
   requiredField = {
     employer: false,
     workFunction: false,
@@ -236,6 +239,10 @@ export default class FormAddNewWorkerActivity extends Vue {
 
   get getDismissalDate() {
     return this.newWorkerAction.dismissalDate || '';
+  }
+
+  get getEmploymentDate() {
+    return this.newWorkerAction.employmentDate || '';
   }
 
   get getWorkFunction() {
@@ -284,6 +291,7 @@ export default class FormAddNewWorkerActivity extends Vue {
   clearObj = methods.clearObj;
   exitReview = methods.exitReview;
   verificationObject = methods.verificationObject.bind(this);
+  getGroupFind = methods.getGroupFind.bind(this);
 
   setEmployer() {
     if (!this.selectEmployer) {
@@ -303,15 +311,8 @@ export default class FormAddNewWorkerActivity extends Vue {
     this.dialog = false;
   }
 
-  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
-    const { page = 0, sort = '-id', size } = params;
-    const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.post(queryString);
-    return data;
-  }
-
   created() {
-    this.getGroop('/employers/find/')
+    this.getGroupFind('/employers/find/')
       .then(user => {
         this.listEmployers = user.data;
       });

@@ -9,7 +9,7 @@ export interface TypeDoc {
   active: string | boolean,
 }
 export interface IdentityDoc {
-  id?: string | number | null,
+  id?: number | null,
   individualPersonId?: string | number | null,
   seriesNumber?: string | number | null,
   issueDate: string | null,
@@ -94,7 +94,7 @@ export interface UpdatePropsObject {
 }
 
 export interface SaveObj {
-  objDoc: any,
+  objDoc: IdentityDoc | WorkerAction,
   nameList: string,
 }
 export interface DataPeopleInNeety {
@@ -108,4 +108,5 @@ export interface DataPeopleInNeety {
   flagTabWorker: number,
   flagUpdateItem: boolean,
   flagViewing: boolean,
+  yearStart: number,
 }

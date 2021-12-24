@@ -35,7 +35,7 @@
       >
         <!-- Фамилия -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('surname', nameObject)"
               :value="getSurname"
@@ -43,13 +43,14 @@
               label="Фамилия"
               :is-error="requiredField.surname"
               :required="true"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Имя -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('name', nameObject)"
               :value="getName"
@@ -57,37 +58,40 @@
               label="Имя"
               :is-error="requiredField.name"
               :required="true"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Отчество -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('patronymic', nameObject)"
               :value="getPatronymic"
               :disabled="flagDisabled"
               label="Имя"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Дата рождения -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <datepicker
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'birthDate', nameObject)"
               @click:clear="updatePropsSpech( '', 'birthDate', nameObject)"
-              :starting-year="1923"
+              :starting-year="yearStart"
               :value="getBirthDate"
-              :label="'Дата рождения'"
+              label="Дата рождения"
               :is-required="true"
               :error="requiredField.birthDate"
             />
             <input-component
               v-else
+              label="Дата рождения"
               :value="getBirthDate"
               :disabled="true"
             />
@@ -96,7 +100,7 @@
 
         <!-- Пол -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <v-radio-group
               v-if="!flagDisabled"
               v-model="newPerson.sex"
@@ -109,12 +113,12 @@
                 </div>
               </template>
               <v-radio
-                :label="'Мужской'"
+                :label="Мужской"
                 :value="'M'"
                 :key="1"
               />
               <v-radio
-                :label="'Женский'"
+                :label="Женский"
                 :value="'W'"
                 :key="2"
               />
@@ -130,31 +134,33 @@
 
         <!-- Место жительства -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('residence', nameObject)"
               :value="getResidence"
               :disabled="flagDisabled"
               label="Место жительства"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Место регистрации -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('location', nameObject)"
               :value="getLocation"
               :disabled="flagDisabled"
               label="Место прибывания"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Дата регистрации -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <datepicker
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'registrationDate', nameObject)"
@@ -175,7 +181,7 @@
 
         <!-- Код МО -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <input-component
               @input="updateProps('areaCode', nameObject)"
               :value="getAreaCode"
@@ -183,13 +189,14 @@
               label="Код МО"
               :is-error="requiredField.areaCode"
               :required="true"
+              :clearable="true"
             />
           </v-col>
         </v-row>
 
         <!-- Документ удостоверяющиё -->
         <v-row>
-          <v-col cols="12">
+          <v-col>
             <router-link :to="flagNew ? {name: 'FormAddDocument'} : ''">
               <input-component
                 :value="getIdentityDoc"
@@ -212,6 +219,7 @@
               :value="getSnils"
               :disabled="flagDisabled"
               label="СНИЛС"
+              :clearable="true"
             />
           </v-col>
           <!-- ИНН -->
@@ -222,6 +230,7 @@
               :value="getInn"
               :disabled="flagDisabled"
               label="ИНН"
+              :clearable="true"
             />
           </v-col>
         </v-row>
@@ -246,6 +255,7 @@
               :value="getOgrnip"
               :disabled="flagDisabled"
               label="ОГРНИП"
+              :clearable="true"
             />
           </v-col>
         </v-row>
@@ -258,6 +268,7 @@
               :value="getEmail"
               :disabled="flagDisabled"
               label="Эл. почта"
+              :clearable="true"
             />
           </v-col>
         </v-row>
@@ -341,10 +352,7 @@
           </v-col>
           <v-col cols="auto">
             <button-component
-              @click="
-                myStore.offUpdateItem();
-                push('ListPeoplePage');
-              "
+              @click="offUpdateItem"
               size="micro"
               title="Закрыть"
               class="button-save"
@@ -365,16 +373,7 @@
           </v-col>
           <v-col cols="auto">
             <button-component
-              @click="clearObj(
-                {
-                  status: { active: true, id: 1, name: 'Черновик' },
-                  works: [],
-                },
-                newPerson,
-                'newPersonNeedy',
-                'ListPeoplePage',
-              )
-              "
+              @click="cancel"
               size="micro"
               title="Отменить"
               class="button-save"
@@ -435,6 +434,7 @@ import { mask } from 'vue-the-mask';
 export default class FormAddNewPeopleInNeety extends Vue {
   store: Store = useStore(this.$store);
   myStore = this.store.peopleInNeety;
+  yearStart = this.myStore.state.yearStart
   flagUpdatePerson = this.myStore.state.flagUpdateItem; // истина если обновляем
   flagNew = this.flagUpdatePerson || !this.myStore.state.updatePersonNeedy; // Истина если новый
   flagDisabled = this.myStore.state.flagViewing; // Истина если просмотр
@@ -547,6 +547,23 @@ export default class FormAddNewPeopleInNeety extends Vue {
   dispatchUpdateObject = methods.dispatchUpdateObject.bind(this);
   verificationObject = methods.verificationObject.bind(this);
 
+  cancel() {
+    this.clearObj(
+      {
+        status: { active: true, id: 1, name: 'Черновик' },
+        works: [],
+      },
+      this.newPerson,
+      'newPersonNeedy',
+      'ListPeoplePage'
+    );
+  }
+
+  offUpdateItem() {
+    this.myStore.offUpdateItem();
+    this.push('ListPeoplePage');
+  }
+
   getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
     const { page = 0, sort = '-id', size } = params;
     const queryParams = query({ ...params, page, sort, size });
@@ -631,20 +648,6 @@ export default class FormAddNewPeopleInNeety extends Vue {
   .tab-card {
     border-top: 1px solid rgb(193, 193, 193);
     padding-top: 50px;
-  }
-
-  .required-field {
-    position: relative;
-  }
-
-  .required-field::after {
-    bottom: 40%;
-    color: rgb(238, 61, 61);
-    content: "\F06C4";
-    font-family: "Material Design Icons";
-    font-size: 80%;
-    font-weight: bold;
-    position: absolute;
   }
 
   .global-button {
