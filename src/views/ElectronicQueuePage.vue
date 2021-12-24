@@ -233,7 +233,7 @@ export default class ElectronicQueuePageList extends Vue {
 
  columns = [
    {
-     // text:'',
+     sortable: false,
      isVisible: false,
      isDefault: true,
      value: 'check',
@@ -513,8 +513,8 @@ export default class ElectronicQueuePageList extends Vue {
    this.checkedProperties = this.checkedProperties.map((item: any) => item.id);
    this.store.electronicQueue.postElectronicQueueArchive(this.checkedProperties).then(() => {
      this.checkedProperties = [];
+     this.fetchStateElectronicQueue();
    });
-   this.fetchStateElectronicQueue();
  }
 
  generateList() {
