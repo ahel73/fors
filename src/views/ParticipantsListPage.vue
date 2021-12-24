@@ -320,7 +320,14 @@ export default class ParticipantsListPage extends Vue {
 
   mounted() {
     this.store.participants.fetchImprovingWays().then((improvingWay) => {
-      this.store.participants.fetchMembers({ size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+      this.store.participants.fetchMembers(
+        {
+          listMembersFinancialYear: this.year,
+          size: this.size.toString(),
+          sort: this.sort,
+          page: this.page.toString(),
+        }
+      );
       this.store.participants.fetchRegions();
       this.store.participants.fetchYears();
       this.store.me.fetchMe();
@@ -329,7 +336,15 @@ export default class ParticipantsListPage extends Vue {
 
   handleSearch(outputFilters: OutputFilters): void {
     this.items = outputFilters;
-    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
   }
 
   handleReset(): void {
@@ -343,6 +358,15 @@ export default class ParticipantsListPage extends Vue {
 
   onAcceptSearchClick() {
     this.store.participants.setSearch(this.year, this.region);
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
   }
 
   onCancelSearchClick() {
@@ -373,7 +397,15 @@ export default class ParticipantsListPage extends Vue {
     this.size = size;
     this.page = page;
 
-    this.store.participants.fetchMembers({ items: this.items, size: this.size.toString(), sort: this.sort, page: this.page.toString() });
+    this.store.participants.fetchMembers(
+      {
+        listMembersFinancialYear: this.year,
+        items: this.items,
+        size: this.size.toString(),
+        sort: this.sort,
+        page: this.page.toString(),
+      }
+    );
   }
 }
 </script>

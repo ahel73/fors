@@ -83,13 +83,14 @@ export default class ParticipantsModule {
 
   @Action()
   async fetchMembers({
-    name, page, size, sort, items
+    name, page, size, sort, items, listMembersFinancialYear,
   } : {
     name?: string;
     page?: string;
     size?: string;
     sort?: string;
     items?: OutputFilters;
+    listMembersFinancialYear: number | null;
   }) {
     const filterParams: FilterParams = {
       name: name,
@@ -97,6 +98,7 @@ export default class ParticipantsModule {
       size: size,
       sort: sort,
       items: items,
+      listMembersFinancialYear: listMembersFinancialYear,
     };
     try {
       const result = await fetchParticipantsList(filterParams);
@@ -115,7 +117,7 @@ export default class ParticipantsModule {
 
   @Action()
   async conformMembers({
-    improvingWay, financialYear, areaCode
+    improvingWay, financialYear, areaCode,
   } : {
     improvingWay: WorkingRegion;
     financialYear: number | null;
@@ -145,7 +147,7 @@ export default class ParticipantsModule {
 
   @Action()
   async createSummaryList({
-    improvingWay, financialYear, regionCode
+    improvingWay, financialYear, regionCode,
   } : {
     improvingWay: WorkingRegion;
     financialYear: number | null;

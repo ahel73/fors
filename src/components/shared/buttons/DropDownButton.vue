@@ -3,7 +3,7 @@
     content-class="dialog"
     offset-y
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <button-component
         v-on="on"
         @click="handleClick"

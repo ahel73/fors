@@ -53,7 +53,7 @@
             class="ml-2 truncate"
           >
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <span
                   v-on="on"
                   v-bind="attrs"

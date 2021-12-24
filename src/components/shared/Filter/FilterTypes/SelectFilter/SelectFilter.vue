@@ -22,7 +22,7 @@
     >
       <template
         v-if="showCode || showHierarchy"
-        v-slot:item="{ item }"
+        #item="{ item }"
       >
         <template v-if="showCode">
           <v-list-item-content>

@@ -1,4 +1,4 @@
-import { OutputFilters } from "@/components/shared/Filter/FilterTypes/types";
+import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
 
 export interface HeaderColumns {
     text: string;
@@ -62,4 +62,5 @@ export interface FilterParams {
     page?: string;
     sort?: string;
     items?: OutputFilters;
+    listMembersFinancialYear: number | null;
 }
