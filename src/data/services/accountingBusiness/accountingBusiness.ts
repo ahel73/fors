@@ -1,5 +1,5 @@
 import httpClient from '@/data/http';
-import { DeedItemCard, StateDeed, StateDeedData, StateDeedDataParams } from '@/types/AccountBissiness';
+import { DeedItemCard, StateDeed, StateDeedData, StateDeedDataParams, StateDeedItem } from '@/types/DeedType';
 import { AccountingType, UndoRecordAccounting } from '@/types/AccountingType';
 import { query } from '@/utils';
 
@@ -20,13 +20,13 @@ export const deleteDeedController = async (id: string | number): Promise<never> 
   return data;
 };
 
-export const createDeedController = async (form: DeedItemCard) => {
-  const { data } = await httpClient.post('/deeds', form);
+export const createDeedController = async (form: DeedItemCard): Promise<never> => {
+  const { data } = await httpClient.post<never>('/deeds', form);
   return data;
 };
 
-export const getDeedControllerByID = async (id: number | string) => {
-  const { data } = await httpClient.get(`/deeds/${id}`);
+export const getDeedControllerByID = async (id: number | string): Promise<DeedItemCard> => {
+  const { data } = await httpClient.get<StateDeedItem>(`/deeds/${id}`);
   return data;
 };
 

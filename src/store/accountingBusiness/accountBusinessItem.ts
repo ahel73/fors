@@ -4,7 +4,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { getDeedControllerByID } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard, DocumentItem, FamilyMembers, Person } from '@/types/AccountBissiness';
+import { DeedItemCard, DocumentItem, FamilyMembers, Person } from '@/types/DeedType';
 
 export default class DeedControllerItemModule {
   @State()

@@ -50,7 +50,7 @@ export const getSpendingDirectionController = async (): Promise<SpendingDirectio
   return data;
 };
 
-export const getQueueStatusController = async () => {
-  const { data } = await httpClient.post('/queue-statuses/find');
+export const getQueueStatusController = async (): Promise<StatusResponseData> => {
+  const { data } = await httpClient.post<StatusResponse>('/queue-statuses/find');
   return data;
 };

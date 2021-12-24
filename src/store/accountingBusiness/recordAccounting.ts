@@ -4,7 +4,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { onRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard } from '@/types/AccountBissiness';
+import { DeedItemCard } from '@/types/DeedType';
 import { AccountingType } from '@/types/AccountingType';
 
 export default class RecordAccountingModule {

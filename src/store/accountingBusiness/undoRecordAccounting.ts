@@ -4,7 +4,7 @@ import { Mutation, Action, State } from 'vuex-simple';
 import { undoRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard } from '@/types/AccountBissiness';
+import { DeedItemCard } from '@/types/DeedType';
 import { UndoRecordAccounting } from '@/types/AccountingType';
 
 export default class UndoRecordAccountingModule {

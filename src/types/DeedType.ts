@@ -116,3 +116,5 @@ export interface StateDeedDataParams extends Partial<Pagination> {
 }
 
 export type StateDeed = AxiosResponse<StateDeedData>;
+
+export type StateDeedItem = AxiosResponse<DeedItemCard>;

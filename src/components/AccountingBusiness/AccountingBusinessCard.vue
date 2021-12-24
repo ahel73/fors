@@ -426,7 +426,7 @@ import eventBus from '@/utils/bus/event-bus';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
-import { DeedItemCard, DocumentItem, FamilyMembers } from '@/types/AccountBissiness';
+import { DeedItemCard, DocumentItem, FamilyMembers } from '@/types/DeedType';
 import { AccountingType, UndoRecordAccounting } from '@/types/AccountingType';
 
 @Component({
