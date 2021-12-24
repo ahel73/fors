@@ -115,7 +115,7 @@ import eventBus from '@/utils/bus/event-bus';
 import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
 import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
 import { AxiosError } from 'axios';
-import { DocumentItem } from '@/types/AccountBissiness';
+import { DocumentItem } from '@/types/DeedType';
 
 interface Document {
     index: string,

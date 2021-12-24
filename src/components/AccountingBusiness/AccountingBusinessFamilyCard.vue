@@ -79,7 +79,7 @@ import { useStore } from 'vuex-simple';
 import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import eventBus from '@/utils/bus/event-bus';
-import { FamilyMembers } from '@/types/AccountBissiness';
+import { FamilyMembers } from '@/types/DeedType';
 import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
 
 const mapForm = (data: any) => ({

@@ -336,7 +336,7 @@ export default class AccountingBusinessList extends Vue {
     {
       isDefault: true,
       isEditable: true,
-      text: 'Нормативная площать',
+      text: 'Нормативная площадь',
       value: 'normativeArea',
       align: 'center',
     },
