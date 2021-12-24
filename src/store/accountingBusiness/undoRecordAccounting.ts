@@ -5,6 +5,7 @@ import { undoRecordAccounting } from '@/data/services/accountingBusiness/account
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
 import { DeedItemCard } from '@/types/AccountBissiness';
+import { UndoRecordAccounting } from '@/types/AccountingType';
 
 export default class UndoRecordAccountingModule {
   @State()
@@ -36,18 +37,12 @@ export default class UndoRecordAccountingModule {
     }
   }
 
-  @Mutation()
-  setUndoRecordAccounting(response?: any): void {
-    const data = response;
-    this.state.data = data;
-  }
-
   @Action()
-  async fetchUndoRecordAccounting(params: any): Promise<void> {
+  async undoRecordAccounting(params: UndoRecordAccounting): Promise<void> {
     this.setUndoRecordAccountingIsLoading(true);
     this.setUndoRecordAccountingError(null);
     try {
-      const data = await undoRecordAccounting(params).then(() => {
+      await undoRecordAccounting(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
@@ -57,8 +52,6 @@ export default class UndoRecordAccountingModule {
           }
         );
       });
-
-      this.setUndoRecordAccounting(data);
     } catch (error) {
       this.setUndoRecordAccountingError(error as AxiosError);
     } finally {

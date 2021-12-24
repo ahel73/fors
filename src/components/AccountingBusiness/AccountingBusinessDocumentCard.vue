@@ -1,7 +1,7 @@
 <template>
   <main-layout title="Документ">
     <v-row>
-      <v-col cols="12">
+      <v-col>
         <input-component
           v-model="documentEditOrCreate.name"
           label="Наименование"

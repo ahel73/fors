@@ -5,6 +5,7 @@ import { onRecordAccounting } from '@/data/services/accountingBusiness/accountin
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
 import { DeedItemCard } from '@/types/AccountBissiness';
+import { AccountingType } from '@/types/AccountingType';
 
 export default class RecordAccountingModule {
   @State()
@@ -36,18 +37,12 @@ export default class RecordAccountingModule {
     }
   }
 
-  @Mutation()
-  setRecordAccounting(response?: any): void {
-    const data = response;
-    this.state.data = data;
-  }
-
   @Action()
-  async fetchRecordAccounting(params: any): Promise<void> {
+  async recordAccounting(params: AccountingType): Promise<void> {
     this.setRecordAccountingIsLoading(true);
     this.setRecordAccountingError(null);
     try {
-      const data = await onRecordAccounting(params).then(() => {
+      await onRecordAccounting(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
@@ -57,8 +52,6 @@ export default class RecordAccountingModule {
           }
         );
       });
-
-      this.setRecordAccounting(data);
     } catch (error) {
       this.setRecordAccountingError(error as AxiosError);
     } finally {

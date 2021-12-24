@@ -1,5 +1,6 @@
 import httpClient from '@/data/http';
 import { DeedItemCard, StateDeed, StateDeedData, StateDeedDataParams } from '@/types/AccountBissiness';
+import { AccountingType, UndoRecordAccounting } from '@/types/AccountingType';
 import { query } from '@/utils';
 
 export const getDeedController = async (params: StateDeedDataParams = {} as StateDeedDataParams): Promise<StateDeedData> => {
@@ -29,12 +30,12 @@ export const getDeedControllerByID = async (id: number | string) => {
   return data;
 };
 
-export const onRecordAccounting = async (data: any): Promise<never> => {
+export const onRecordAccounting = async (data: AccountingType): Promise<never> => {
   const { content } = await httpClient.post<never>('deeds/actions/accounting', data);
   return content;
 };
 
-export const undoRecordAccounting = async (data: any): Promise<never> => {
+export const undoRecordAccounting = async (data: UndoRecordAccounting): Promise<never> => {
   const { content } = await httpClient.post<never>('/deeds/actions/undo-accounting', data);
   return content;
 };

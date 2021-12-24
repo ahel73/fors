@@ -427,6 +427,7 @@ import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
 import { DeedItemCard, DocumentItem, FamilyMembers } from '@/types/AccountBissiness';
+import { AccountingType, UndoRecordAccounting } from '@/types/AccountingType';
 
 @Component({
   components: {
@@ -671,21 +672,21 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   async handleRecordSuccess() {
-    const data = {
+    const data: AccountingType = {
       deedId: this.$route.params.id,
       registrationDate: this.recordDate,
     };
-    await this.store.record.fetchRecordAccounting(data);
+    await this.store.record.recordAccounting(data);
     this.fetchById();
     this.recordDate = '';
   }
 
   async onDeregister() {
-    const data = {
+    const data: UndoRecordAccounting = {
       deedId: this.$route.params.id,
       changeReason: this.form.changeReason,
     };
-    await this.store.undoRecord.fetchUndoRecordAccounting(data);
+    await this.store.undoRecord.undoRecordAccounting(data);
     this.fetchById();
   }
 
