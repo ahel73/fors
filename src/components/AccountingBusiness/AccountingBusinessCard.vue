@@ -692,19 +692,11 @@ export default class AccountingBusinessListCard extends Vue {
 
   async saveAllInfo() {
     this.form.registrationDate = moment(this.form.registrationDate).format('YYYY-MM-DDTHH:mm:ss.SSS').toString();
-    if (this.form.applicant === undefined) {
+    if (this.form.applicant === undefined || this.form.improvingWay === undefined || this.form.oktmo === undefined) {
       eventBus.$emit(
         'notification:message',
         {
-          text: 'Обязательное поле "Заявитель" не заполненно',
-          type: 'error',
-        }
-      );
-    } else if (this.form.improvingWay === undefined) {
-      eventBus.$emit(
-        'notification:message',
-        {
-          text: 'Обязательное поле "Способ УЖУ" не заполненно',
+          text: 'Обязательные поля не заполнены',
           type: 'error',
         }
       );
@@ -717,14 +709,6 @@ export default class AccountingBusinessListCard extends Vue {
           type: 'error',
         }
       );
-    } else if (this.form.oktmo === undefined) {
-      eventBus.$emit(
-        'notification:message',
-        {
-          text: 'Обязательное поле "Способ УЖУ" не заполненно',
-          type: 'error',
-        }
-      );
     } else {
       if (!this.$route.params.id) {
         const data: DeedItemCard = {
@@ -733,7 +717,7 @@ export default class AccountingBusinessListCard extends Vue {
           familyMembers: this.familyMembers,
         };
         await this.store.createItem.fetchCreateDeedController(data).then(() => {
-          if (!this.store.updateItem.state.error) {
+          if (!this.store.createItem.state.error) {
             this.$router.replace({
               path: '/accounting-business',
             });

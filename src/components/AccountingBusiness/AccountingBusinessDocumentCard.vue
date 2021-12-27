@@ -117,17 +117,6 @@ import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
 import { AxiosError } from 'axios';
 import { DocumentItem } from '@/types/DeedType';
 
-interface Document {
-    index: string,
-    id: number,
-    active: boolean,
-    fileName: string,
-    fileUid: string,
-    name: string,
-    docNum: number,
-    docDate: Date,
-}
-
 interface File {
   fileName: string,
   id: string,
@@ -205,19 +194,10 @@ export default class AccountingBusinessDocumentCard extends Vue {
   }
 
   saveDocument() {
-    if (this.documentEditOrCreate.name === undefined) {
+    if (this.documentEditOrCreate.name === undefined || this.documentEditOrCreate?.docNum === undefined ||
+    this.documentEditOrCreate.docDate === undefined) {
       eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Наименование" не заполненно',
-        type: 'error',
-      });
-    } else if (this.documentEditOrCreate?.docNum === undefined) {
-      eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Номер" не заполненно',
-        type: 'error',
-      });
-    } else if (this.documentEditOrCreate.docDate === undefined) {
-      eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Дата" не заполненно',
+        text: 'Обязательные поля не заполнены',
         type: 'error',
       });
     } else {

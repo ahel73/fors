@@ -184,19 +184,11 @@ export default class AccountingBusinessFamilyCard extends Vue {
   }
 
   saveDataFamilyPeople() {
-    if (this.itemPeople.individualPerson === undefined) {
+    if (this.itemPeople.individualPerson === undefined || this.itemPeople.relationship === undefined) {
       eventBus.$emit(
         'notification:message',
         {
-          text: 'Обязательное поле "Фамилия Имя Отчество" не заполненно',
-          type: 'error',
-        }
-      );
-    } else if (this.itemPeople.relationship === undefined) {
-      eventBus.$emit(
-        'notification:message',
-        {
-          text: 'Обязательное поле "Родственные отношения" не заполненно',
+          text: 'Обязательные поля не заполнены',
           type: 'error',
         }
       );
