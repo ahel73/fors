@@ -62,6 +62,23 @@ export default class PeopleInNeetyModule {
       pfr: true,
       baseDoc: null,
     },
+    filter: {
+      surname: null,
+      name: null,
+      patronymic: null,
+      fromBirthDate: null,
+      toBirthDate: null,
+      inn: null,
+      snils: null,
+      residence: null,
+      location: null,
+    },
+    pagAndSort: {
+      page: 0,
+      size: 10,
+      sort: '-id',
+      total: null,
+    },
     flagTabWorker: 0, // для переключения на таб трудовой деятельности при создании трудовой новой деятельности
     flagUpdateItem: false, // Ставится в истину при редактировании сущности
     flagViewing: false, // В истину при просмотре

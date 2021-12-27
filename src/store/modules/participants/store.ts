@@ -83,13 +83,14 @@ export default class ParticipantsModule {
 
   @Action()
   async fetchMembers({
-    name, page, size, sort, items,
+    name, page, size, sort, items, listMembersFinancialYear,
   } : {
     name?: string;
     page?: string;
     size?: string;
     sort?: string;
     items?: OutputFilters;
+    listMembersFinancialYear: number | null;
   }) {
     const filterParams: FilterParams = {
       name: name,
@@ -97,6 +98,7 @@ export default class ParticipantsModule {
       size: size,
       sort: sort,
       items: items,
+      listMembersFinancialYear: listMembersFinancialYear,
     };
     try {
       const result = await fetchParticipantsList(filterParams);

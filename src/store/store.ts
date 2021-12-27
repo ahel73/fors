@@ -13,6 +13,7 @@ import UndoRecordAccountingModule from './accountingBusiness/undoRecordAccountin
 import UpdateDeedControllerModule from './accountingBusiness/updateAccountingBusiness';
 import DirectoryControllerModule from './directoryController/directoryController';
 import FileRepositoryModule from './fileRepository';
+import ElectronicQueueModule from './electronicQueue/store';
 
 export default class {
   @Module()
@@ -56,4 +57,7 @@ export default class {
 
   @Module()
   public directory = new DirectoryControllerModule();
+
+  @Module()
+  public electronicQueue = new ElectronicQueueModule();
 }

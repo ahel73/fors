@@ -18,7 +18,7 @@
       :nudge-top="menuTopOffset"
       :offset-y="offsetY"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <div
           v-on="on"
           v-bind="attrs"

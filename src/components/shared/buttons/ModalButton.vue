@@ -4,7 +4,7 @@
     persistent
     :max-width="width"
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <button-component
         :variant="primary ? 'primary' : 'default'"
         :title="buttonText"

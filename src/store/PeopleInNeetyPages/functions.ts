@@ -14,6 +14,10 @@ export const methods = {
     this.store.peopleInNeety.update({ name, value, object });
   },
 
+  updatePropState(name: string, value: any): void {
+    this.store.peopleInNeety.updateProp({ name, value });
+  },
+
   push(namePath: string) {
     this.$router.push({ name: namePath });
   },

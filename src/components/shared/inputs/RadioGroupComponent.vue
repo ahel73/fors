@@ -12,7 +12,7 @@
     >
       <template
         v-if="labelYes"
-        v-slot:label
+        #label
       >
         <label-component
           :label="labelYes"
@@ -26,7 +26,7 @@
     >
       <template
         v-if="labelNo"
-        v-slot:label
+        #label
       >
         <label-component
           :label="labelNo"

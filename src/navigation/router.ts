@@ -201,6 +201,19 @@ const router = new Router({
       component: () => import('@/views/PayoutParticipantFormPage.vue'),
     },
     {
+      path: '/electronic-queue',
+      meta: {
+        breadcrumbs: [
+          {
+            label: 'Сводный список участников',
+          },
+        ],
+      },
+      name: 'ElectronicQueueList',
+      component: () => import('@/views/ElectronicQueuePage.vue'),
+      props: true,
+    },
+    {
       path: '*',
       redirect: '/',
     },
