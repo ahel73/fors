@@ -43,7 +43,7 @@ export class HttpClient {
   }
 
   async putEmpty<T>(url: string, data?: object, params?: AxiosRequestConfig): Promise<T> {
-    return await this.client.put(url, data, params);
+    return await axios.put(url, data, params);
   }
 
   async patch<T>(url: string, data?: object, params?: AxiosRequestConfig): Promise<T> {

@@ -89,7 +89,7 @@ export interface PersonNeedy {
 }
 export interface UpdatePropsObject {
   name: string | number,
-  value: string,
+  value: string | null | number,
   object?: string,
 }
 
@@ -101,7 +101,7 @@ export interface DataPeopleInNeety {
   headerTablePeopleInNeety: HeaderTablePeopleInNeety[] | [],
   listPeopleInNeety: PersonNeedy[] | [],
   newPersonNeedy: PersonNeedy,
-  updatePersonNeedy: any,
+  updatePersonNeedy: object | null,
   newIdentityDoc: IdentityDoc,
   newEmployer: Employer,
   newWorkerAction?: WorkerAction,

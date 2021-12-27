@@ -7,7 +7,7 @@
         <v-col>
           <autocomplete-component
             :items="typeEmployer"
-            :label="'Тип'"
+            label="Тип"
             :required="true"
             :error="requiredField.type"
           >

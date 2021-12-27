@@ -11,7 +11,7 @@
                 v-on="on"
                 :value="newWorkerAction.employer ? newWorkerAction.employer.shortName : '' "
                 v-bind="attrs"
-                :label="'Место работы'"
+                label="Место работы"
                 :is-error="requiredField.employer"
                 :required="true"
               />
@@ -102,7 +102,7 @@
             @input="updateProps('workFunction', 'newWorkerAction')"
             :clearable="true"
             :value="getWorkFunction"
-            label="'Трудовая функция'"
+            label="Трудовая функция"
             :is-error="requiredField.workFunction"
             :required="true"
           />
@@ -146,7 +146,7 @@
             @input="updateProps('baseDoc', 'newWorkerAction')"
             :clearable="true"
             :value="getBaseDoc"
-            label="'Документ основание'"
+            label="Документ основание"
           />
         </v-col>
       </v-row>
@@ -156,7 +156,7 @@
             @change="updatePropsSpech( !newWorkerAction.pfr, 'pfr', 'newWorkerAction')"
             :clearable="true"
             :value="newWorkerAction.pfr"
-            label="'Признак ПФР'"
+            label="Признак ПФР"
           />
         </v-col>
       </v-row>
