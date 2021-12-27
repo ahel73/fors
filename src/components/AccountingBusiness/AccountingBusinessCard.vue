@@ -101,6 +101,7 @@
             <input-component
               v-model="form.refinedArea"
               label="Уточненная площадь"
+              :disabled="isShow"
             />
           </v-col>
           <v-col>
@@ -126,6 +127,7 @@
               v-model="form.registrationDate "
               label="Дата постановки на учет"
               :readonly="isShow"
+              :disabled="isShow"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
             />
@@ -134,7 +136,8 @@
             <Datepicker
               v-model="form.changeDate "
               label="Дата изменения"
-              :readonly="isShow"
+              :readonly="true"
+              :disabled="true"
               view-format="DD.MM.YYYY"
               output-format="YYYY-MM-DD"
             />
@@ -198,7 +201,7 @@
             <template #[`item.actions`]="{ item }">
               <div
                 v-if="!isShow"
-                class="d-flex justify-center flex-nowrap"
+                class="d-flex justify-start flex-nowrap"
               >
                 <span class="table-action__wrapper">
                   <router-link
@@ -252,7 +255,7 @@
           >
             <template #[`item.actions`]="{ item }">
               <div
-                class="d-flex justify-center flex-nowrap"
+                class="d-flex justify-start flex-nowrap"
               >
                 <span
                   v-if="!isShow"
@@ -420,11 +423,11 @@ import Store from '@/store/store';
 import ModalButton from '../shared/buttons/ModalButton.vue';
 import { cloneDeep } from 'lodash';
 import eventBus from '@/utils/bus/event-bus';
-import { DeedItemCard } from '@/store/accountingBusiness/typesDeedItem';
 import moment from 'moment';
 import SelectComponent from '../shared/inputs/SelectComponent.vue';
 import ButtonComponent from '@/components/shared/buttons/DefaultButton.vue';
-import { timeout } from '@/utils';
+import { DeedItemCard, DocumentItem, FamilyMembers } from '@/types/DeedType';
+import { AccountingType, UndoRecordAccounting } from '@/types/AccountingType';
 
 @Component({
   components: {
@@ -466,8 +469,8 @@ export default class AccountingBusinessListCard extends Vue {
   cancelDialog = false;
 
   tab = 0;
-  docForDelete = {};
-  peopleForDelete = {};
+  docForDelete = {} as DocumentItem;
+  peopleForDelete = {} as FamilyMembers;
   form = {} as DeedItemCard;
 
   isShow = false;
@@ -625,6 +628,9 @@ export default class AccountingBusinessListCard extends Vue {
       listForUpdating: true,
       id: +this.form.applicant?.id,
     };
+    const code = {
+      regionCode: 20,
+    };
     this.store.directory.fetchIndividualPersonInfoController(params);
     this.store.directory.fetchDeedStatusController();
     this.store.directory.fetchEmploymentController();
@@ -632,15 +638,15 @@ export default class AccountingBusinessListCard extends Vue {
     this.store.directory.fetchImprovingWayController();
     this.store.directory.fetchQueuePriorityController();
     this.store.directory.fetchSpendingDirectionController();
-    this.store.directory.fetchOktmoControllerData();
+    this.store.directory.fetchOktmoControllerData(code);
   }
 
-  handleOpenfamilyMembers(item: any) {
+  handleOpenfamilyMembers(item: FamilyMembers) {
     this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeFamilyPeople(item);
   }
 
-  handleOpenDocument(item: Document) {
+  handleOpenDocument(item: DocumentItem) {
     this.store.deedItem.saveStateItem(this.form);
     this.store.deedItem.changeDocument(item);
   }
@@ -666,39 +672,31 @@ export default class AccountingBusinessListCard extends Vue {
   }
 
   async handleRecordSuccess() {
-    const data = {
+    const data: AccountingType = {
       deedId: this.$route.params.id,
       registrationDate: this.recordDate,
     };
-    await this.store.record.fetchRecordAccounting(data);
+    await this.store.record.recordAccounting(data);
     this.fetchById();
     this.recordDate = '';
   }
 
   async onDeregister() {
-    const data = {
+    const data: UndoRecordAccounting = {
       deedId: this.$route.params.id,
       changeReason: this.form.changeReason,
     };
-    await this.store.undoRecord.fetchUndoRecordAccounting(data);
+    await this.store.undoRecord.undoRecordAccounting(data);
     this.fetchById();
   }
 
   async saveAllInfo() {
     this.form.registrationDate = moment(this.form.registrationDate).format('YYYY-MM-DDTHH:mm:ss.SSS').toString();
-    if (this.form.applicant === undefined) {
+    if (this.form.applicant === undefined || this.form.improvingWay === undefined || this.form.oktmo === undefined) {
       eventBus.$emit(
         'notification:message',
         {
-          text: 'Обязательное поле "Заявитель" не заполненно',
-          type: 'error',
-        }
-      );
-    } else if (this.form.improvingWay === undefined) {
-      eventBus.$emit(
-        'notification:message',
-        {
-          text: 'Обязательное поле "Способ УЖУ" не заполненно',
+          text: 'Обязательные поля не заполнены',
           type: 'error',
         }
       );
@@ -711,61 +709,59 @@ export default class AccountingBusinessListCard extends Vue {
           type: 'error',
         }
       );
-    } else if (this.form.oktmo === undefined) {
-      eventBus.$emit(
-        'notification:message',
-        {
-          text: 'Обязательное поле "Способ УЖУ" не заполненно',
-          type: 'error',
-        }
-      );
     } else {
       if (!this.$route.params.id) {
-        const data = {
+        const data: DeedItemCard = {
           ...this.form,
           documents: this.formDoc,
           familyMembers: this.familyMembers,
         };
-        await this.store.createItem.fetchCreateDeedController(data);
-        this.$router.replace({
-          path: '/accounting-business',
+        await this.store.createItem.fetchCreateDeedController(data).then(() => {
+          if (!this.store.createItem.state.error) {
+            this.$router.replace({
+              path: '/accounting-business',
+            });
+            this.store.deedItem.clearItem();
+          }
         });
-        this.store.deedItem.clearItem();
       } else {
-        const data = {
+        const data: DeedItemCard = {
           ...this.form,
           documents: this.formDoc,
           familyMembers: this.familyMembers,
           id: this.$route.params.id,
         };
-        await this.store.updateItem.fetchUpdateDeedController(data);
-        this.$router.replace({
-          path: '/accounting-business',
+        await this.store.updateItem.fetchUpdateDeedController(data).then(() => {
+          if (!this.store.updateItem.state.error) {
+            this.$router.replace({
+              path: '/accounting-business',
+            });
+            this.store.deedItem.clearItem();
+          }
         });
-        this.store.deedItem.clearItem();
       }
     }
     this.store.deedItem.changeTabValue(0);
   }
 
-  handleDeleteFamilyPeople(item: string) {
+  handleDeleteFamilyPeople(item: FamilyMembers) {
     this.peopleForDelete = item;
     this.isDeletePeopleDialogShow = true;
   }
 
-  handleDeleteDocument(document: string) {
+  handleDeleteDocument(document: DocumentItem) {
     this.docForDelete = document;
     this.isDeleteDocumentDialogShow = true;
   }
 
   handleDeleteDocumentSuccess() {
     this.store.deedItem.deleteDocument(this.docForDelete);
-    this.docForDelete = {};
+    this.docForDelete = {} as DocumentItem;
   }
 
   handleDeletePeopleSuccess() {
     this.store.deedItem.deleteFamilyPeople(this.peopleForDelete);
-    this.peopleForDelete = {};
+    this.peopleForDelete = {} as FamilyMembers;
   }
 
   onCancelClick() {

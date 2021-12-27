@@ -1,12 +1,13 @@
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
-import { createDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
+import { undoRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/DeedType';
+import { UndoRecordAccounting } from '@/types/AccountingType';
 
-export default class CreateDeedControllerModule {
+export default class UndoRecordAccountingModule {
   @State()
   state: DeedControllerItemStore = {
     data: {} as DeedItemCard,
@@ -15,12 +16,12 @@ export default class CreateDeedControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setUndoRecordAccountingIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
+  setUndoRecordAccountingError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
 
     if (error?.isAxiosError) {
@@ -36,33 +37,25 @@ export default class CreateDeedControllerModule {
     }
   }
 
-  @Mutation()
-  setDeedController(response: DeedItemCard): void {
-    const data = response;
-    this.state.data = data;
-  }
-
   @Action()
-  async fetchCreateDeedController(form: DeedItemCard): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
-
+  async undoRecordAccounting(params: UndoRecordAccounting): Promise<void> {
+    this.setUndoRecordAccountingIsLoading(true);
+    this.setUndoRecordAccountingError(null);
     try {
-      const data: any = await createDeedController(form).then(() => {
+      await undoRecordAccounting(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
-            text: 'Успешно создано',
+            text: 'Успешно снят с учета',
             title: 'Выполнено',
             type: 'success',
           }
         );
       });
-      this.setDeedController(data);
     } catch (error) {
-      this.setBudgetsError(error as AxiosError);
+      this.setUndoRecordAccountingError(error as AxiosError);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setUndoRecordAccountingIsLoading(false);
     }
   }
 }

@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { Meta } from './Meta';
 
 export interface ImprovingWay {
@@ -9,3 +10,5 @@ export interface ImprovingWay {
 export interface ImprovingWayResponseData extends Meta {
   data: ImprovingWay[];
 }
+
+export type ImprovingWayResponse = AxiosResponse<ImprovingWayResponseData>;

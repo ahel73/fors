@@ -1,12 +1,13 @@
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
-import { deleteDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
+import { onRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/DeedType';
+import { AccountingType } from '@/types/AccountingType';
 
-export default class DeleteDeedControllerModule {
+export default class RecordAccountingModule {
   @State()
   state: DeedControllerItemStore = {
     data: {} as DeedItemCard,
@@ -15,12 +16,12 @@ export default class DeleteDeedControllerModule {
   }
 
   @Mutation()
-  setDeedControllerIsLoading(isLoading: boolean): void {
+  setRecordAccountingIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
+  setRecordAccountingError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
 
     if (error?.isAxiosError) {
@@ -37,24 +38,24 @@ export default class DeleteDeedControllerModule {
   }
 
   @Action()
-  async fetchDeleteDeedController(params: string | number): Promise<void> {
-    this.setDeedControllerIsLoading(true);
-    this.setBudgetsError(null);
+  async recordAccounting(params: AccountingType): Promise<void> {
+    this.setRecordAccountingIsLoading(true);
+    this.setRecordAccountingError(null);
     try {
-      await deleteDeedController(params).then(() => {
+      await onRecordAccounting(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
-            text: 'Успешно удалено',
+            text: 'Успешно поставлен на учет',
             title: 'Выполнено',
             type: 'success',
           }
         );
       });
     } catch (error) {
-      this.setBudgetsError(error as AxiosError);
+      this.setRecordAccountingError(error as AxiosError);
     } finally {
-      this.setDeedControllerIsLoading(false);
+      this.setRecordAccountingIsLoading(false);
     }
   }
 }
