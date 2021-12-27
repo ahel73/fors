@@ -294,8 +294,8 @@ export default class ListPeopleInNeetyPage extends Vue {
       });
   }
 
-  onEditClick(item, string) {
-    this.getOne(string, item.id)
+  async onEditClick(item, string) {
+    await this.getOne(string, item.id)
       .then(item => {
         this.store.peopleInNeety.activeUpdateItem(item);
         this.push('FormAddNewPeopleInNeety');
@@ -305,12 +305,16 @@ export default class ListPeopleInNeetyPage extends Vue {
       });
   }
 
-  onOpenClick(item, string) {
-    this.getOne(string, item.id)
-      .then(item => {
-        this.store.peopleInNeety.viewing(item);
-        this.push('FormAddNewPeopleInNeety');
-      });
+  async onOpenClick(item, string) {
+    try {
+      await this.getOne(string, item.id)
+        .then(item => {
+          this.store.peopleInNeety.viewing(item);
+          this.push('FormAddNewPeopleInNeety');
+        });
+    } catch (error) {
+      this.errorDispatch(error.response.data.message);
+    }
   }
 
   saveColumns(): void {
