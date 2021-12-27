@@ -82,7 +82,7 @@
             <datepicker
               v-if="!flagDisabled"
               @change="updatePropsSpech($event, 'birthDate', nameObject)"
-              @click:clear="updatePropsSpech( '', 'birthDate', nameObject)"
+              :handle-input="verificationInput"
               :starting-year="yearStart"
               :value="getBirthDate"
               label="Дата рождения"
@@ -113,14 +113,12 @@
                 </div>
               </template>
               <v-radio
-                :label="Мужской"
-                :value="'M'"
-                :key="1"
+                label="Мужской"
+                value="M"
               />
               <v-radio
-                :label="Женский"
-                :value="'W'"
-                :key="2"
+                label="Женский"
+                value="W"
               />
             </v-radio-group>
             <input-component
@@ -226,7 +224,7 @@
           <v-col cols="6">
             <input-component
               @input="updateProps('inn', nameObject)"
-              @blur="inputValidation"
+              @blur="toNull('inn', nameObject)"
               :value="getInn"
               :disabled="flagDisabled"
               label="ИНН"
@@ -514,6 +512,10 @@ export default class FormAddNewPeopleInNeety extends Vue {
     return !!(this.newPerson.sex === 'W');
   }
 
+  test(value) {
+    console.log(value);
+  }
+
   // ложь общие сведение, истина трудовая деятельность
   tab = this.myStore.state.flagTabWorker;
   // Количество лет в выподашке по датапикеру
@@ -546,6 +548,8 @@ export default class FormAddNewPeopleInNeety extends Vue {
   dispatchObject = methods.dispatchObject.bind(this);
   dispatchUpdateObject = methods.dispatchUpdateObject.bind(this);
   verificationObject = methods.verificationObject.bind(this);
+  toNull = methods.toNull.bind(this);
+  errorDispatch = methods.errorDispatch.bind(this);
 
   cancel() {
     this.clearObj(
@@ -564,23 +568,6 @@ export default class FormAddNewPeopleInNeety extends Vue {
     this.push('ListPeoplePage');
   }
 
-  getGroop = async (queryString: string, params: any = {} as any): Promise<any> => {
-    const { page = 0, sort = '-id', size } = params;
-    const queryParams = query({ ...params, page, sort, size });
-    const { data } = await httpClient.post<any>(queryString);
-    return data;
-  }
-
-  errorDispatch(error) {
-    eventBus.$emit(
-      'notification:message',
-      {
-        text: error,
-        type: 'error',
-      }
-    );
-  }
-
   createPerson() {
     const flagError = this.verificationObject(this.newPerson, this.requiredField);
     if (!flagError) {
@@ -597,7 +584,10 @@ export default class FormAddNewPeopleInNeety extends Vue {
           );
         })
         .catch((error) => {
-          this.errorDispatch(error);
+          error.then(r => {
+            const objResp = JSON.parse(r);
+            this.errorDispatch(objResp.message);
+          });
         });
     }
   }
@@ -606,30 +596,36 @@ export default class FormAddNewPeopleInNeety extends Vue {
     const flagError = this.verificationObject(this.newPerson, this.requiredField);
     if (!flagError) {
       this.dispatchUpdateObject(this.newPerson, '/individual-persons/')
-        .then(() => {
-          this.myStore.offUpdateItem();
-          this.push('ListPeoplePage');
+        .then((body) => {
+          if (body.ok) {
+            this.myStore.offUpdateItem();
+            this.push('ListPeoplePage');
+          } else {
+            this.errorDispatch('что то пошло не так, попробуйте ещё раз или обратитесь к разработчику');
+          }
         })
         .catch((error) => {
-          this.errorDispatch(error);
+          error.then(r => {
+            const objResp = JSON.parse(r);
+            this.errorDispatch(objResp.message);
+          });
         });
     }
   }
 
   maskPhone = {
-    mask: 'qwrerrtrtrr',
+    mask: 'qrrerrtrtrr',
     tokens: {
-      q: { pattern: /[0-9]/, transform: () => '+7 ' },
-      w: { pattern: /[0-9]/, transform: v => '(' + v },
+      q: { pattern: /[0-9]/, transform: () => '+7 (' },
       e: { pattern: /[0-9]/, transform: v => v + ') ' },
       r: { pattern: /[0-9]/ },
       t: { pattern: /[0-9]/, transform: v => v + '-' },
     },
   }
 
-  inputValidation() {
-    console.log(event.target.value.length);
-    console.log(isNaN(parseInt(event.target.value)));
+  verificationInput() {
+    console.log(event.target);
+    console.log(event.target.value);
   }
 
   mounted() {

@@ -134,6 +134,7 @@ export default class PeopleInNeetyModule {
     this.state.updatePersonNeedy = item;
   }
 
+  @Mutation()
   offUpdateItem() {
     this.state.flagUpdateItem = false;
     this.state.updatePersonNeedy = null;

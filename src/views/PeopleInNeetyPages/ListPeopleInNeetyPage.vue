@@ -273,19 +273,24 @@ export default class ListPeopleInNeetyPage extends Vue {
   push = methods.push;
   getOne = methods.getOne;
   getGroupFind = methods.getGroupFind;
+  dispathDeleteObject = methods.dispathDeleteObject;
+  errorDispatch = methods.errorDispatch.bind(this);
 
-  // getGroup = async (queryString: string, params: any = {} as any, filter: any = {}): Promise<any> => {
-  //   const { page = 0, sort = '-id', size } = params;
-  //   const queryParams = query({ ...params, page, sort, size });
-  //   const response = await httpClient.post(queryString + '?' + queryParams, filter);
-  //   return response.data;
-  // }
-
-  async onDeleteClick(item) {
-    const data = await httpClient.delete(`/individual-persons/${item.id}`);
-    this.getGroupFind('/individual-persons/find/')
-      .then(user => {
-        this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
+  async onDeleteClick(item: object) {
+    // const data = await httpClient.delete(`/individual-persons/${item.id}`);
+    await this.dispathDeleteObject(item.id)
+      .then(response => {
+        console.log(response);
+        this.getGroupFind('/individual-persons/find/')
+          .then(user => {
+            this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
+          });
+      })
+      .catch(error => {
+        error.then(r => {
+          const objResp = JSON.parse(r);
+          this.errorDispatch(objResp.message);
+        });
       });
   }
 
@@ -294,6 +299,9 @@ export default class ListPeopleInNeetyPage extends Vue {
       .then(item => {
         this.store.peopleInNeety.activeUpdateItem(item);
         this.push('FormAddNewPeopleInNeety');
+      })
+      .catch(error => {
+        this.errorDispatch(error);
       });
   }
 
