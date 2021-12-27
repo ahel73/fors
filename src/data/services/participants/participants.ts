@@ -6,19 +6,19 @@ import { query } from '@/utils';
 const fetchParticipantsList = async (params: FilterParams) : Promise<WorkingRegion[]> => {
   const { page = 0, sort = '-id', size, ...payload } = params;
   const queryParams = query({ page, sort, size });
-  const { data } = await httpClient.post(`/payout-list-members/find?${queryParams}`, { ...payload });
+  const { data } = await httpClient.post(`/list-members/participants/find?${queryParams}`, { ...payload });
   return data.data;
 };
 
 const fetchConsolidatedParticipantsList = async (params: any): Promise<WorkingRegion[]> => {
   const { page = 0, sort = '-id', size, ...payload } = params;
   const queryParams = query({ page, sort, size });
-  const { data } = await httpClient.post(`/payout-list-members/find?${queryParams}`, { ...payload });
+  const { data } = await httpClient.post(`/summary-list-members/participants/find?${queryParams}`, { ...payload });
   return data.data;
 };
 
 const fetchYears = async (): Promise<number[]> => {
-  const { data } = await httpClient.get('/list-members/financialYears');
+  const { data } = await httpClient.get('/list-members/financial-years');
 
   return data;
 };

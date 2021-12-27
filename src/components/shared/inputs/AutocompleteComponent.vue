@@ -53,7 +53,7 @@
     >
       <template
         v-for="(_, name) in $scopedSlots"
-        v-slot:[name]="slotData"
+        #[name]="slotData"
       >
         <slot
           :name="name"
@@ -111,7 +111,7 @@
           max-width="500"
           open-delay="500"
         >
-          <template v-slot:activator="{ on, activatorAttrs }">
+          <template #activator="{ on, activatorAttrs }">
             <span
               v-if="tooltip"
               v-on="on"

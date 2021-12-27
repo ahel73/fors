@@ -62,4 +62,5 @@ export interface FilterParams {
     page?: string;
     sort?: string;
     items?: OutputFilters;
+    listMembersFinancialYear: number | null;
 }
