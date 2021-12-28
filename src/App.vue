@@ -4,13 +4,6 @@
       class="pa-0"
       fluid
     >
-      <router-link :to="{name: 'MainPage'}">
-        На главную
-      </router-link>
-
-      <router-link :to="{name: 'ListPeoplePage'}">
-        Нуждающиеся лица
-      </router-link>
       <router-view />
     </v-container>
     <notification-component :notifications.sync="notifications" />
