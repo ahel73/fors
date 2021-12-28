@@ -21,8 +21,11 @@
                 <filter-component
                   @onSearch="sendFilter"
                   @onReset="resetFilter"
+                  @return-search-labels="setSearchlabels"
                   :initial-items="itemsFilter"
                   :filters="filtersElems"
+                  :parent-search-labels="getSearchlabels"
+                  :flag-reset="flagResetFiltr"
                 />
               </v-col>
             </v-row>
@@ -128,6 +131,10 @@ export default class ListPeopleInNeetyPage extends Vue {
     return this.store.peopleInNeety.state.pagAndSort;
   }
 
+  get getSearchlabels() {
+    return this.store.peopleInNeety.state.searchLabels;
+  }
+
   get listPeople() {
     return this.store.peopleInNeety.state.listPeopleInNeety;
   }
@@ -140,6 +147,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'Фамилия',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.surname || '',
         isDefault: true,
       },
       {
@@ -147,6 +155,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'Имя',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.name || '',
         isDefault: true,
       },
       {
@@ -154,6 +163,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'Отчество',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.patronymic || '',
         isDefault: true,
       },
       {
@@ -161,6 +171,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'ИНН',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.inn || '',
         isDefault: true,
       },
       {
@@ -168,6 +179,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'СНИЛС ',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.snils || '',
         isDefault: true,
       },
       {
@@ -175,6 +187,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'Место жительства',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.residence || '',
         isDefault: true,
       },
       {
@@ -182,6 +195,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         label: 'Место прибывания',
         type: FilterTypeNames.SIMPLE_FILTER,
         valueType: ValueTypes.STRING,
+        defaultValue: this.getFilter.location || '',
         isDefault: true,
       },
     ],
@@ -191,12 +205,14 @@ export default class ListPeopleInNeetyPage extends Vue {
           type: FilterTypeNames.SIMPLE_FILTER,
           name: 'from',
           value: null,
+          defaultValue: this.getFilter.fromBirthDate || '',
           label: 'от:',
         },
         to: {
           type: FilterTypeNames.SIMPLE_FILTER,
           name: 'to',
           value: null,
+          defaultValue: this.getFilter.toBirthDate || '',
           label: 'до:',
         },
         name: 'birthDate',
@@ -208,6 +224,8 @@ export default class ListPeopleInNeetyPage extends Vue {
   }
 
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
+  flagResetFiltr = false
+
   push = methods.push;
   getOne = methods.getOne;
   getGroupFind = methods.getGroupFind;
@@ -217,19 +235,26 @@ export default class ListPeopleInNeetyPage extends Vue {
   updatePropState = methods.updatePropState;
 
   sendFilter(outputFilters: OutputFilters): void {
-    outputFilters.forEach(el => {
-      if (el.name !== 'birthDate') {
-        const value = el.value[0] || null;
-        this.updatePropsSpech(value, el.name, 'filter');
-      } else if (el.name === 'birthDate') {
-        const valueFrom = el.valueFrom ? el.valueFrom[0] : null;
-        this.updatePropsSpech(valueFrom, 'fromBirthDate', 'filter');
-        const valueTo = el.valueTo ? el.valueTo[0] : null;
-        this.updatePropsSpech(valueTo, 'toBirthDate', 'filter');
-      }
-    });
+    console.log(outputFilters);
+    console.log(this.getFilter);
+    console.log(this.getSearchlabels);
+    if (!this.flagResetFiltr) {
+      outputFilters.forEach(el => {
+        if (el.name !== 'birthDate') {
+          const value = el.value[0] || null;
+          this.updatePropsSpech(value, el.name, 'filter');
+        } else if (el.name === 'birthDate') {
+          const valueFrom = el.valueFrom ? el.valueFrom[0] : null;
+          this.updatePropsSpech(valueFrom, 'fromBirthDate', 'filter');
+          const valueTo = el.valueTo ? el.valueTo[0] : null;
+          this.updatePropsSpech(valueTo, 'toBirthDate', 'filter');
+        }
+      });
+    }
+
     this.getGroupFind('/individual-persons/find/', this.getPagAndSort, this.getFilter)
       .then(user => {
+        this.flagResetFiltr = false;
         this.updatePropsSpech(user.meta.total, 'total', 'pagAndSort');
         this.store.peopleInNeety.updatelistPeopleInNeety(user.data);
       });
@@ -239,6 +264,8 @@ export default class ListPeopleInNeetyPage extends Vue {
     for (const prop in this.myStore.state.filter) {
       this.updatePropsSpech(null, prop, 'filter');
     }
+    this.updatePropState('searchLabels', []);
+    this.flagResetFiltr = true;
   }
 
   changePagAndSort(options) {
@@ -317,6 +344,11 @@ export default class ListPeopleInNeetyPage extends Vue {
       newObj.isEditable = !requiredFields.includes(newObj.value);
       return newObj;
     });
+  }
+
+  setSearchlabels({ searchLabels }) {
+    console.log(searchLabels);
+    this.updatePropState('searchLabels', searchLabels);
   }
 
   created() {

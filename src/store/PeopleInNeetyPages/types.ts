@@ -130,5 +130,6 @@ export interface DataPeopleInNeety {
   flagFirstResponse: boolean,
   yearStart: number,
   filter: filterObject,
-  pagAndSort: pagAndSortObject
+  pagAndSort: pagAndSortObject,
+  searchLabels: string[] | [],
 }

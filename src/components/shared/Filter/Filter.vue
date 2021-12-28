@@ -38,6 +38,7 @@
           </select-component>
         </div>
       </template>
+      {{ filters.simpleFilters[0] }}
       <filter-dialog
         @onSearch="handleSearch"
         @onReset="handleReset"
@@ -203,6 +204,8 @@ export default class FilterComponent extends Vue {
   @Prop(String) searchError!: string;
   @Prop(Boolean) searchOnMount!: boolean;
   @Prop(Boolean) eager!: boolean;
+  @Prop({ type: Array, default: [] }) parentSearchLabels!: [];
+  @Prop({ type: Boolean, default: false }) flagReset!: boolean;
 
   searchLabels: (string | undefined)[] = [];
   isDialogFilterShow = false;
@@ -249,8 +252,14 @@ export default class FilterComponent extends Vue {
     isDialogFilterWShow && this.$emit('onShow');
   }
 
+  @Watch('isDialogFilterShow')
+  returnIsDialogFilterShow(newV) {
+    !newV && this.$emit('return-search-labels', { searchLabels: this.searchLabels });
+  }
+
   @Watch('initialItems')
   onInitialItemsChange(initialItems: OutputFilters): void {
+    console.log(initialItems);
     if (!this.searchLabels.length) {
       this.searchLabels = initialItems.map(item => {
         const currentFilter = this.processedFilters.find(filter => {
@@ -273,6 +282,10 @@ export default class FilterComponent extends Vue {
         }
       });
     }
+  }
+
+  created() {
+    this.searchLabels = this.parentSearchLabels;
   }
 }
 </script>
