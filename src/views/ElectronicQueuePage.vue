@@ -146,7 +146,7 @@ import { ListMembersParams } from '@/types/ElectronicQueueDataItem';
 import { ImprovingWay } from '@/types/ImprovingWay';
 import { IndividualPersonInfo } from '@/types/IndividualPersonInfo';
 import { Employment } from '@/types/Employment';
-import { Priority } from '@/types/Employment copy';
+import { Priority } from '@/types/Priority';
 import { Status } from '@/types/Status';
 import { numeric } from 'vuelidate/lib/validators';
 

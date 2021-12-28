@@ -1,12 +1,12 @@
 import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
-import { onRecordAccounting } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
+import { updateDeedController } from '@/data/services/accountingBusiness/accountingBusiness';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard } from '@/types/DeedType';
 
-export default class RecordAccountingModule {
+export default class UpdateDeedControllerModule {
   @State()
   state: DeedControllerItemStore = {
     data: {} as DeedItemCard,
@@ -15,12 +15,12 @@ export default class RecordAccountingModule {
   }
 
   @Mutation()
-  setRecordAccountingIsLoading(isLoading: boolean): void {
+  setUpdateDeedControllerIsLoading(isLoading: boolean): void {
     this.state.isLoading = isLoading;
   }
 
   @Mutation()
-  setRecordAccountingError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
+  setUpdateBudgetsError(error: AxiosError | null, fallbackMessage = 'Ошибка'): void {
     this.state.error = error;
 
     if (error?.isAxiosError) {
@@ -36,33 +36,25 @@ export default class RecordAccountingModule {
     }
   }
 
-  @Mutation()
-  setRecordAccounting(response?: any): void {
-    const data = response;
-    this.state.data = data;
-  }
-
   @Action()
-  async fetchRecordAccounting(params: any): Promise<void> {
-    this.setRecordAccountingIsLoading(true);
-    this.setRecordAccountingError(null);
+  async fetchUpdateDeedController(params: DeedItemCard): Promise<void> {
+    this.setUpdateDeedControllerIsLoading(true);
+    this.setUpdateBudgetsError(null);
     try {
-      const data = await onRecordAccounting(params).then(() => {
+      await updateDeedController(params).then(() => {
         eventBus.$emit(
           'notification:message',
           {
-            text: 'Успешно поставлен на учет',
+            text: 'Успешно обновлено',
             title: 'Выполнено',
             type: 'success',
           }
         );
       });
-
-      this.setRecordAccounting(data);
     } catch (error) {
-      this.setRecordAccountingError(error as AxiosError);
+      this.setUpdateBudgetsError(error as AxiosError);
     } finally {
-      this.setRecordAccountingIsLoading(false);
+      this.setUpdateDeedControllerIsLoading(false);
     }
   }
 }

@@ -2,9 +2,9 @@ import { AxiosError } from 'axios';
 import { Mutation, Action, State } from 'vuex-simple';
 
 import { getDeedControllerByID } from '@/data/services/accountingBusiness/accountingBusiness';
-import { DeedItemCard } from './typesDeedItem';
 import { DeedControllerItemStore } from './typesItem';
 import eventBus from '@/utils/bus/event-bus';
+import { DeedItemCard, DocumentItem, FamilyMembers, Person } from '@/types/DeedType';
 
 export default class DeedControllerItemModule {
   @State()
@@ -46,7 +46,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  setNewDeedItemController(item?: any): void {
+  setNewDeedItemController(item: DocumentItem): void {
     if (this.state.data.documents) {
       this.state.data.documents.push(item);
     } else {
@@ -57,7 +57,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  setNewFamilyPeople(item?: any): void {
+  setNewFamilyPeople(item: FamilyMembers): void {
     if (this.state.data.familyMembers) {
       this.state.data.familyMembers.push(item);
     } else {
@@ -68,7 +68,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  editDocument(item: any): void {
+  editDocument(item: DocumentItem): void {
     if (item.id) {
       this.state.data.documents.filter(value => {
         if (value.id === item.id) {
@@ -107,7 +107,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  editFamilyPeople(item: any): void {
+  editFamilyPeople(item: FamilyMembers): void {
     if (item.id) {
       this.state.data.familyMembers.filter(value => {
         if (value.id === item.id) {
@@ -124,7 +124,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  updateDoc(item: any): void {
+  updateDoc(item: DocumentItem): void {
     if (item.id) {
       this.state.data.documents.find((value, i) => {
         if (value.id === item.id) {
@@ -159,7 +159,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  updatePeople(item: any): void {
+  updatePeople(item: FamilyMembers): void {
     if (item.id) {
       this.state.data.familyMembers.find((value, i) => {
         if (value.id === item.id) {
@@ -176,7 +176,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  delDocument(item: any) {
+  delDocument(item: DocumentItem) {
     if (item.id) {
       const index = this.state.data.documents.findIndex(n => n.id === item.id);
       if (index !== -1) {
@@ -191,7 +191,7 @@ export default class DeedControllerItemModule {
   }
 
   @Mutation()
-  delFamilyPeople(item: any) {
+  delFamilyPeople(item: FamilyMembers) {
     if (item.id) {
       const index = this.state.data.familyMembers.findIndex(n => n.id === item.id);
       if (index !== -1) {
@@ -235,42 +235,42 @@ export default class DeedControllerItemModule {
   }
 
   @Action()
-  addDocument(item: any = {} as any) {
+  addDocument(item: DocumentItem) {
     this.setNewDeedItemController(item);
   }
 
   @Action()
-  changeDocument(item: any) {
+  changeDocument(item: DocumentItem) {
     this.editDocument(item);
   }
 
   @Action()
-  updateDocument(item: any) {
+  updateDocument(item: DocumentItem) {
     this.updateDoc(item);
   }
 
   @Action()
-  deleteDocument(item: any) {
+  deleteDocument(item: DocumentItem) {
     this.delDocument(item);
   }
 
   @Action()
-  addFamilyPeople(item: any) {
+  addFamilyPeople(item: FamilyMembers) {
     this.setNewFamilyPeople(item);
   }
 
   @Action()
-  changeFamilyPeople(item: any) {
+  changeFamilyPeople(item: FamilyMembers) {
     this.editFamilyPeople(item);
   }
 
   @Action()
-  updateFamilyPeople(item: any) {
+  updateFamilyPeople(item: FamilyMembers) {
     this.updatePeople(item);
   }
 
   @Action()
-  deleteFamilyPeople(item: any) {
+  deleteFamilyPeople(item: FamilyMembers) {
     this.delFamilyPeople(item);
   }
 

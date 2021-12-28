@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { Meta } from './Meta';
 
 export interface SpendingDirection {
@@ -9,3 +10,5 @@ export interface SpendingDirection {
 export interface SpendingDirectionResponseData extends Meta {
   data: SpendingDirection[];
 }
+
+export type SpendingDirectionResponse = AxiosResponse<SpendingDirectionResponseData>;

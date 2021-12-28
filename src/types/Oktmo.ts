@@ -15,3 +15,7 @@ export interface Oktmo {
   lastChangeNum: string;
   lastChangeType: string;
 }
+
+export interface RegionOktmo {
+  regionCode: number | string;
+}

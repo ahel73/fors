@@ -1,7 +1,7 @@
 <template>
   <main-layout title="Документ">
     <v-row>
-      <v-col cols="12">
+      <v-col>
         <input-component
           v-model="documentEditOrCreate.name"
           label="Наименование"
@@ -115,17 +115,7 @@ import eventBus from '@/utils/bus/event-bus';
 import { FileRepositoryResponse } from '@/types/byServices/fileRepository/fileRepository';
 import { MultipleFileResponseData } from '@/data/services/fileRepository/types';
 import { AxiosError } from 'axios';
-
-interface Document {
-    index: string,
-    id: number,
-    active: boolean,
-    fileName: string,
-    fileUid: string,
-    name: string,
-    docNum: number,
-    docDate: Date,
-}
+import { DocumentItem } from '@/types/DeedType';
 
 interface File {
   fileName: string,
@@ -150,7 +140,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
   store: Store = useStore(this.$store);
   documentEditOrCreate = {
     active: false,
-  } as Document;
+  } as DocumentItem;
 
   rules = {
     required: (value: any) => !!value || 'Обязательное поле',
@@ -204,19 +194,10 @@ export default class AccountingBusinessDocumentCard extends Vue {
   }
 
   saveDocument() {
-    if (this.documentEditOrCreate.name === undefined) {
+    if (this.documentEditOrCreate.name === undefined || this.documentEditOrCreate?.docNum === undefined ||
+    this.documentEditOrCreate.docDate === undefined) {
       eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Наименование" не заполненно',
-        type: 'error',
-      });
-    } else if (this.documentEditOrCreate?.docNum === undefined) {
-      eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Номер" не заполненно',
-        type: 'error',
-      });
-    } else if (this.documentEditOrCreate.docDate === undefined) {
-      eventBus.$emit('notification:message', {
-        text: 'Обязательное поле "Дата" не заполненно',
+        text: 'Обязательные поля не заполнены',
         type: 'error',
       });
     } else {
@@ -237,7 +218,7 @@ export default class AccountingBusinessDocumentCard extends Vue {
       }
       this.store.deedItem.changeTabValue(2);
       this.$router.go(-1);
-      this.documentEditOrCreate = {} as Document;
+      this.documentEditOrCreate = {} as DocumentItem;
     }
   }
 

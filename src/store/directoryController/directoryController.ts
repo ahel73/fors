@@ -1,7 +1,7 @@
 import { getDeedStatusController, getDocGroupController, getEmploymentController, getImprovingWayController, getIndividualPersonInfoController, getOktmoController, getQueuePriorityController, getQueueStatusController, getSpendingDirectionController } from '@/data/services/directoryController/directoryController';
 import { DocGroup, DocGroupResponseData } from '@/types/DocGroup';
 import { Employment, EmploymentResponseData } from '@/types/Employment';
-import { Priority, PriorityResponseData } from '@/types/Employment copy';
+import { Priority, PriorityResponseData } from '@/types/Priority';
 import { ImprovingWay, ImprovingWayResponseData } from '@/types/ImprovingWay';
 import { IndividualPersonResponseData } from '@/types/IndividualPersonInfo';
 import { Oktmo } from '@/types/Oktmo';
