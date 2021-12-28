@@ -97,6 +97,25 @@ export interface SaveObj {
   objDoc: IdentityDoc | WorkerAction,
   nameList: string,
 }
+
+export interface filterObject {
+  surname: null | string,
+  name: null | string,
+  patronymic: null | string,
+  fromBirthDate: null | string,
+  toBirthDate: null | string,
+  inn: null | string,
+  snils: null | string,
+  residence: null | string,
+  location: null | string,
+}
+
+export interface pagAndSortObject {
+  page: number,
+  size: number,
+  sort: string,
+  total: number | null,
+}
 export interface DataPeopleInNeety {
   headerTablePeopleInNeety: HeaderTablePeopleInNeety[] | [],
   listPeopleInNeety: PersonNeedy[] | [],
@@ -108,5 +127,8 @@ export interface DataPeopleInNeety {
   flagTabWorker: number,
   flagUpdateItem: boolean,
   flagViewing: boolean,
+  flagFirstResponse: boolean,
   yearStart: number,
+  filter: filterObject,
+  pagAndSort: pagAndSortObject
 }
