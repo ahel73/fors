@@ -83,6 +83,7 @@ export default class PeopleInNeetyModule {
     flagUpdateItem: false, // Ставится в истину при редактировании сущности
     flagViewing: false, // В истину при просмотре
     yearStart: (new Date()).getFullYear() - 98,
+    flagFirstResponse: true, // предотвращает повторный запрос на погинацию при построение таблицы нуждающихся
   }
 
   // Обновляем свойства вложенного объекта

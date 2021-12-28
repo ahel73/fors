@@ -127,6 +127,7 @@ export interface DataPeopleInNeety {
   flagTabWorker: number,
   flagUpdateItem: boolean,
   flagViewing: boolean,
+  flagFirstResponse: boolean,
   yearStart: number,
   filter: filterObject,
   pagAndSort: pagAndSortObject

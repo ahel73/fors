@@ -321,20 +321,6 @@ export default class FormAddNewWorkerActivity extends Vue {
 </script>
 
 <style lang="scss">
-  .required-field {
-    position: relative;
-  }
-
-  .required-field::after {
-    bottom: 40%;
-    color: rgb(238, 61, 61);
-    content: "\F06C4";
-    font-family: "Material Design Icons";
-    font-size: 80%;
-    font-weight: bold;
-    position: absolute;
-  }
-
   .global-button {
     justify-content: end;
   }

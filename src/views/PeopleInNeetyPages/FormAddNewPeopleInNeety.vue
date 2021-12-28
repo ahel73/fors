@@ -213,7 +213,7 @@
             <input-component
               v-mask="'###-###-### ##'"
               @input="updateProps('snils', nameObject)"
-              placeholder="###-###-### ##"
+              :placeholder="maskSnils"
               :value="getSnils"
               :disabled="flagDisabled"
               label="СНИЛС"
@@ -622,6 +622,8 @@ export default class FormAddNewPeopleInNeety extends Vue {
       t: { pattern: /[0-9]/, transform: v => v + '-' },
     },
   }
+
+  maskSnils = '###-###-### ##'
 
   verificationInput() {
     console.log(event.target);

@@ -177,7 +177,7 @@ export const methods = {
   },
 
   /**
-   * Выводит сообщение об ошибке
+   * Выводит сообщение об ошибке.
    */
   errorDispatch(error: string): void {
     eventBus.$emit(

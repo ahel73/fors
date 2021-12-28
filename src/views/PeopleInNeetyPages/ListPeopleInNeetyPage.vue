@@ -236,8 +236,8 @@ export default class ListPeopleInNeetyPage extends Vue {
   }
 
   resetFilter(): void {
-    for (const prop in this.filter) {
-      this.filter[prop] = null;
+    for (const prop in this.myStore.state.filter) {
+      this.updatePropsSpech(null, prop, 'filter');
     }
   }
 
@@ -250,6 +250,11 @@ export default class ListPeopleInNeetyPage extends Vue {
     this.updatePropsSpech(sort, 'sort', 'pagAndSort');
     this.updatePropsSpech(size, 'size', 'pagAndSort');
     this.updatePropsSpech(page, 'page', 'pagAndSort');
+
+    if (this.myStore.state.flagFirstResponse) {
+      this.updatePropState('flagFirstResponse', false);
+      return;
+    }
 
     this.getGroupFind('/individual-persons/find/', this.getPagAndSort, this.getFilter)
       .then(user => {
@@ -327,6 +332,10 @@ export default class ListPeopleInNeetyPage extends Vue {
       });
 
     this.columns = this.setColumns();
+  }
+
+  destroyed() {
+    this.updatePropState('flagFirstResponse', true);
   }
 }
 </script>
