@@ -1,19 +1,5 @@
 <template>
   <div class="wrapper px-0">
-    <!-- Это надо удалить!-->
-    <h6>Из корневого компонента</h6>
-    <div
-      v-for="(p, i) in filters"
-      :key="'p' + i"
-    >
-      <p
-        v-for="(f, q) in p"
-        :key="'f' + q"
-      >
-        {{ f }}
-      </p>
-    </div>
-    <!-- До этого!-->
     <v-menu
       v-model="isDialogFilterShow"
       :close-on-content-click="false"
@@ -52,15 +38,6 @@
           </select-component>
         </div>
       </template>
-      <!-- Это надо удалить!-->
-      <h6>Компонент фильтр</h6>
-      <div
-        v-for="(p, i) in processedFilters"
-        :key="i"
-      >
-        {{ p }}
-      </div>
-      <!-- До этого!-->
       <filter-dialog
         @onSearch="handleSearch"
         @onReset="handleReset"

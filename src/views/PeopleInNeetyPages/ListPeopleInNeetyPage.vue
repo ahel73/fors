@@ -11,28 +11,10 @@
           :items-length="getPagAndSort.total"
           :per-page="getPagAndSort.size"
           :sort-by="getPagAndSort.sort"
+          :active-page="getPagAndSort.page"
         >
           <!-- Фильтр и кнопки -->
           <template #[`tabs.after`]>
-            {{ getFilter }}
-            <div>
-              <p>Без гетера {{ store.peopleInNeety.state.filter.surname }}</p>
-              <p>Из гетера {{ getFilter.surname }}</p>
-            </div>
-            <!-- Это надо удалить!-->
-            <h6>В корневом компоненте</h6>
-            <div
-              v-for="(p, i) in filtersElems()"
-              :key="'p' + i"
-            >
-              <p
-                v-for="(f, q) in p"
-                :key="'f' + q"
-              >
-                {{ f }}
-              </p>
-            </div>
-            <!-- До этого!-->
             <v-row>
               <v-col
                 class="d-flex align-start"

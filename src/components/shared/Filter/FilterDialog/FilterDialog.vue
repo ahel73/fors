@@ -13,15 +13,6 @@
         </v-row>
         <v-row>
           <v-col>
-            <!-- Это надо удалить!-->
-            <h6>Компонент фильтр диалог</h6>
-            <div
-              v-for="(p, i) in defaultFilters"
-              :key="i"
-            >
-              {{ p }}
-            </div>
-            <!-- До этого!-->
             <filters
               @onRemove="handleFilterRemove"
               :initial-items="initialItems"
