@@ -1,5 +1,19 @@
 <template>
   <div class="wrapper px-0">
+    <!-- Это надо удалить!-->
+    <h6>Из корневого компонента</h6>
+    <div
+      v-for="(p, i) in filters"
+      :key="'p' + i"
+    >
+      <p
+        v-for="(f, q) in p"
+        :key="'f' + q"
+      >
+        {{ f }}
+      </p>
+    </div>
+    <!-- До этого!-->
     <v-menu
       v-model="isDialogFilterShow"
       :close-on-content-click="false"
@@ -38,7 +52,15 @@
           </select-component>
         </div>
       </template>
-      {{ filters.simpleFilters[0] }}
+      <!-- Это надо удалить!-->
+      <h6>Компонент фильтр</h6>
+      <div
+        v-for="(p, i) in processedFilters"
+        :key="i"
+      >
+        {{ p }}
+      </div>
+      <!-- До этого!-->
       <filter-dialog
         @onSearch="handleSearch"
         @onReset="handleReset"
@@ -205,7 +227,6 @@ export default class FilterComponent extends Vue {
   @Prop(Boolean) searchOnMount!: boolean;
   @Prop(Boolean) eager!: boolean;
   @Prop({ type: Array, default: [] }) parentSearchLabels!: [];
-  @Prop({ type: Boolean, default: false }) flagReset!: boolean;
 
   searchLabels: (string | undefined)[] = [];
   isDialogFilterShow = false;

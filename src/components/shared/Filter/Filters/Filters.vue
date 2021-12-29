@@ -11,6 +11,12 @@
         <label-component
           :label="filter.label"
         />
+        <!-- Это надо удалить!-->
+        <h6>Это конкретный фильтр</h6>
+        <p>
+          {{ filter }}
+        </p>
+        <!-- До этого!-->
       </v-row>
       <v-row
         :key="filter.name"
@@ -30,6 +36,12 @@
           />
         </v-col>
         <v-col v-if="filter.type === 'SIMPLE_FILTER'">
+          <!-- Это надо удалить!-->
+          <h6>Это конкретный фильтр</h6>
+          <p>
+            {{ filter }}
+          </p>
+          <!-- До этого!-->
           <simple-filter
             @input="(value) => setValue(value, filter.name, filter.type)"
             @onRemove="handleRemove"

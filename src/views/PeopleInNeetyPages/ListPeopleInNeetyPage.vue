@@ -14,6 +14,25 @@
         >
           <!-- Фильтр и кнопки -->
           <template #[`tabs.after`]>
+            {{ getFilter }}
+            <div>
+              <p>Без гетера {{ store.peopleInNeety.state.filter.surname }}</p>
+              <p>Из гетера {{ getFilter.surname }}</p>
+            </div>
+            <!-- Это надо удалить!-->
+            <h6>В корневом компоненте</h6>
+            <div
+              v-for="(p, i) in filtersElems()"
+              :key="'p' + i"
+            >
+              <p
+                v-for="(f, q) in p"
+                :key="'f' + q"
+              >
+                {{ f }}
+              </p>
+            </div>
+            <!-- До этого!-->
             <v-row>
               <v-col
                 class="d-flex align-start"
@@ -23,7 +42,7 @@
                   @onReset="resetFilter"
                   @return-search-labels="setSearchlabels"
                   :initial-items="itemsFilter"
-                  :filters="filtersElems"
+                  :filters="filtersElems()"
                   :parent-search-labels="getSearchlabels"
                   :flag-reset="flagResetFiltr"
                 />
@@ -140,87 +159,89 @@ export default class ListPeopleInNeetyPage extends Vue {
   }
 
   itemsFilter: OutputFilters = [];
-  filtersElems: FilterTypes = {
-    simpleFilters: [
-      {
-        name: 'surname',
-        label: 'Фамилия',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.surname || '',
-        isDefault: true,
-      },
-      {
-        name: 'name',
-        label: 'Имя',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.name || '',
-        isDefault: true,
-      },
-      {
-        name: 'patronymic',
-        label: 'Отчество',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.patronymic || '',
-        isDefault: true,
-      },
-      {
-        name: 'inn',
-        label: 'ИНН',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.inn || '',
-        isDefault: true,
-      },
-      {
-        name: 'snils',
-        label: 'СНИЛС ',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.snils || '',
-        isDefault: true,
-      },
-      {
-        name: 'residence',
-        label: 'Место жительства',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.residence || '',
-        isDefault: true,
-      },
-      {
-        name: 'location',
-        label: 'Место прибывания',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        defaultValue: this.getFilter.location || '',
-        isDefault: true,
-      },
-    ],
-    rangeDateFilters: [
-      {
-        from: {
+  filtersElems(): FilterTypes {
+    return {
+      simpleFilters: [
+        {
+          name: 'surname',
+          label: 'Фамилия',
           type: FilterTypeNames.SIMPLE_FILTER,
-          name: 'from',
-          value: null,
-          defaultValue: this.getFilter.fromBirthDate || '',
-          label: 'от:',
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.surname || '',
+          isDefault: true,
         },
-        to: {
+        {
+          name: 'name',
+          label: 'Имя',
           type: FilterTypeNames.SIMPLE_FILTER,
-          name: 'to',
-          value: null,
-          defaultValue: this.getFilter.toBirthDate || '',
-          label: 'до:',
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.name || '',
+          isDefault: true,
         },
-        name: 'birthDate',
-        type: FilterTypeNames.RANGE_DATE_FILTER,
-        label: 'Дата рождения',
-        isDefault: true,
-      },
-    ],
+        {
+          name: 'patronymic',
+          label: 'Отчество',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.patronymic || '',
+          isDefault: true,
+        },
+        {
+          name: 'inn',
+          label: 'ИНН',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.inn || '',
+          isDefault: true,
+        },
+        {
+          name: 'snils',
+          label: 'СНИЛС ',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.snils || '',
+          isDefault: true,
+        },
+        {
+          name: 'residence',
+          label: 'Место жительства',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.residence || '',
+          isDefault: true,
+        },
+        {
+          name: 'location',
+          label: 'Место прибывания',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.location || '',
+          isDefault: true,
+        },
+      ],
+      rangeDateFilters: [
+        {
+          from: {
+            type: FilterTypeNames.SIMPLE_FILTER,
+            name: 'from',
+            value: null,
+            defaultValue: this.getFilter.fromBirthDate || '',
+            label: 'от:',
+          },
+          to: {
+            type: FilterTypeNames.SIMPLE_FILTER,
+            name: 'to',
+            value: null,
+            defaultValue: this.getFilter.toBirthDate || '',
+            label: 'до:',
+          },
+          name: 'birthDate',
+          type: FilterTypeNames.RANGE_DATE_FILTER,
+          label: 'Дата рождения',
+          isDefault: true,
+        },
+      ],
+    };
   }
 
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
