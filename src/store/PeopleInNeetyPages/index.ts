@@ -79,6 +79,7 @@ export default class PeopleInNeetyModule {
       sort: '-id',
       total: null,
     },
+    searchLabels: [],
     flagTabWorker: 0, // для переключения на таб трудовой деятельности при создании трудовой новой деятельности
     flagUpdateItem: false, // Ставится в истину при редактировании сущности
     flagViewing: false, // В истину при просмотре

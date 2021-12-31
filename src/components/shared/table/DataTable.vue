@@ -87,6 +87,7 @@
             @onPageChange="handlePageChange"
             :items-length="pagination.itemsLength"
             :initial-per-page="perPage"
+            :active-page-prop="activePage"
           />
         </div>
       </template>
@@ -158,6 +159,7 @@ export default class DataTable extends Vue {
   @Prop(Boolean) readonly singleExpand!: boolean;
   @Prop(String) readonly sortBy!: string;
   @Prop(Boolean) readonly withVerticalScroll!: boolean;
+  @Prop(Number) readonly activePage!: number; // необходим для правильного отображения активной страницы в пагинации
 
   expanded: DataItem[] = [];
 
