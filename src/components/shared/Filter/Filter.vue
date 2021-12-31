@@ -203,6 +203,7 @@ export default class FilterComponent extends Vue {
   @Prop(String) searchError!: string;
   @Prop(Boolean) searchOnMount!: boolean;
   @Prop(Boolean) eager!: boolean;
+  @Prop({ type: Array, default: [] }) parentSearchLabels!: [];
 
   searchLabels: (string | undefined)[] = [];
   isDialogFilterShow = false;
@@ -249,8 +250,18 @@ export default class FilterComponent extends Vue {
     isDialogFilterWShow && this.$emit('onShow');
   }
 
+  // Возвращаем в родитель выбранные колонки для фильтрации,
+  // тк при выходе из фильтра этот массив уничтожится и при повторном входе метки выбранных фильров не сформируются.
+  // в дальнейшем этот массив из родителя возвращается в фильтр и в created присваивается в  searchLabels
+  // Фактически это костыль надо что бы метки формировались непрсредственно в этом компоненте на основании значений переданных в проп filters
+  @Watch('isDialogFilterShow')
+  returnIsDialogFilterShow(newV) {
+    !newV && this.$emit('return-search-labels', { searchLabels: this.searchLabels });
+  }
+
   @Watch('initialItems')
   onInitialItemsChange(initialItems: OutputFilters): void {
+    console.log(initialItems);
     if (!this.searchLabels.length) {
       this.searchLabels = initialItems.map(item => {
         const currentFilter = this.processedFilters.find(filter => {
@@ -273,6 +284,10 @@ export default class FilterComponent extends Vue {
         }
       });
     }
+  }
+
+  created() {
+    this.searchLabels = this.parentSearchLabels;
   }
 }
 </script>

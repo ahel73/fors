@@ -160,9 +160,10 @@ import TextComponent from '@/components/shared/Text/Text.vue';
 })
 export default class Pagination extends Vue {
   @Prop({ type: Number, default: 5 }) readonly visiblePages!: number;
-  @Prop({ type: Array, default: () => [10, 20, 30] }) readonly perPages!: number[];
+  @Prop({ type: Array, default: () => [5, 10, 20, 30] }) readonly perPages!: number[];
   @Prop(Number) readonly itemsLength!: number;
   @Prop(Number) readonly initialPerPage!: number;
+  @Prop(Number) readonly activePageProp!: number; // Номер активной страницы, нужен если таблицы была уничтожена и формируется заново
 
   activePage = 1;
   perPage = 10;
@@ -280,6 +281,7 @@ export default class Pagination extends Vue {
     this.perPage = this.initialPerPage || this.perPage;
     this.total = this.calculateTotalPerPage(this.perPage);
     this.pages = this.calculatePages(this.activePage);
+    this.activePage = this.activePageProp + 1;
   }
 
   @Watch('perPage')

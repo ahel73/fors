@@ -15,6 +15,8 @@ export const methods = {
   },
 
   updatePropState(name: string, value: any): void {
+    console.log('name', name);
+    console.log('value', value);
     this.store.peopleInNeety.updateProp({ name, value });
   },
 

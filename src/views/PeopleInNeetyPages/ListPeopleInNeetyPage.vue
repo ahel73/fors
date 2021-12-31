@@ -11,6 +11,7 @@
           :items-length="getPagAndSort.total"
           :per-page="getPagAndSort.size"
           :sort-by="getPagAndSort.sort"
+          :active-page="getPagAndSort.page"
         >
           <!-- Фильтр и кнопки -->
           <template #[`tabs.after`]>
@@ -21,8 +22,10 @@
                 <filter-component
                   @onSearch="sendFilter"
                   @onReset="resetFilter"
+                  @return-search-labels="setSearchlabels"
                   :initial-items="itemsFilter"
-                  :filters="filtersElems"
+                  :filters="getFiltersElems"
+                  :parent-search-labels="getSearchlabels"
                 />
               </v-col>
             </v-row>
@@ -94,8 +97,6 @@ import BaseAction from '@/components/shared/table/RowActions/BaseAction.vue';
 import EditIcon from '@/components/shared/IconComponent/icons/EditIcon.vue';
 import EyeIcon from '@/components/shared/IconComponent/icons/EyeIcon.vue';
 import DeleteIcon from '@/components/shared/IconComponent/icons/DeleteIcon.vue';
-import httpClient from '@/data/http';
-import { query } from '@/utils';
 import { methods } from '@/store/PeopleInNeetyPages/functions.ts';
 import { cloneDeep } from 'lodash';
 import { OutputFilters } from '@/components/shared/Filter/FilterTypes/types';
@@ -128,86 +129,102 @@ export default class ListPeopleInNeetyPage extends Vue {
     return this.store.peopleInNeety.state.pagAndSort;
   }
 
+  get getSearchlabels() {
+    return this.store.peopleInNeety.state.searchLabels;
+  }
+
   get listPeople() {
     return this.store.peopleInNeety.state.listPeopleInNeety;
   }
 
   itemsFilter: OutputFilters = [];
-  filtersElems: FilterTypes = {
-    simpleFilters: [
-      {
-        name: 'surname',
-        label: 'Фамилия',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'name',
-        label: 'Имя',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'patronymic',
-        label: 'Отчество',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'inn',
-        label: 'ИНН',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'snils',
-        label: 'СНИЛС ',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'residence',
-        label: 'Место жительства',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-      {
-        name: 'location',
-        label: 'Место прибывания',
-        type: FilterTypeNames.SIMPLE_FILTER,
-        valueType: ValueTypes.STRING,
-        isDefault: true,
-      },
-    ],
-    rangeDateFilters: [
-      {
-        from: {
+  get getFiltersElems(): FilterTypes {
+    return {
+      simpleFilters: [
+        {
+          name: 'surname',
+          label: 'Фамилия',
           type: FilterTypeNames.SIMPLE_FILTER,
-          name: 'from',
-          value: null,
-          label: 'от:',
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.surname || '',
+          isDefault: true,
         },
-        to: {
+        {
+          name: 'name',
+          label: 'Имя',
           type: FilterTypeNames.SIMPLE_FILTER,
-          name: 'to',
-          value: null,
-          label: 'до:',
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.name || '',
+          isDefault: true,
         },
-        name: 'birthDate',
-        type: FilterTypeNames.RANGE_DATE_FILTER,
-        label: 'Дата рождения',
-        isDefault: true,
-      },
-    ],
+        {
+          name: 'patronymic',
+          label: 'Отчество',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.patronymic || '',
+          isDefault: true,
+        },
+        {
+          name: 'inn',
+          label: 'ИНН',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.inn || '',
+          isDefault: true,
+        },
+        {
+          name: 'snils',
+          label: 'СНИЛС ',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.snils || '',
+          isDefault: true,
+        },
+        {
+          name: 'residence',
+          label: 'Место жительства',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.residence || '',
+          isDefault: true,
+        },
+        {
+          name: 'location',
+          label: 'Место прибывания',
+          type: FilterTypeNames.SIMPLE_FILTER,
+          valueType: ValueTypes.STRING,
+          defaultValue: this.getFilter.location || '',
+          isDefault: true,
+        },
+      ],
+      rangeDateFilters: [
+        {
+          from: {
+            type: FilterTypeNames.SIMPLE_FILTER,
+            name: 'from',
+            value: null,
+            defaultValue: this.getFilter.fromBirthDate || '',
+            label: 'от:',
+          },
+          to: {
+            type: FilterTypeNames.SIMPLE_FILTER,
+            name: 'to',
+            value: null,
+            defaultValue: this.getFilter.toBirthDate || '',
+            label: 'до:',
+          },
+          name: 'birthDate',
+          type: FilterTypeNames.RANGE_DATE_FILTER,
+          label: 'Дата рождения',
+          isDefault: true,
+        },
+      ],
+    };
   }
 
   columns = [] // В этот массив добавляются колонки для отображенияи скрытия
+
   push = methods.push;
   getOne = methods.getOne;
   getGroupFind = methods.getGroupFind;
@@ -228,6 +245,7 @@ export default class ListPeopleInNeetyPage extends Vue {
         this.updatePropsSpech(valueTo, 'toBirthDate', 'filter');
       }
     });
+
     this.getGroupFind('/individual-persons/find/', this.getPagAndSort, this.getFilter)
       .then(user => {
         this.updatePropsSpech(user.meta.total, 'total', 'pagAndSort');
@@ -239,6 +257,7 @@ export default class ListPeopleInNeetyPage extends Vue {
     for (const prop in this.myStore.state.filter) {
       this.updatePropsSpech(null, prop, 'filter');
     }
+    this.updatePropState('searchLabels', []);
   }
 
   changePagAndSort(options) {
@@ -264,7 +283,6 @@ export default class ListPeopleInNeetyPage extends Vue {
   }
 
   async onDeleteClick(item: object) {
-    // const data = await httpClient.delete(`/individual-persons/${item.id}`);
     await this.dispathDeleteObject(item.id)
       .then(response => {
         console.log(response);
@@ -317,6 +335,11 @@ export default class ListPeopleInNeetyPage extends Vue {
       newObj.isEditable = !requiredFields.includes(newObj.value);
       return newObj;
     });
+  }
+
+  setSearchlabels({ searchLabels }) {
+    console.log(searchLabels);
+    this.updatePropState('searchLabels', searchLabels);
   }
 
   created() {
