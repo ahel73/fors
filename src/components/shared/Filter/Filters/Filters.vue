@@ -1,164 +1,176 @@
 <template>
   <div>
-    <v-row
+    <template
       v-for="filter in filters"
-      :key="filter.name"
     >
-      <v-col v-if="filter.type === 'MULTI_FILTER'">
-        <multi-filter
-          @input="(value) => setValue(value, filter.name, filter.type)"
-          @onRemove="handleRemove"
-          :deletable="filter.isCustom"
-          :label="filter.label"
-          :like="filter.like"
-          :name="filter.name"
-          :negative="filter.negative"
-          :value="getValue(filter.name)"
-          :value-type="filter.valueType"
-          :ref="filter.type"
-        />
-      </v-col>
-      <v-col v-if="filter.type === 'SIMPLE_FILTER'">
-        <simple-filter
-          @input="(value) => setValue(value, filter.name, filter.type)"
-          @onRemove="handleRemove"
-          :deletable="filter.isCustom"
-          :label="filter.label"
-          :like="filter.like"
-          :name="filter.name"
-          :negative="filter.negative"
-          :value-type="filter.valueType"
-          :value="getValue(filter.name)"
-          :ref="filter.type"
-        />
-      </v-col>
-      <v-col
-        v-if="filter.type === 'CHECKBOX_SIMPLE_FILTER'"
-        class="d-inline-flex"
+      <v-row
+        v-if="filter.type === 'RANGE_DATE_FILTER' && filter.label"
+        class="pl-3 pt-3"
+        :key="filter.label"
       >
-        <checkbox-simple-filter
-          @change="(value) => setValue(value, filter.name, filter.type)"
-          @onRemove="handleRemove"
-          :deletable="filter.isCustom"
+        <label-component
           :label="filter.label"
-          :like="filter.like"
-          :name="filter.name"
-          :negative="filter.negative"
-          :value="getValue(filter.name)"
-          :value-type="filter.valueType"
-          :ref="filter.type"
         />
-      </v-col>
-      <v-col v-if="filter.type === 'SELECT_FILTER'">
-        <select-filter
-          @change="(value) => setValue(value, filter.name, filter.type)"
-          @onRemove="handleRemove"
-          :chips="filter.multiple"
-          :deletable-chips="filter.multiple"
-          :deletable="filter.isCustom"
-          :items-length="filter.itemsLength"
-          :items="filter.items"
-          :label="filter.label"
-          :like="filter.like"
-          :multiple="filter.multiple"
-          :show-code="filter.showCode"
-          :show-hierarchy="filter.showHierarchy"
-          :name="filter.name"
-          :negative="filter.negative"
-          :no-filter="filter.noFilter"
-          :on-page-change="filter.onPageChange"
-          :on-enter="filter.onEnter"
-          :on-search-input-update="filter.onSearchInputUpdate"
-          :search-mode="filter.searchMode"
-          :value="getValue(filter.name)"
-          :ref="filter.type"
-        />
-      </v-col>
-      <template v-if="filter.type === 'RANGE_SIMPLE_FILTER'">
-        <v-col
-          cols="6"
-          class="d-flex align-end"
-        >
-          <div class="input-wrapper">
-            <range-simple-filter
-              @input="(value) => setValue(value, `${filter.name}.from`, filter.type)"
-              :label="filter.from.label"
-              :like="filter.like"
-              :name="filter.name"
-              :negative="filter.negative"
-              :type="filter.from.type"
-              :value="getValue(`${filter.name}.from`)"
-              :value-type="filter.valueType"
-              :ref="filter.type"
-            />
-          </div>
+      </v-row>
+      <v-row
+        :key="filter.name"
+      >
+        <v-col v-if="filter.type === 'MULTI_FILTER'">
+          <multi-filter
+            @input="(value) => setValue(value, filter.name, filter.type)"
+            @onRemove="handleRemove"
+            :deletable="filter.isCustom"
+            :label="filter.label"
+            :like="filter.like"
+            :name="filter.name"
+            :negative="filter.negative"
+            :value="getValue(filter.name)"
+            :value-type="filter.valueType"
+            :ref="filter.type"
+          />
+        </v-col>
+        <v-col v-if="filter.type === 'SIMPLE_FILTER'">
+          <simple-filter
+            @input="(value) => setValue(value, filter.name, filter.type)"
+            @onRemove="handleRemove"
+            :deletable="filter.isCustom"
+            :label="filter.label"
+            :like="filter.like"
+            :name="filter.name"
+            :negative="filter.negative"
+            :value-type="filter.valueType"
+            :value="getValue(filter.name)"
+            :ref="filter.type"
+          />
         </v-col>
         <v-col
-          cols="6"
-          class="d-flex align-end"
+          v-if="filter.type === 'CHECKBOX_SIMPLE_FILTER'"
+          class="d-inline-flex"
         >
-          <div class="input-wrapper">
-            <range-simple-filter
-              @input="(value) => setValue(value, `${filter.name}.to`, filter.type)"
-              @onRemove="handleRemove"
-              :deletable="filter.isCustom"
-              :label="filter.to.label"
-              :like="filter.like"
-              :name="filter.name"
-              :negative="filter.negative"
-              :type="filter.to.type"
-              :value="getValue(`${filter.name}.to`)"
-              :value-type="filter.valueType"
-              :ref="filter.type"
-            />
-          </div>
+          <checkbox-simple-filter
+            @change="(value) => setValue(value, filter.name, filter.type)"
+            @onRemove="handleRemove"
+            :deletable="filter.isCustom"
+            :label="filter.label"
+            :like="filter.like"
+            :name="filter.name"
+            :negative="filter.negative"
+            :value="getValue(filter.name)"
+            :value-type="filter.valueType"
+            :ref="filter.type"
+          />
         </v-col>
-      </template>
-      <template v-if="filter.type === 'RANGE_DATE_FILTER'">
-        <v-col
-          cols="6"
-          class="d-flex align-end"
-        >
-          <div class="input-wrapper">
-            <range-date-filter
-              @change="(value) => setValue(value, `${filter.name}.from`, filter.type)"
-              :label="filter.from.label"
-              :like="filter.like"
-              :limit-to="getValue(`${filter.name}.to`)"
-              :name="filter.name"
-              :negative="filter.negative"
-              :output-format="filter.from.outputFormat"
-              :type="filter.from.type"
-              :value="getValue(`${filter.name}.from`)"
-              :view-format="filter.from.viewFormat"
-              :ref="filter.type"
-            />
-          </div>
+        <v-col v-if="filter.type === 'SELECT_FILTER'">
+          <select-filter
+            @change="(value) => setValue(value, filter.name, filter.type)"
+            @onRemove="handleRemove"
+            :chips="filter.multiple"
+            :deletable-chips="filter.multiple"
+            :deletable="filter.isCustom"
+            :items-length="filter.itemsLength"
+            :items="filter.items"
+            :label="filter.label"
+            :like="filter.like"
+            :multiple="filter.multiple"
+            :show-code="filter.showCode"
+            :show-hierarchy="filter.showHierarchy"
+            :name="filter.name"
+            :negative="filter.negative"
+            :no-filter="filter.noFilter"
+            :on-page-change="filter.onPageChange"
+            :on-enter="filter.onEnter"
+            :on-search-input-update="filter.onSearchInputUpdate"
+            :search-mode="filter.searchMode"
+            :value="getValue(filter.name)"
+            :ref="filter.type"
+          />
         </v-col>
-        <v-col
-          cols="6"
-          class="d-flex align-end"
-        >
-          <div class="input-wrapper">
-            <range-date-filter
-              @change="(value) => setValue(value, `${filter.name}.to`, filter.type)"
-              @onRemove="handleRemove"
-              :deletable="filter.isCustom"
-              :label="filter.to.label"
-              :like="filter.like"
-              :limit-from="getValue(`${filter.name}.from`)"
-              :name="filter.name"
-              :negative="filter.negative"
-              :output-format="filter.to.outputFormat"
-              :type="filter.to.type"
-              :value="getValue(`${filter.name}.to`)"
-              :view-format="filter.to.viewFormat"
-              :ref="filter.type"
-            />
-          </div>
-        </v-col>
-      </template>
-    </v-row>
+        <template v-if="filter.type === 'RANGE_SIMPLE_FILTER'">
+          <v-col
+            cols="6"
+            class="d-flex align-end"
+          >
+            <div class="input-wrapper">
+              <range-simple-filter
+                @input="(value) => setValue(value, `${filter.name}.from`, filter.type)"
+                :label="filter.from.label"
+                :like="filter.like"
+                :name="filter.name"
+                :negative="filter.negative"
+                :type="filter.from.type"
+                :value="getValue(`${filter.name}.from`)"
+                :value-type="filter.valueType"
+                :ref="filter.type"
+              />
+            </div>
+          </v-col>
+          <v-col
+            cols="6"
+            class="d-flex align-end"
+          >
+            <div class="input-wrapper">
+              <range-simple-filter
+                @input="(value) => setValue(value, `${filter.name}.to`, filter.type)"
+                @onRemove="handleRemove"
+                :deletable="filter.isCustom"
+                :label="filter.to.label"
+                :like="filter.like"
+                :name="filter.name"
+                :negative="filter.negative"
+                :type="filter.to.type"
+                :value="getValue(`${filter.name}.to`)"
+                :value-type="filter.valueType"
+                :ref="filter.type"
+              />
+            </div>
+          </v-col>
+        </template>
+        <template v-if="filter.type === 'RANGE_DATE_FILTER'">
+          <v-col
+            cols="6"
+            class="d-flex align-end"
+          >
+            <div class="input-wrapper">
+              <range-date-filter
+                @change="(value) => setValue(value, `${filter.name}.from`, filter.type)"
+                :label="filter.from.label"
+                :like="filter.like"
+                :limit-to="getValue(`${filter.name}.to`)"
+                :name="filter.name"
+                :negative="filter.negative"
+                :output-format="filter.from.outputFormat"
+                :type="filter.from.type"
+                :value="getValue(`${filter.name}.from`)"
+                :view-format="filter.from.viewFormat"
+                :ref="filter.type"
+              />
+            </div>
+          </v-col>
+          <v-col
+            cols="6"
+            class="d-flex align-end"
+          >
+            <div class="input-wrapper">
+              <range-date-filter
+                @change="(value) => setValue(value, `${filter.name}.to`, filter.type)"
+                @onRemove="handleRemove"
+                :deletable="filter.isCustom"
+                :label="filter.to.label"
+                :like="filter.like"
+                :limit-from="getValue(`${filter.name}.from`)"
+                :name="filter.name"
+                :negative="filter.negative"
+                :output-format="filter.to.outputFormat"
+                :type="filter.to.type"
+                :value="getValue(`${filter.name}.to`)"
+                :view-format="filter.to.viewFormat"
+                :ref="filter.type"
+              />
+            </div>
+          </v-col>
+        </template>
+      </v-row>
+    </template>
   </div>
 </template>
 
@@ -183,6 +195,7 @@ import RangeSimpleFilter from '@/components/shared/Filter/FilterTypes/RangeSimpl
 import SelectFilter from '@/components/shared/Filter/FilterTypes/SelectFilter/SelectFilter.vue';
 import SimpleFilter from '@/components/shared/Filter/FilterTypes/SimpleFilter/SimpleFilter.vue';
 import { SelectItem, SelectValue } from '@/components/shared/Filter/FilterTypes/SelectFilter/SelectFilter.types';
+import LabelComponent from '@/components/shared/Label/Label.vue';
 
 import { isRangeFilter } from '@/utils';
 
@@ -195,6 +208,7 @@ import { isRangeFilter } from '@/utils';
     RangeSimpleFilter,
     SelectFilter,
     SimpleFilter,
+    LabelComponent,
   },
 })
 export default class Filters extends Vue {
