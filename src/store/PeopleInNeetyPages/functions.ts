@@ -15,8 +15,6 @@ export const methods = {
   },
 
   updatePropState(name: string, value: any): void {
-    console.log('name', name);
-    console.log('value', value);
     this.store.peopleInNeety.updateProp({ name, value });
   },
 
@@ -127,13 +125,28 @@ export const methods = {
   },
 
   // Проверка на заполненость обязательных полей
-  verificationObject(dataObj = {}, requiredFields = {}) {
+  verificationObject(dataObj: object, requiredFields: object) : boolean {
     let flagError = false;
-    for (const a in requiredFields) {
-      if (dataObj[a] === null) {
-        requiredFields[a] = true;
+    let mess = 'Не заполнены следующие обязательные поля: \n';
+    for (const prop in requiredFields) {
+      console.log(prop);
+      console.log(dataObj[prop] + ' тип: ' + typeof dataObj[prop]);
+      if (dataObj[prop] === null || dataObj[prop] === undefined || dataObj[prop] === '') {
+        console.log(requiredFields[prop]);
+        requiredFields[prop].flagEmpty = true;
+        mess += `- ${requiredFields[prop].name}, \n`;
         flagError = true;
       }
+    }
+
+    if (flagError) {
+      eventBus.$emit(
+        'notification:message',
+        {
+          text: mess,
+          type: 'error',
+        }
+      );
     }
     return flagError;
   },
@@ -189,5 +202,20 @@ export const methods = {
         type: 'error',
       }
     );
+  },
+
+  /**
+   * Если инпут не пустой то снимает флаг незаполненности
+   */
+  cleanFlagEmpty(name: string, linkObjRequiredField: object) : void {
+    if (event.target.value) {
+      linkObjRequiredField[name].flagEmpty = false;
+    }
+  },
+
+  cleanFlagEmptySpesh(value: any, name: string, linkObjRequiredField: object) : void {
+    if (value) {
+      linkObjRequiredField[name].flagEmpty = false;
+    }
   },
 };

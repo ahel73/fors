@@ -37,11 +37,11 @@
         <v-row>
           <v-col>
             <input-component
-              @input="updateProps('surname', nameObject)"
+              @input="wrapperEventInputFuncs('surname', nameObject, requiredField)"
               :value="getSurname"
               :disabled="flagDisabled"
               label="Фамилия"
-              :is-error="requiredField.surname"
+              :is-error="requiredField.surname.flagEmpty"
               :required="true"
               :clearable="true"
             />
@@ -52,11 +52,11 @@
         <v-row>
           <v-col>
             <input-component
-              @input="updateProps('name', nameObject)"
+              @input="wrapperEventInputFuncs('name', nameObject, requiredField)"
               :value="getName"
               :disabled="flagDisabled"
               label="Имя"
-              :is-error="requiredField.name"
+              :is-error="requiredField.name.flagEmpty"
               :required="true"
               :clearable="true"
             />
@@ -81,13 +81,12 @@
           <v-col>
             <datepicker
               v-if="!flagDisabled"
-              @change="updatePropsSpech($event, 'birthDate', nameObject)"
-              :handle-input="verificationInput"
+              @change="wrapperEventChangeFuncs($event, 'birthDate', nameObject, requiredField)"
               :starting-year="yearStart"
               :value="getBirthDate"
               label="Дата рождения"
               :is-required="true"
-              :error="requiredField.birthDate"
+              :error="requiredField.birthDate.flagEmpty"
             />
             <input-component
               v-else
@@ -183,11 +182,8 @@
             <input-component
               @input="updateProps('areaCode', nameObject)"
               :value="getAreaCode"
-              :disabled="flagDisabled"
+              :disabled="true"
               label="Код МО"
-              :is-error="requiredField.areaCode"
-              :required="true"
-              :clearable="true"
             />
           </v-col>
         </v-row>
@@ -195,15 +191,16 @@
         <!-- Документ удостоверяющиё -->
         <v-row>
           <v-col>
-            <router-link :to="flagNew ? {name: 'FormAddDocument'} : ''">
-              <input-component
-                :value="getIdentityDoc"
-                :disabled="flagDisabled"
-                label="Документ удостоверяющий личность"
-                :is-error="requiredField.identityDoc"
-                :required="true"
-              />
-            </router-link>
+            <input-component
+              @click="push('FormAddDocument')"
+              @input="clearIdentityDoc(null, 'identityDoc', nameObject, requiredField)"
+              :value="getIdentityDoc"
+              :disabled="flagDisabled"
+              label="Документ удостоверяющий личность"
+              :is-error="requiredField.identityDoc.flagEmpty"
+              :required="true"
+              :clearable="true"
+            />
           </v-col>
         </v-row>
 
@@ -512,10 +509,6 @@ export default class FormAddNewPeopleInNeety extends Vue {
     return !!(this.newPerson.sex === 'W');
   }
 
-  test(value) {
-    console.log(value);
-  }
-
   // ложь общие сведение, истина трудовая деятельность
   tab = this.myStore.state.flagTabWorker;
   // Количество лет в выподашке по датапикеру
@@ -530,14 +523,37 @@ export default class FormAddNewPeopleInNeety extends Vue {
 
   // Объект с имнеами обязательных полей, в случае незаполнености ставим в истину
   requiredField = {
-    surname: false,
-    name: false,
-    birthDate: false,
-    areaCode: false,
-    identityDoc: false,
+    surname: {
+      flagEmpty: false,
+      name: 'Фамилия',
+    },
+    name: {
+      flagEmpty: false,
+      name: 'Имя',
+    },
+    birthDate: {
+      flagEmpty: false,
+      name: 'Дата рождения',
+    },
+    identityDoc: {
+      flagEmpty: false,
+      name: 'Документ удостоверяющий личность',
+    },
   };
 
   flagError = false;
+
+  maskPhone = {
+    mask: 'qrrerrtrtrr',
+    tokens: {
+      q: { pattern: /[0-9]/, transform: () => '+7 (' },
+      e: { pattern: /[0-9]/, transform: v => v + ') ' },
+      r: { pattern: /[0-9]/ },
+      t: { pattern: /[0-9]/, transform: v => v + '-' },
+    },
+  }
+
+  maskSnils = '###-###-### ##'
 
   updateProps = methods.updateProps.bind(this);
   updatePropsSpech = methods.updatePropsSpech.bind(this);
@@ -550,6 +566,8 @@ export default class FormAddNewPeopleInNeety extends Vue {
   verificationObject = methods.verificationObject.bind(this);
   toNull = methods.toNull.bind(this);
   errorDispatch = methods.errorDispatch.bind(this);
+  cleanFlagEmpty = methods.cleanFlagEmpty;
+  cleanFlagEmptySpesh = methods.cleanFlagEmptySpesh;
 
   cancel() {
     this.clearObj(
@@ -613,21 +631,26 @@ export default class FormAddNewPeopleInNeety extends Vue {
     }
   }
 
-  maskPhone = {
-    mask: 'qrrerrtrtrr',
-    tokens: {
-      q: { pattern: /[0-9]/, transform: () => '+7 (' },
-      e: { pattern: /[0-9]/, transform: v => v + ') ' },
-      r: { pattern: /[0-9]/ },
-      t: { pattern: /[0-9]/, transform: v => v + '-' },
-    },
+  wrapperEventInputFuncs(name: string, nameObject: string, linkObjRequiredField: object) {
+    this.updateProps(name, nameObject);
+    this.cleanFlagEmpty(name, linkObjRequiredField);
   }
 
-  maskSnils = '###-###-### ##'
-
-  verificationInput() {
+  test() {
     console.log(event.target);
-    console.log(event.target.value);
+    console.log(event.currentTarget);
+  }
+
+  wrapperEventChangeFuncs(value, name: string, nameObject: string, linkObjRequiredField: object) {
+    console.log(event);
+    console.log(value);
+    this.updatePropsSpech(value, name, nameObject);
+    this.cleanFlagEmptySpesh(value, name, linkObjRequiredField);
+  }
+
+  clearIdentityDoc(value, name: string, nameObject: string, linkObjRequiredField: object) {
+    this.updatePropsSpech(value, name, nameObject);
+    this.push('FormAddDocument');
   }
 
   mounted() {
